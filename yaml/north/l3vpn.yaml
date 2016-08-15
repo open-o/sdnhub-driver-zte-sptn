@@ -1,0 +1,860 @@
+swagger: '2.0'
+info:
+  version: '0.1.0'
+  title: L3VpnService Sbi Adapter Interface
+  description: Orchestrator SDN-O SBI Reference V1.0-L3VPN
+host: sdno.openo.org
+basePath: /rest
+schemes:
+  - http
+consumes: 
+  - application/json
+produces: 
+  - application/json
+  
+paths: 
+
+  /rest/{controller-name}/v1/controllers/{controlleruuid}/united-sbi-service-l3vpn:service/l3vpns:
+    post:
+      summary: Create L3Vpn a connection
+      description: it will create a L3VPN connection through the controller specified . 
+      operationId: createL3VPN
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters: 
+        - name: controlleruuid 
+          in: path 
+          description: ID of the controller used to create L3VPN connection. 
+          required: true 
+          type: string
+          format: uuid
+        - name: l3vpnconnection
+          in: body
+          description: L3Vpn conenction
+          required: true
+          schema:
+            $ref: "#/definitions/L3Vpn"
+      responses: 
+        default: 
+          description: Response 
+          schema: 
+            $ref: "#/definitions/L3VpnResponse" 
+
+
+  /rest/{controller-name}/v1/controllers/{controlleruuid}/united-sbi-service-l3vpn:service/l3vpns/l3vpn/{vpnid}:    
+    delete:
+      summary: Delete the L3VPN whose Id is specified in the path
+      description: delete a L3VPN if it exists
+      operationId: deleteL3VPN
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters: 
+        - name: controlleruuid 
+          in: path 
+          description: ID of the controller used to delete a L3Vpn.
+          required: true 
+          type: string
+          format: uuid
+        - name: vpnid
+          in: path
+          description: ID of the VPN to be deleted.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        default: 
+          description: Response 
+          schema: 
+            $ref: "#/definitions/L3VpnResponse" 
+
+
+    
+            
+definitions:
+
+  AutoSelectTunnel:
+    description: Policy Constraints of auto select tunnel policy
+    type: object
+    properties:
+      type:
+        type: string
+        description: Tunnel type of Auto select tunnel policy
+      priority:
+        type: integer
+        format: int64
+        description: Tunnel priority of Auto select tunnel policy
+
+  AutoSelectTunnels:
+    description: List of AutoSelect Tunnels
+    type: object
+    required:
+      - autoSelectTunnel
+    properties: 
+      autoSelectTunnel:
+        type: array
+        items:
+          $ref: "#/definitions/AutoSelectTunnel"
+
+  AutoSelectPolicy:
+    description: Tunnel policy of Auto select
+    type: object
+    required:
+      - loadBalanceNumber
+    properties:
+      loadBalanceNumber:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 32
+        description: Auto Select tunnel Load Number
+      autoSelectTunnels:
+        $ref: "#/definitions/AutoSelectTunnels"
+
+
+
+  PathConstraint:
+    description: Constraints of Tunnel route
+    type: object
+    properties:
+      setupPriority:
+        type: integer
+        format: int64
+        minimum: 0
+        maximum: 7
+        description: Setup priority of tunnel route constraints
+      holdupPriority:
+        type: integer
+        format: int64
+        minimum: 0
+        maximum: 7
+        description: Holdup priority of tunnel route constraints
+      latency:
+        type: integer
+        format: int64
+        minimum: 0
+        maximum: 60000000
+        description: Latency priority of tunnel route constraints
+        
+  PathProtectPolicy:
+    description: Tunnel protection policy
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        description: Type of tunnel protection policy
+      hotStandbyEnable:
+        type: boolean
+        description: Whether to enable hotstandby in tunnel protection (true, false)
+      retrieve:
+        type: boolean
+        description: Whether to revertive in tunnel protection (true, false)
+      bandwidthMode:
+        type: string
+        description: Bandwidth mode of tunnel protection. (original-bandwidth, dynamic-bandwidth)
+      wtr:
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 60000000
+        description: Wtr time of tunnel protection revertive in micro-second
+        
+  MplsTePolicy:
+    description: Tunnel policy of Mple-te
+    type: object
+    required:
+      - signalType
+      - sharing
+    properties:
+      signalType:
+        type: string
+        description: Tunnel type of Manual Select(rsvp-te, sr-te, static-lsp)
+      manageProtocol:
+        type: string
+        description: Manage protocol(netconf, pcep)
+      sharing:
+        type: boolean
+        description: Whether is shared (true, false)
+      besteffort:
+        type: boolean
+        description: Whether is best effort (true, false)
+      bandwidth:
+        type: integer
+        format: int64
+        description: Tunnel bandwidth in kbps
+      coRoute:
+        type: boolean
+        description: Whether to re Route (true, false)
+      bfdEnable:
+        type: boolean
+        description: Whether to enable BFD Protocol (true, false)        
+      pathConstraint:
+        $ref: "#/definitions/PathConstraint"
+      pathProtectPolicy:
+        $ref: "#/definitions/PathProtectPolicy"
+
+
+
+  ParticularConstraint:
+    description: particular constraint
+    type: object
+    required:
+      - ingressNe
+      - egressNe
+      - type
+    properties:
+      ingressNe:
+        type: string
+        format: uuid
+        description: Ingress node of tunnel
+      egressNe:
+        type: string
+        format: uuid
+        description: Egress node of tunnel
+      type:
+        type: string
+        description: Type of tunnel constraint (binding, particular-mpls-te-tunnel)
+      bindingTunnel:
+        description: List of binding tunnel
+        type: array
+        items:
+          type: string
+      mplsTe:
+        $ref: "#/definitions/MplsTePolicy"
+
+  ParticularConstraints:
+    description: List of particular constraints
+    type: object
+    required:
+      - particularConstraint
+    properties:
+      particularConstraint:
+        type: array
+        items:
+          $ref: "#/definitions/ParticularConstraint"
+
+
+
+
+  TunnelService: 
+    type: object
+    description: Policy configuration of Vpn business tunnel
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        description: Type of tunnel policy - (auto-select, mpls-te, vxlan, gre)
+      autoSelect:
+        $ref: "#/definitions/AutoSelectPolicy"
+      mplsTe:
+        $ref: "#/definitions/MplsTePolicy"
+      particularConstraints:
+        $ref: "#/definitions/ParticularConstraints"
+
+
+
+
+  QosIfCar:
+    description: bandwidth related QoS parameters
+    type: object
+    required:
+      - enable
+      - cir
+      - pir
+    properties:
+      enable:
+        type: boolean
+        description: Whether to enable car configuration (true, false)
+      cir:
+        type: integer
+        format: int32
+        description: Committed speed in kbps
+      pir: 
+        type: integer
+        format: int32
+        description: Peak speed in kbps
+      cbs:
+        type: integer
+        format: int32
+        description: Committed burst Size in bytes
+      pbs:
+        type: integer
+        format: int32
+        description: Peak burst Size in bytes
+  
+  
+  L2Access:
+    description: Layer2 Access Configuration
+    type: object
+    required:
+      - accessType
+    properties:
+      accessType:
+        type: string
+        description: Access type(port, dot1q, qinq)
+      dot1qVlanBitmap:
+        type: integer
+        format: uint32
+        minimum: 1
+        maximum: 4095
+        description:  Vlan Bitmap in dot1q access type
+      qinqSvlanBitmap:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 4095
+        description: Svlan Bitmap in qing access type
+      qinqCvlanBitmap:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 4095
+        description: Cvlan Bitmap in qing access type
+      pushVlanId:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 4095
+        description: Push Vlan Id
+      swapVlanId:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 4095
+        description: Swap Vlan Id
+      accessAction:
+        type: string
+        description: Access action ("keep","push", "pop","swap"). Default - "keep". keep(0, "keep"), push(1, "push"), pop(2, "pop"), swap(3, "swap")
+
+
+
+  StaticRoute:
+    description: Static Route
+    type: object
+    required:
+      - ipPrefix
+      - nextHop
+    properties:
+      ipPrefix:
+        type: string
+        description: Destination IpAddress
+      nextHop:
+        type: string
+        description: Next hop
+  StaticRoutes:
+    description: List of StaticRoute
+    type: object
+    required:
+      - staticRoute
+    properties:
+      staticRoute:
+        type: array
+        items:
+          $ref: "#/definitions/StaticRoute"
+  
+  BgpRoute:
+    description: BGP Route
+    type: object
+    required:
+      - remoteAs
+      - peerIp
+    properties:
+      remoteAs:
+        type: string
+        description: Remote autonomous system Id
+      localAs:
+        type: string
+        description: Local autonomous system Id
+      peerIp:
+        type: string
+        description: Peer IpAddress
+      localIp:
+        type: string
+        description: Local IpAddress
+      keepaliveTime:
+        type: string
+        description: Time of keeping alive
+      holdTime:
+        type: string
+        description: Time of holding
+      password:
+        type: string
+        description: password
+      advertiseCommunity:
+        type: boolean
+        description: Whether to advertise community (true, false)
+      advertiseExtCommunity:
+        type: boolean
+        description: Whether to advertise external community (true, false)
+  BgpRoutes:
+    description: List of Bgp Route
+    type: object
+    required:
+      - bgpRoute
+    properties:
+      bgpRoute:
+        type: array
+        items:
+          $ref: "#/definitions/BgpRoute"
+
+  
+  IsisRoute:
+    description: Isis Route
+    type: object
+    required:
+      - networkEntity
+    properties:
+      networkEntity:
+        type: string
+        description: Name of Isis network entity
+
+
+  Network:
+    description: Network
+    type: object
+    required:
+      - ipPrefix
+    properties:
+      ipPrefix:
+        type: string
+        description: Network IpAddress Prefix
+  Networks:
+    description: List of Network
+    type: object
+    required:
+      - network
+    properties:
+      network:
+        type: array
+        items:
+          $ref: "#/definitions/Network"
+  
+  OspfRoute:
+    description: OSPF Route
+    type: object
+    required:
+      - id
+      - networks
+    properties:
+      id:
+        type: string
+        description: Ospf area id
+      networks:
+        $ref: "#/definitions/Networks"
+  OspfRoutes:
+    description: List of Ospf Route
+    type: object
+    required:
+      - ospfRoute
+    properties:
+      ospfRoute:
+        type: array
+        items:
+          $ref: "#/definitions/OspfRoute"
+
+  Route:
+    description: Route
+    type: object
+    required:
+      - type
+    properties:
+      type: 
+        type: string
+        description: Route protocol type (static, bgp, ospf, isis)
+      staticRoutes:
+        $ref: "#/definitions/StaticRoutes"
+      bgpRoutes:
+        $ref: "#/definitions/BgpRoutes"
+      isisRoute:
+        $ref: "#/definitions/IsisRoute"
+      ospfRoutes:
+        $ref: "#/definitions/OspfRoutes"
+  Routes:
+    description: List of Route
+    type: object
+    required:
+      - route
+    properties:
+      route:
+        type: array
+        items:
+          $ref: "#/definitions/Route"
+
+
+  
+  L3Access:
+    description: Layer3 Access Configuration - ipv4Address and a list of PE-CE routes 
+    type: object
+    required:
+      - ipv4Address
+      - routes
+    properties:    
+      ipv4Address:
+        type: string
+        description: ipAddress
+      routes:
+        $ref: "#/definitions/Routes"
+
+
+  OverrideFlow:
+    description: Override Flow 
+    type: object
+    required:
+      - externalFlowId
+      - car
+    properties:
+      externalFlowId:
+        type: string
+        format: uuid
+        description: Flow ID in controller.
+      name:
+        type: string
+        description: Flow name in controller.
+      direction:
+        type: string
+        description: Direction of flow. [0] ingress,[1] egress
+      car:
+        $ref: "#/definitions/QosIfCar"
+  OverrideFlows:
+    description: List of OverrideFlow
+    type: object
+    required:
+      - overrideFlow
+    properties:
+      overrideFlow:
+        type: array
+        items:
+          $ref: "#/definitions/OverrideFlow"
+
+    
+    
+  L3Ac:
+    description: L3Vpn Access point configuration
+    type: object
+    required:
+      - id
+      - neId
+      - ltpId
+      - name
+      - tenantId
+      - adminStatus
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Ac ID
+      neId:
+        type: string
+        format: uuid
+        description: Network Element Device Id
+      ltpId:
+        type: string
+        format: uuid
+        description: Ltp Id
+      name:
+        type: string
+        description: Ac name
+      localName:
+        type: string
+        description: Local name.
+      tenantId:
+        type: string
+        format: uuid
+        description: Tenant Id
+      description:
+        type: string
+        description: Ac description
+      adminStatus:
+        type: string
+        description: management status(active, inactive). Active - activate the Ac; Inactive - inactivate the Ac. adminUp(0, "adminUp"), adminDown(1, "adminDown");
+      operStatus:
+        type: string
+        description: The running status of Ac (up,down,partially down). operateUp(0, "operateUp"), operateDown(1, "operateDown");
+      upstreamBandwidth:
+        $ref: "#/definitions/QosIfCar"
+      downstreamBandwidth:
+        $ref: "#/definitions/QosIfCar"
+      l2Access:
+        $ref: "#/definitions/L2Access"
+      l3Access:
+        $ref: "#/definitions/L3Access"
+      inboundQosPolicyId:
+        type: string
+        description: Id of Inbound Qos Policy
+      outboundQosPolicyId:
+        type: string
+        description: Id of Outbound Qos Policy
+      inboundQueuePolicyId:
+        type: string
+        description: Id of Inbound Queue Qos Policy
+      outboundQueuePolicyId:
+        type: string
+        description: Id of Outbound Queue Qos Policy
+      externalQosPolicyId:
+        type: string
+        description: Id of External Qos Policy
+      overrideFlows:
+        $ref: "#/definitions/OverrideFlows"
+
+  L3Acs:
+    description: List of L3Vpn Access point configuration
+    type: object
+    required:
+      - ac
+    properties:
+      ac:
+        type: array
+        items:
+          $ref: "#/definitions/L3Ac"
+
+
+
+
+  L3LoopbackIf:
+    description: L3 Loopback Interface
+    type: object
+    required:
+      - id
+      - neId
+      - ipv4Address
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: This is a UUID of the L3LoopbackIf instance, which is allocated by the orchestrator
+      neId:
+        type: string
+        format: uuid
+        description: Network Element device id
+      description:
+        type: string
+        description: This is the description of the L3LoopbackIf instance.    
+      ipv4Address:
+        type: string
+        description: ipv4 address of loopback interface
+  L3LoopbackIfs:
+    description: a list of L3 Loopback Interface.
+    type: object
+    required:
+      - loopback
+    properties:
+      loopback:
+        type: array
+        items:
+          $ref: "#/definitions/L3LoopbackIf"
+          
+
+
+
+  HubGroup:
+    description: the definition of a hub group. 
+    type: object
+    required:
+      - acId
+      - hubDirection
+    properties:
+      acId:
+        type: string
+        format: uuid
+        description: AC UUID
+      hubDirection:
+        type: string
+        description: Hub AC direction (none, in, out)
+
+  SpokeAcs:
+    description: Spoke Acs
+    type: object
+    required:
+      - acId
+    properties:
+      acId:
+        type: string
+        format: uuid
+        description: AC UUID
+
+  SpokeGroup:
+    description: Spoke Group
+    type: object
+    properties:
+      localBridge: 
+        description: Is Local Bridge (true, false)
+        type: boolean
+      spokeAc: 
+        type: array
+        items:
+          $ref: "#/definitions/SpokeAcs"
+
+    
+  TopologyService:
+    description: Topology Service. a SpokeGroup and a list of HubGroup
+    type: object
+    required:
+      - hubGroups
+      - spokeGroup
+    properties:
+      hubGroups:
+        description: The list of Hub AC Group
+        type: array
+        items:
+          $ref: "#/definitions/HubGroup"
+      spokeGroup: 
+        $ref: "#/definitions/SpokeGroup"
+
+
+
+  BfdParameter:
+    description: Bidirectional Forwarding Detection parameter
+    type: object
+    properties:
+      minTxInterval:
+        type: integer
+        format: int64
+        minimum: 1
+        maximum: 4094
+        description: minTxInterval
+      minRxInterval:
+        type: integer
+        format: int64
+        minimum: 1
+        maximum: 4094
+        description: minRxInterval
+        
+  Vrrp:
+    description: Vrrp configuration
+    type: object
+    properties:
+      virtualIp:
+        type: string
+        description: Virtual IP
+      vrrpTrackBfd:
+        type: string
+        description: Track Bidirectional Forwarding Detection (true, false)
+      bfdParamter:
+        $ref: "#/definitions/BfdParameter"
+    
+  ProtectGroup:
+    description: protection group
+    type: object
+    properties:
+      masterAc:
+        type: string
+        format: uuid
+        description: The master id of AC protect group
+      backupAc:
+        type: string
+        format: uuid
+        description: The backup id of AC protect group
+      vrrp: 
+        $ref: "#/definitions/Vrrp"
+
+
+  
+  DiffServ:
+    description: DiffServ configuration
+    type: object
+    properties:
+      mode:
+        type: string
+        description: Differential service mode (uniform, outbound, short-pipe)
+      serviceClass:
+        type: string
+        description: Differential service class (BE, AF1, AF2, AF3, AF4, EF, CS6, CS7)
+      color:
+        type: string
+        description: Differential service color (green, yellow, red)
+
+
+
+
+
+  
+  L3Vpn:
+    type: object
+    description: the model of a L3VPN (all related information).  
+    required:
+      - id
+      - name
+      - adminStatus
+      - tunnelService
+      - acs
+    properties: 
+      id: 
+        type: string 
+        format: uuid
+        description: This is a UUID of the vpn-instance, which is allocated by the orchestrator. 
+      name: 
+        type: string
+        description: This is the name of the vpn-instance, be created by the application, which is just used to identify the different vpn instances created by the application, and the name on forwarding device can be created differently by controller.
+      tenantId:
+        type: string
+        format: uuid
+        description: Tenant ID. 
+      description:
+        type: string
+        description: This is the description of the vpn-instance.
+      topology:
+        type: string
+        description: This identify the connection mode of vpns, including none, hub-spoke and full-mesh.      
+      adminStatus:
+        type: string
+        description: L3VPN Connection management status(active, inactive). Active - activate the L3VPN Connection. Inactive - inactivate the L3VPN Connection. adminUp(0, "adminUp"), adminDown(1, "adminDown");
+      operStatus:
+        type: string
+        description: The running status of connection in controller, the adapter need fill this parameter (up,down,partially down). operateUp(0, "operateUp"), operateDown(1, "operateDown");
+      tunnelService:
+        $ref: "#/definitions/TunnelService"
+      mtu:
+        type: integer
+        format: int16
+        minimum: 46
+        maximum: 9600
+        description: MTU
+      frr:
+        type: boolean
+        description: Whether the vpn should be in vpn frr protection (true, false).
+      acs:
+        $ref: "#/definitions/L3Acs"
+      loopbackifs:
+        $ref: "#/definitions/L3LoopbackIfs"
+      topologyService:
+          $ref: "#/definitions/TopologyService"
+      protectGroup:
+        $ref: "#/definitions/ProtectGroup"
+      diffServ:
+        $ref: "#/definitions/DiffServ"
+        
+
+
+
+
+
+  L3VpnResponse:
+    description: a general structure for response  
+    type: object
+    required:
+      - ret
+      - format
+    properties: 
+      ret: 
+        type: integer
+        description: Http Status code of controller
+      format:
+        type: string
+        description: Return data format,such as "json"
+      msg: 
+        type: string
+        description: Response msg returned from adapter
+      success:
+        type: boolean
+        description: Whether is success
+      respHeaders:
+        description: Response headers
+        type: object
+        additionalProperties:
+          type: string

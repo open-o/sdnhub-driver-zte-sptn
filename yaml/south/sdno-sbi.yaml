@@ -1,0 +1,840 @@
+swagger: '2.0'
+info:
+  version: '0.1.0'
+  title: SDN-O SPTN Controller Driver SBI Interface
+  description: SDN-O SPTN Controller Driver SBI Interface
+host: sdno.openo.org
+basePath: /rest
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /sptndriver/v1/sbi-elines:service/eline:
+    post:
+      summary: Create Eline Connection
+      description: Creates a Eline Connection instance
+      produces:
+        - application/json
+      parameters:
+        - name: eline
+          in: body
+          description: Eline Connection
+          required: true
+          schema:
+            $ref: '#/definitions/ElineSncAndRoute'
+      responses:
+        '200':
+          description: Create a Eline connection
+  /sptndriver/v1/sbi-elines:service/create-eline-tunnels:
+    post:
+      summary: Create Eline and Tunnels
+      description: Creates a Eline Connection instance and Corresponding Tunnels
+      produces:
+        - application/json
+      parameters:
+        - name: create-snc-eline-tunnels
+          in: body
+          description: Eline Connection
+          required: true
+          schema:
+            $ref: '#/definitions/CreateElineAndTunnels'
+      responses:
+        '200':
+          description: Create a Eline connection and Corresponding Tunnels
+  /sptndriver/v1/sbi-elines:service/eline:
+    delete:
+      summary: Delete a Eline Connection
+      description: Delete a Eline Connection, need to pass in Eline id
+      produces:
+        - application/json
+      parameters:
+        - name: eline-id
+          in: header
+          description: Eline Connection uuid
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Delete a Eline connection 
+    get:
+      summary: Query a Eline Connection
+      description: Query a Eline Connection, need to pass in Eline id
+      produces:
+        - application/json
+      parameters:
+        - name: elineid
+          in: header
+          description: Eline Connection uuid
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query a Eline connection 
+          schema:
+            $ref: '#/definitions/Eline'
+  /sptndriver/v1/sbi-l3vpns:service/l3vpn:
+    post:
+      summary: Create L3vpn Connection
+      description: Creates a L3vpn Connection instance and relating tunnels
+      produces:
+        - application/json
+      parameters:
+        - name: snc-l3vpn
+          in: body
+          description: L3vpn Connection
+          required: true
+          schema:
+            $ref: '#/definitions/L3vpn'
+      responses:
+        '200':
+          description: Create a L3vpn connection          
+definitions:
+  CreateElineAndTunnels:
+   type: object
+   required:
+    - snc-eline
+    - snc-tunnel-create-policy
+   properties:
+    snc-eline:
+     $ref: '#/definitions/Eline'
+    route-cal-result:
+     type: array
+     items:
+      $ref: '#/definitions/RouteCalResult'
+    snc-tunnel-create-policy:
+     $ref: '#/definitions/SncTunnelCreatePolicy'
+  ElineSncAndRoute:
+   type: object
+   properties:
+    snc-eline:
+     $ref: '#/definitions/Eline'
+    routes:
+     $ref: '#/definitions/SncRoute'
+  Eline:
+   type: object
+   required:
+     - id
+     - user-label
+   properties:
+      id:
+        type: string
+        description: Eline Connection UUID
+        format: string
+      name:
+        type: string
+        description: Eline Connection name(Only used within domain)
+        format: string
+      user-label:
+       type: string
+       description: Eline Connection userlabel
+       format: string
+      parent-ncd-id:
+       type: string
+       description: ID of parent NCD
+       format: string
+      admin-status:
+       $ref: '#/definitions/AdminStatus'
+      operate-status:
+       $ref: '#/definitions/OperateStatus'
+      snc-type: 
+        type: integer
+        description: The Type of Eline, currently only use 1(Simple)
+        format: int16
+        enum: [1]
+        default: 1
+      interconnection-mode:
+       type: integer
+       description: Mode of inter-connection between sub-domains, including 1(nni-nni), 2(uni-uni)
+       enum: [1,2]
+       default: 2
+       format: int16
+      ingress-end-points:
+       $ref: '#/definitions/ServiceEndPoints'
+      egress-end-points:
+       $ref: '#/definitions/ServiceEndPoints'
+      snc-switch:
+       $ref: '#/definitions/SncSwitch'
+      snc-pws:
+       $ref: '#/definitions/SncPws'
+  ServiceEndPoints:
+   type: array
+   items:
+    $ref: '#/definitions/ServiceEndPoint'
+  ServiceEndPoint:
+   type: object
+   description: The service end points(EP)
+   required:
+    - id
+    - ne-id
+    - ltp-id
+   properties:
+    id:
+      type: string
+      description: EP UUID
+      format: string
+    ne-id:
+      type: string
+      description: NE UUID
+      format: string
+    ltp-id:
+      type: string
+      description: Logical terminal point UUID
+      format: string
+    access-type:
+     type: integer
+     description: The access type, including 1(Port), 2(Dot1Q), 3(QinQ)
+     enum: [1,2,3]
+     format: int16
+    dot1q-vlan-bitmap:
+     type: integer
+     description: The vlan bitmap of Dot1Q, range from 1 to 4094
+     minimum: 1
+     maximum: 4094
+     format: int16
+    qinq-svlan-bitmap:
+     type: integer
+     description: the svlan bitmap of QinQ, range from 1 to 4094
+     minimum: 1
+     maximum: 4094
+     format: int16
+    qinq-cvlan-bitmap:
+     type: integer
+     description: the cvlan bitmap of QinQ, range from 1 to 4094
+     minimum: 1
+     maximum: 4094
+     format: int16
+    access-action:
+     type: integer
+     description: The access action type, including 1(Keep), 2(Push), 3(Pop), 4(Swap) 
+     enum: [1,2,3,4]
+     format: int16
+    access-vlan-id:
+     type: integer
+     description: The access vlan id, range from 1 to 4094
+     minimum: 1
+     maximum: 4094
+     format: int16
+    role:
+     type: integer
+     description: The role of EP, including 0(master), 1(slave)
+     enum: [0,1]
+     default: 0
+     format: int16
+    oam:
+      $ref: '#/definitions/OAM'
+    qos:
+      $ref: '#/definitions/QOS'
+  SncSwitch:
+   type: object
+   required:
+    - snc-id
+    - layer-rate
+    - linear-protection-type
+   properties:
+    snc-id:
+     type: string
+     description: UUID of tunnel or UUID of Eline
+     format: string
+    layer-rate: 
+     type: integer
+     description: Rate of the connection, including 0(LSP), 1(PW)
+     enum: [0,1]
+     format: int16
+    linear-protection-type: 
+     type: integer
+     description: Linear protection type, including 0(unprotected), 1(path-protection-1-to-1), 2(path-protection-1-plus-1), 3(unprotected-with-recovery), 4(with-recovery-1-to-1), 5(with-recovery-1-plus-1), 6(permanent-1-plus-1-protection)
+     enum: [0,1,2,3,4,5,6]
+     default: 0
+     format: int16
+    linear-protection-protocol:
+     type: integer
+     description: Linear protection protocol, including 0(APS), 1(PSC)
+     enum: [0,1]
+     default: 0
+     format: int16
+    switch-mode:
+     type: integer
+     description: Switch mode, including 0(single-ended-switch), 1(double-end-switch)
+     enum: [0,1]
+     format: int16
+     default: 1
+    revertive-mode:
+     type: integer
+     description: Revertive mode, including 0(no-revertive), 1(revertive)
+     enum: [0,1]
+     format: int16
+     default: 1
+    wtr:
+     type: integer
+     description: wait time in seconds
+     minimum: 0
+     default: 300
+     format: int32
+    hold-off-time:
+     type: integer
+     description: hode off time in ms 
+     minimum: 0
+     maximum: 10000
+     default: 0
+     format: int32
+    reroute-revertive-mode:
+     type: integer
+     description: Reroute revertive mode, including 0(no-revertive), 1(revertive)
+     default: 0
+     format: int32
+    reroute-wtr:
+     type: integer
+     description: wait time for reroute in seconds
+     default: 50
+     format: int32
+  Meps:
+   type: array
+   description: MEPs of MEG, assigned by controller
+   items:
+    $ref: '#/definitions/Mep'
+  Mep:
+   type: object
+   required:
+   - id
+   properties:
+    name:
+     type: string
+     description: Assigned by EMS
+     format: string
+    id:
+     type: integer
+     format: int32
+  QOS:
+   type: object
+   required: 
+    - belonged-id
+   properties:
+    belonged-id:
+     type: string
+     description: The UUID of OAM related object
+     format: string
+    tunnel-mode:
+     type: integer
+     description: The tunnel mode, including 1(pipeline), 2(short-pipeline), 3(unified-pattern)
+     enum: [1,2,3]
+     default: 1
+     format: int16
+    cac-mode:
+     type: integer
+     description: Whether CAC is enabled, including 0(disable), 1(enable)
+     enum: [0,1]
+     default: 0
+     format: int16
+    convg-mode:
+     type: integer
+     description: Whether the tunnel inherits the convege rate of TMS, including 0(not convergence), 1(use TMS convergence rate)
+     enum: [0,1]
+     default: 0
+     format: int16
+    traffic-adj-mode:
+     type: integer
+     description: Whether the traffic parameters(like Cir, Pir) of the tunnel can be automatically changed with the change of client service, including 0(not support auto-adjust), 1(support auto-adjust)
+     enum: [0,1]
+     default: 0
+     format: int16
+    a2z-policing:
+     type: integer
+     description: Whether a2z policing is enabled, including 0(disabled), 1(enabled)
+     enum: [0,1]
+     default: 0
+     format: int16
+    z2a-policing:
+     type: integer
+     description: Whether z2a policing is enabled, including 0(disabled), 1(enabled)
+     enum: [0,1]
+     default: 0
+     format: int16
+    a2z-cir:
+     type: integer
+     description: The a2z committed speed in kbps
+     format: int32
+    z2a-cir:
+     type: integer
+     description: The z2a Committed speed in kbps
+     format: int32
+    a2z-pir:
+     type: integer
+     description: The a2z peak speed in kbps
+     format: int32
+    z2a-pir:
+     type: integer
+     description: The z2a peak speed in kbps
+     format: int32
+    a2z-cbs:
+     type: integer
+     description: The a2z committed burst Size in  bytes
+     format: int32
+    z2a-cbs:
+     type: integer
+     description: The z2a committed burst Size in  bytes
+     format: int32 
+    a2z-pbs:
+     type: integer
+     description: The a2z peak burst Size in bytes
+     format: int32
+    z2a-pbs:
+     type: integer
+     description: The z2a peak burst Size in bytes
+     format: int32 
+    a2z-color-mode:
+      type: integer
+      description: The a2z color mode, including 0(blind), 1(aware)
+      enum: [0,1]
+      default: 0
+      format: int16
+    z2a-color-mode:
+      type: integer
+      description: The z2a color mode, including 0(blind), 1(aware)
+      enum: [0,1]
+      default: 0
+      format: int16
+    traffic-class:
+     type: integer
+     description: The traffic class, including 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7)
+     enum: [0,1,2,3,4,5,6,7]
+     default: 0
+     format: int16
+  OAM:
+   type: object
+   required: 
+    - belonged-id
+   properties:
+    belonged-id:
+     type: string
+     description: The UUID of OAM related object
+     format: string
+    name:
+     type: string
+     description: Only used within domain
+     format: string
+    meg-id:
+     type: string
+     description: MEG ID, 1-13 bytes
+     maxLength: 13
+     format: string
+    meps:
+     $ref: '#/definitions/Meps'
+    cc-allow:
+     type: boolean
+     description: false(not allowed), true(allowed), default value is false(not allowed)
+     default: false
+    cc-exp:
+     type: integer
+     description: 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7), default value is 7(CS7)
+     enum: [0,1,2,3,4,5,6,7]
+     default: 7
+     format: int16
+    cc-interval:
+     type: number
+     description: The interval of CC in ms, including 3.3, 10, 100, 1000, default value is 3.3 ms
+     format: double
+     enum: [3.3, 10, 100, 1000]
+    lm-mode:
+     type: integer
+     description: The lm mode, 0(including disable), 1(preactive), 2(on-demand)
+     enum: [0,1,2]
+     default: 0
+     format: int16
+    dm-mode:
+     type: integer
+     description: The lm mode, 0(including disable), 1(preactive), 2(on-demand)
+     enum: [0,1,2]
+     default: 0
+     format: int16
+  SncPws:
+   type: array
+   items:
+    $ref: '#/definitions/SncPw'
+  SncPw:
+   type: object
+   required: 
+    - id
+   properties:
+    id:
+      type: string
+      description: The PW UUID
+      format: string
+    name:
+      type: string
+      description: Only used within domain
+      format: string
+    user-label:
+      type: string
+      description: User label of PW
+      format: string
+    role:
+      type: integer
+      description: The role of PW, including 0(master), 1(slave), 2(DNI-PW)
+      enum: [0,1,2]
+      format: int16
+    encaplate-type:
+      type: integer
+      description: The encaplate type, including 0(NONE), 4(ethernet-vlan), 5(ethernet)
+      enum: [0, 4, 5]
+      format: int16
+    ingress-ne-id:
+      type: string
+      description: UUID of source NE
+      format: string
+    egress-ne-id:
+      type: string
+      description: UUID of destination NE
+      format: string
+    source-ip:
+      type: string
+      description: source NE IP address
+      format: string
+    destination-ip:
+      type: string
+      description: destination NE IP address
+      format: string
+    tunnel-ids:
+      type: array
+      description: List of binding Tunnel ID, Only used within domain
+      items: 
+       type: string
+       description: binding Tunnel ID 
+       format: string
+    admin-status:
+     $ref: '#/definitions/AdminStatus'
+    operate-status:
+     $ref: '#/definitions/OperateStatus'
+    ctrl-word-support:
+     type: integer
+     description: The control word type, including 0(Not support), 1(support)
+     enum: [0,1]
+     default: 1
+     format: int16
+    sn-support:
+     type: integer
+     description: 0(Not support), 1(support)
+     enum: [0,1]
+     default: 0
+     format: int16
+    vccv-type:
+     type: integer
+     description: 0(not support VCCV), 1(inbound), 2(outbound), 3(based on TTL), 4(inbound + outbound), 5(inbound +based on TTL), 6(outbound + based on TTL), 7(inbound + outbound + based onTTL)
+     enum: [0,1,2,3,4,5,6,7]
+     default: 0
+     format: int16
+    conn-ack-type:
+     type: integer
+     description: 0(None), 1(lsp-ping), 2(lsp-ping+icmp-ping), 3(lsp-ping+bfd-pwach-fs), 4(lsp-ping+bfd-pwach-fo), 5(lsp-ping+bfd-pwach-fs+ bfd-pwach-fo), 6(lsp-ping+icmp-ping+bfd-pwach-fs), 7(lsp-ping+icmp-ping+bfd-pwach-fo), 8(lsp-ping+icmp-ping+bfd-pwach-fs+ bfd-pwach-fo), 9(lsp-ping+bfd-ipudp-fs), 10(lsp-ping+bfd-ipudp-fo), 11(lsp-ping+bfd-ipudp-fs+bfd-ipudp-fo), 12(lsp-ping+icmp-ping +bfd-ipudp-fs), 13(lsp-ping+icmp-ping +bfd-ipudp-fo), 14(lsp-ping+icmp-ping +bfd-ipudp-fs+bfd-ipudp-fo), 15(CCM)
+     minimum: 0
+     maximum: 15
+     default: 0
+     format: int16
+    oam:
+     $ref: '#/definitions/OAM'
+    qos:
+     $ref: '#/definitions/QOS'
+  AdminStatus:
+   type: integer
+   description: Connection  management status, including 0(adminUp) and 1(adminDown)
+   minimum: 0
+   maximum: 1
+   default: 0
+   format: int16
+  OperateStatus:
+   type: integer
+   description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
+   minimum: 0
+   maximum: 1
+   default: 0
+   format: int16
+  SncRoute:
+   type: object
+   description: The route of service
+   required: 
+    - id
+    - snc-id
+   properties:
+    id: 
+     type: string
+     description: UUID of route
+     format: string
+    name:
+     type: string 
+     description: Only used within domain, for driver, it is empty
+     format: string
+    layer-rate:
+     type: integer
+     description: Layer rate, 0(LSP) or 1(PW)
+     enum: [0,1]
+     format: int16
+    snc-id:
+     type: string
+     description: UUID of service related to the route, LSP ID or PW ID
+     format: string
+    xcs:
+     type: array
+     items:
+      $ref: '#/definitions/XC'
+  XC:
+   type: object
+   description: Node on the route
+   required: 
+    - ne-id
+   properties:
+    ne-id:
+     type: string
+     description: UUID of NE
+     format: string
+    ingress-ltp-id:
+     type: string
+     description: UUID of XC's ingress port. For LSP, it is PTP or FTP; For destination node of PW, it is empty
+     format: string
+    forward-in-label:
+     type: integer
+     description: Inlabel of ingress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
+     format: int32
+    backward-out-label:
+     type: integer
+     description: Outlabel of ingress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
+     format: int32
+    backward-peer-id:
+     type: string
+     description: For LSP, it is the IP address of ingress port's peer port; For PW, it is VC ID of ingress port's peer port
+     format: string
+    egress-ltp-id:
+     type: string
+     description: UUID of XC's egress port. For LSP, it is PTP or FTP; For source node of PW, it is empty
+     format: string
+    forward-out-label:
+     type: integer
+     description: Outlabel of egress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
+     format: int32
+    backward-in-label:
+     type: integer
+     description: Inlabel of egress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
+     format: int32
+    forward-peer-id:
+     type: string
+     description: For LSP, it is the IP address of egress port's peer port; For PW, it is VC ID of egress port's peer port
+     format: string
+  SncTunnelCreatePolicy:
+   type: object
+   description: Policy of create tunnels
+   required:
+    - user-label
+   properties:
+    Name: 
+     type: string 
+     description: Only used within domain, for driver, it is empty
+     format: string
+    user-label:
+     type: string
+     description: User label of tunnel
+     format: string
+    tenant-Id:
+     type: string
+     description: Tenant ID
+     format: string
+    creater: 
+     type: string
+     description: APP ID
+     format: string
+    parent-ncd-id:
+     type: string
+     description: Only used within domain, for driver, it is empty
+     format: string
+    direction: 
+     type: integer
+     description: Direction of tunnel, including 0(unidirection), 1(bidirection)
+     format: int16
+     enum: [0,1]
+     default: 0
+    Type: 
+     type: integer
+     description: Type of tunnel, including 1(linear), 2(ring)
+     enum: [1, 2]
+     default: 1
+     format: int16
+    qos: 
+     $ref: '#/definitions/QOS'
+    snc-switch:
+     $ref: '#/definitions/SncSwitch'
+    admin-status:
+     $ref: '#/definitions/AdminStatus'
+    lsp-oam:
+     $ref: '#/definitions/OAM'
+    is-shared:
+     type: boolean
+     description: Whether the tunnel is sharing bandwidth, true(shared), false(not shared)
+     default: false
+  RouteCalResult:
+   type: object
+   description: Tunnel route calculate result
+   required:
+    - sequence-no
+    - group-no
+   properties:
+    sequence-no:
+     type: string
+     description: Sequence number
+     format: string
+     default: "1"
+    group-no:
+     type: string
+     description: Group number of tunnel
+     format: string
+    role:
+     type: integer
+     description: Role of tunnel, including 1(master),2(slave), 3(reroute)
+     format: int16
+    ingress-ne-id:
+     type: string
+     description: Source NE UUID
+     format: string
+    egress-ne-id: 
+     type: string
+     description: Destination NE UUID
+     format: string
+    latency:
+     type: integer
+     description: Latency of tunnel in us, range from 0 to 60000000
+     format: int32
+    max-availble-bandwidth:
+     type: integer
+     description: The minimum max available bandwidth of all links bearing the tunnel in kps, range from 0 to 4000000000
+     format: int32
+    xcs:
+      type: array
+      items:
+       $ref: '#/definitions/XC'
+  L3vpn:
+   type: object
+   properties:
+    id:
+     type: string
+     description: L3vpn UUID
+     format: string
+    name:
+     type: string
+     description: Only used withen domain
+     format: string
+    user-label:
+     type: string
+     description: User Label of L3vpn
+     format: string
+    parent-ncd-id:
+     type: string
+     description: UUID of parent ncd, is empty for driver
+     format: string
+    admin-status:
+     $ref: '#/definitions/AdminStatus'
+    operate-status: 
+     $ref: '#/definitions/OperateStatus'
+    ac-list:
+     type: array
+     items:
+      $ref: '#/definitions/L3ac'
+    bind-relation-list:
+     type: array
+     items:
+      $ref: '#/definitions/L3BindRelation'
+    static-route-list:
+     type: array
+     items:
+      $ref: '#/definitions/StaticRoute'
+    traffic-class:
+     type: integer
+     description: The traffic class, including 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7)
+     enum: [0,1,2,3,4,5,6,7]
+     default: 0
+     format: int16 
+  L3ac:
+   type: object
+   properties:
+    id: 
+     type: string
+     description: L3vpn AC UUID
+     format: string
+    ne-id:
+      type: string
+      description: NE UUID
+      format: string
+    ltp-id:
+     type: string
+     description: LTP UUID
+     format: string
+    ip-addr:
+     type: string 
+     description: New private IP address of LTP after  added to L3vpn
+     format: string
+  L3BindRelation:
+   type: object
+   properties:
+    source-peer:
+     type: string
+     description: Peer IP address of souce end
+     format: string
+    dest-peer:
+     type: string
+     description: Peer IP address of destination end
+     format: string
+    source-id:
+     type: string
+     description: UUID of source NE
+     format: string
+    dest-id:
+     type: string
+     description: UUID of destination NE
+     format: string
+    tunnel-policy:
+     $ref: '#/definitions/SncTunnelCreatePolicy'
+    bound-obj:
+     type: string
+     description: UUID of binding tunnel
+     format: string
+  StaticRoute:
+   type: object
+   properties:
+    dest-ip:
+     type: string
+     description: Destination IP address, like "10.1.1.1"
+     format: string
+    dest-mask:
+     type: string
+     description: destination IP mask, like "255.255.0.0"
+     format: string
+    is-backup:
+     type: boolean
+     description: Whether the route is backup route
+    route-type:
+     type: integer
+     description: Route type, including 0(directly connected route), 1(indirectly connected route), 2(net side route)
+     enum: [0,1,2]
+     format: int16
+    next-hop-ip:
+     type: string
+     description: Next hop IP address, like "10.1.1.1"
+     format: string
+    out-inf:
+     type: string
+     description: out interface(LTP) UUID
+     format: string
+    route-weight:
+     type: integer
+     description: Route weight, range from 0 to 255
+     minimum: 0
+     maximum: 255
+     format: int16
+    routeStatus:
+     type: integer
+     description: Route Status, including 1(down), 2(up), only used when querying a route
+     enum: [1,2]
+     format: int16
+    
+    
+     
+  
+
