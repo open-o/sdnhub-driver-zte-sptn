@@ -1,4 +1,4 @@
-package org.openo.sdno.driver.zte.sptn.resources;
+package org.openo.sdno.sptndriver.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,12 +8,12 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
-import org.openo.sdno.driver.zte.sptn.models.north.NL3Vpn;
+import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 
 /**
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
@@ -28,33 +28,36 @@ import org.openo.sdno.driver.zte.sptn.models.north.NL3Vpn;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-@Path("/sptndriver/v1/nbi-l3vpn")
+
+@Path("/sptndriver/v1/nbi-eline")
 @Produces(MediaType.APPLICATION_JSON)
-public class L3Resource {
+
+public class L2Resource {
 
   private final Validator validator;
 
-  public L3Resource(Validator validator) {
+  public L2Resource(Validator validator) {
     this.validator = validator;
   }
 
   @POST
-  public javax.ws.rs.core.Response createEline(NL3Vpn L3) throws URISyntaxException {
+  public Response createEline(NL2Vpn L2) throws URISyntaxException {
 
     return Response.created(new
-                                URI(String.valueOf(new NL3Vpn()))).build();
+                                URI(String.valueOf(new NL2Vpn()))).build();
 
   }
 
   @GET
-  public Response getEline(String ElineId) throws URISyntaxException {
+  @Path("/snc-eline={id}")
+  public Response getContact(@PathParam("id") int id) throws URISyntaxException {
     return Response.created(new
-                                URI(String.valueOf(new NL3Vpn()))).build();
+                                URI(String.valueOf(new NL2Vpn()))).build();
   }
 
   @DELETE
   public Response deleteEline(String ElineId) throws URISyntaxException {
     return Response.created(new
-                                URI(String.valueOf(new NL3Vpn()))).build();
+                                URI(String.valueOf(new NL2Vpn()))).build();
   }
 }

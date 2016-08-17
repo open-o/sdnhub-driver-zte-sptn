@@ -1,0 +1,187 @@
+swagger: '2.0'
+info:
+  version: '0.1.0'
+  title: Resource Management Interface
+  description: Resource Management Interface, including basic resource like NE, LTP, Link
+host: sdno.openo.org
+basePath: /rest
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+ /v1/managed-elements/{object_id}:
+  get:
+      summary: Get ME by global UUID
+      description: Get ME by global UUID
+      produces:
+        - application/json
+      parameters:
+        - name: object_id
+          in: path
+          description: Global ME UUID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ME information
+          schema:
+            $ref: '#/definitions/ME'
+definitions:
+ ME:
+  type: object
+  properties:
+   id:
+    type: string
+    description: Global ME UUID
+    format: string
+   name:
+    type: string
+    description: ME name
+    format: string
+   description:
+    type: string
+    format: string
+   version:
+    type: string
+    format: string
+   nativeID:
+    type: string
+    description: External ME ID in controller
+    format: string
+   logicID:
+    type: string
+    description: Logic ME ID in controller
+    format: string
+   phyNeID:
+    type: string
+    description: physical id, only for transmission and PTN devices
+    format: string
+   managementDomainID:
+    $ref: '#/definitions/ManageDomain'
+   controllerID:
+    $ref: '#/definitions/Controller'
+   siteID:
+    $ref: '#/definitions/Controller'
+   productName:
+    type: string
+    format: string
+   isVirtual:
+    type: string
+    description: Whether the ME is virtual, including true and false
+    format: string
+   ipAddress:
+    type: string
+    description: Manage IP, only for IP devices
+    format: string
+   source:
+    type: string
+    description: The way ME discovered, including NETWORK_ME(discover from ME), OS(discover from controller), NETWORK_EMS(discover from EMS USER:input by user)
+    format: string
+   owner:
+    type: string
+    format: string
+   adminStatus:
+    type: string
+    format: string
+   operState:
+    type: string
+    format: string
+   location:
+    type: string
+    format: string
+   serialNumber:
+    type: string
+    format: string
+   manufacturer:
+    type: string
+    format: string
+   manufactureDate:
+    type: string
+    format: string
+   neRole:
+    type: string
+    description: Role of ME, f.g. VCPE, THINCPE, and etc
+    format: string
+   neDomainType:
+    type: string
+    description: Domain type, including 1(optical), 16(5hysical55 devices), 17(optical and 6hysical66 in one)
+ ManageDomain:
+  type: object
+  properties:
+   id:
+    type: string
+    description: Domain UUID
+    format: string
+   name:
+    type: string
+    format: string
+   description:
+    type: string
+    format: string
+   location:
+    type: string
+    format: string
+ Controller:
+  type: object
+  properties:
+    id:
+     type: string
+     description: Controller UUID
+     format: string
+    objectId:
+     type: string
+     description: id of controller in ConnectMgr Service
+     format: string
+    name:
+     type: string
+     format: string
+    description:
+     type: string
+     format: string
+    vendor:
+     type: string
+     format: string
+    productName:
+     type: string
+     format: string
+    version:
+     type: string
+     format: string
+    hostName:
+     type: string
+     format: string
+    slaveHostName:
+     type: string
+     format: string
+ Site:
+   type: object
+   properties:
+    id:
+     type: string
+     description: Site UUID
+     format: string
+    name:
+     type: string
+     format: string
+    description:
+     type: string
+     format: string
+    type:
+     type: string
+     description: Site type, including network_site and tenant_site
+     format: string
+    tenantID:
+     type: string
+     format: string
+    tenantSiteIDs:
+     type: array
+     items:
+       $ref: '#/definitions/Site'
+    location:
+     type: string
+     format: string
+
+

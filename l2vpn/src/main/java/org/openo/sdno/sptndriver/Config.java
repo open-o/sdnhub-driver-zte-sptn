@@ -1,7 +1,7 @@
-package org.openo.sdno.driver.zte.sptn.convertor;
+package org.openo.sdno.sptndriver;
 
-import org.openo.sdno.driver.zte.sptn.models.north.NL2Vpn;
-import org.openo.sdno.driver.zte.sptn.models.south.SCreateElineAndTunnels;
+
+import io.dropwizard.Configuration;
 
 /**
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
@@ -16,10 +16,7 @@ import org.openo.sdno.driver.zte.sptn.models.south.SCreateElineAndTunnels;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-public class L2Convertor {
 
-  public static SCreateElineAndTunnels L2ToElineTunnerCreator(NL2Vpn l2vpn) {
-    SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
-    return createElineAndTunnels;
-  }
+public class Config extends Configuration {
+
 }

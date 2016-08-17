@@ -136,9 +136,15 @@ definitions:
        description: ID of parent NCD
        format: string
       admin-status:
-       $ref: '#/definitions/AdminStatus'
+       type: integer
+       description: Connection  management status, including 0(adminUp) and 1(adminDown)
+       enum: [0,1]
+       format: int16
       operate-status:
-       $ref: '#/definitions/OperateStatus'
+       type: integer
+       description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
+       enum: [0,1]
+       format: int16
       snc-type: 
         type: integer
         description: The Type of Eline, currently only use 1(Simple)
@@ -314,7 +320,7 @@ definitions:
    properties:
     belonged-id:
      type: string
-     description: The UUID of OAM related object
+     description: The UUID of QOS related object
      format: string
     tunnel-mode:
      type: integer
@@ -504,9 +510,15 @@ definitions:
        description: binding Tunnel ID 
        format: string
     admin-status:
-     $ref: '#/definitions/AdminStatus'
+     type: integer
+     description: Connection  management status, including 0(adminUp) and 1(adminDown)
+     enum: [0,1]
+     format: int16
     operate-status:
-     $ref: '#/definitions/OperateStatus'
+     type: integer
+     description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
+     enum: [0,1]
+     format: int16'
     ctrl-word-support:
      type: integer
      description: The control word type, including 0(Not support), 1(support)
@@ -536,20 +548,6 @@ definitions:
      $ref: '#/definitions/OAM'
     qos:
      $ref: '#/definitions/QOS'
-  AdminStatus:
-   type: integer
-   description: Connection  management status, including 0(adminUp) and 1(adminDown)
-   minimum: 0
-   maximum: 1
-   default: 0
-   format: int16
-  OperateStatus:
-   type: integer
-   description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
-   minimum: 0
-   maximum: 1
-   default: 0
-   format: int16
   SncRoute:
    type: object
    description: The route of service
@@ -663,7 +661,10 @@ definitions:
     snc-switch:
      $ref: '#/definitions/SncSwitch'
     admin-status:
-     $ref: '#/definitions/AdminStatus'
+     type: integer
+     description: Connection  management status, including 0(adminUp) and 1(adminDown)
+     enum: [0,1]
+     format: int16
     lsp-oam:
      $ref: '#/definitions/OAM'
     is-shared:
@@ -730,9 +731,15 @@ definitions:
      description: UUID of parent ncd, is empty for driver
      format: string
     admin-status:
-     $ref: '#/definitions/AdminStatus'
+     type: integer
+     description: Connection  management status, including 0(adminUp) and 1(adminDown)
+     enum: [0,1]
+     format: int16
     operate-status: 
-     $ref: '#/definitions/OperateStatus'
+     type: integer
+     description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
+     enum: [0,1]
+     format: int16
     ac-list:
      type: array
      items:

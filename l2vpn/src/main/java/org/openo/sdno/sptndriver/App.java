@@ -1,4 +1,4 @@
-package org.openo.sdno.driver.zte.sptn;
+package org.openo.sdno.sptndriver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.openo.sdno.driver.zte.sptn.resources.L2Resource;
+import org.openo.sdno.sptndriver.resources.L2Resource;
 
 /**
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
