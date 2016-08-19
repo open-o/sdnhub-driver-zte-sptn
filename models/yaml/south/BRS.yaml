@@ -1,0 +1,88 @@
+swagger: '2.0'
+info:
+  version: '0.1.0'
+  title: Resource Management Interface
+  description: Resource Management Interface, including basic resource like NE, LTP, Link
+host: sdno.openo.org
+basePath: /rest
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+ /restconf/data/sptn-resources-module:resources/nes/ne-list/ne={id}:
+  get:
+      summary: Get ME by global UUID
+      description: Get ME by global UUID
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Global ME UUID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ME information
+          schema:
+            $ref: '#/definitions/ME'
+definitions:
+ ME:
+  type: object
+  properties:
+   id:
+    type: string
+    description: Global ME UUID
+    format: string
+   Name:
+    type: string
+    description: ME name
+    format: string
+   type:
+    type: string
+    format: string
+   user-label:
+    type: string
+    format: string
+   admin-ip:
+    type: integer
+    description: The real type is unsigned int.However, it is not defined as integer in this document, since Codegen does not support BigInteger
+    format: int64
+   lsr-id:
+    type: string
+    format: string
+   admin-status:
+    type: integer
+    description: Connection  management status, including 0(adminUp) and 1(adminDown)
+    enum: [0,1]
+    format: int16
+   operate-status:
+    type: integer
+    description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
+    enum: [0,1]
+    format: int16
+   synchronization-support-status:
+    type: integer
+    description: Synchronization support status, including 0(both-support), 1(frequency-synchronization-support-only), 2(time-synchronization-support-only), 3(neither-support)
+    format: int16
+   longitude:
+    type: string
+    format: string
+   latitude:
+    type: string
+    format: string
+   location:
+    type: string
+    format: string
+   latency:
+    type: integer
+    description: Latency in us, range from 0 to 60000000
+    format: int32
+    minimum: 0
+    maximum: 60000000
+   vendor-name:
+    type: string
+    format: string

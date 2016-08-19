@@ -1,9 +1,4 @@
-package org.openo.sdno.sptndriver;
-
-
-import io.dropwizard.Configuration;
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -16,6 +11,11 @@ import io.dropwizard.Configuration;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
+package org.openo.sdno.sptndriver;
+
+
+import io.dropwizard.Configuration;
 
 public class Config extends Configuration {
 

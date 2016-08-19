@@ -1,7 +1,4 @@
-package org.openo.sdno.sptndriver.convertor;
-
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -14,6 +11,9 @@ package org.openo.sdno.sptndriver.convertor;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
+package org.openo.sdno.sptndriver.convertor;
+
 public class AdminStatusConvertor {
 
   public final static String n_adminDown = "adminDown";

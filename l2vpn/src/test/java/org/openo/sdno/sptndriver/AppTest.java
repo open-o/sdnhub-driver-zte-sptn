@@ -1,10 +1,4 @@
-package org.openo.sdno.sptndriver;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -17,6 +11,13 @@ import junit.framework.TestSuite;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
+package org.openo.sdno.sptndriver;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class AppTest
     extends TestCase {
 

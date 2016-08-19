@@ -1,6 +1,4 @@
-package org.openo.sdno.sptndriver.enums;
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -13,11 +11,15 @@ package org.openo.sdno.sptndriver.enums;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-public enum SElineSncType {
-  Simple(1);
+
+package org.openo.sdno.sptndriver.enums.south;
+
+public enum SDirection {
+  unidirection(0),
+  bidirection(1);
   private Integer value;
 
-  SElineSncType(Integer value) {
+  SDirection(Integer value) {
     this.value = value;
   }
 
@@ -25,5 +27,3 @@ public enum SElineSncType {
     return String.valueOf(value);
   }
 }
-
-

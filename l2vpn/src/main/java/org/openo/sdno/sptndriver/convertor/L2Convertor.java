@@ -1,3 +1,17 @@
+/*
+ * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package org.openo.sdno.sptndriver.convertor;
 
 import org.openo.sdno.sptndriver.models.north.NL2Ac;
@@ -12,27 +26,15 @@ import org.openo.sdno.sptndriver.models.south.SEline;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoints;
 import org.openo.sdno.sptndriver.models.south.SSncPws;
-import org.openo.sdno.sptndriver.enums.SElineSncType;
-import org.openo.sdno.sptndriver.enums.SInterConnectionMode;
+import org.openo.sdno.sptndriver.enums.south.SElineSncType;
+import org.openo.sdno.sptndriver.enums.south.SInterConnectionMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-/**
- * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
 public class L2Convertor {
 
   private static final Logger LOGGER =
@@ -46,7 +48,7 @@ public class L2Convertor {
 
   public static SEline L2ToEline(NL2Vpn nl2Vpn) {
     if (nl2Vpn == null) {
-      LOGGER.error("input l2vpn is null");
+      LOGGER.error("input l2vpn is null.");
       return null;
     }
 
@@ -61,8 +63,10 @@ public class L2Convertor {
     sEline.setInterconnectionMode(Integer.getInteger(SInterConnectionMode.uni_uni.toString()));
     sEline.setIngressEndPoints(NToS(nl2Vpn.getAcs(), true));
     sEline.setEgressEndPoints(NToS(nl2Vpn.getAcs(), false));
+    boolean hasProtect = hasBackupPw(nl2Vpn.getPws());
     sEline.setSncSwitch(
-        SSncSwitchConvertor.initPwSncSwitch(nl2Vpn.getId(), hasBackupPw(nl2Vpn.getPws())));
+        SSncSwitchConvertor.initPwSncSwitch(nl2Vpn.getId(), hasProtect));
+    sEline.setSncPws(initPws(nl2Vpn, hasProtect));
     return sEline;
   }
 
@@ -74,6 +78,7 @@ public class L2Convertor {
   // todo: API need update
   private static SServiceEndPoints NToS(NL2Acs acList, boolean isIngress) {
     if (acList == null) {
+      LOGGER.error("input acList is null");
       return null;
     }
 
@@ -95,6 +100,7 @@ public class L2Convertor {
   // todo: API need update
   private static SServiceEndPoint NToS(NL2Ac ac) {
     if (ac == null) {
+      LOGGER.error("input ac is null.");
       return null;
     }
     SServiceEndPoint ep = new SServiceEndPoint();
@@ -103,6 +109,7 @@ public class L2Convertor {
 
   private static boolean hasBackupPw(NPws pwList) {
     if (pwList == null) {
+      LOGGER.error("pwList is empty.");
       return false;
     }
     for (NPw pw : pwList.getPws()) {
@@ -112,9 +119,10 @@ public class L2Convertor {
     }
     return false;
   }
-
-  private static SSncPws initPws(NPws nPws, NL2Vpn l2Vpn, boolean hasProtect) {
-    if (nPws == null) {
+  // todo; NE ID and IP ad
+  private static SSncPws initPws(NL2Vpn l2Vpn, boolean hasProtect) {
+    if (l2Vpn == null || l2Vpn.getPws() == null) {
+      LOGGER.error("l2vpn or pwList is null.");
       return null;
     }
 
@@ -125,9 +133,11 @@ public class L2Convertor {
     Integer operateStatus = OperateStatusConvertor.NToS(l2Vpn.getOperStatus());
 
     Set<String> NePairSet = new HashSet<String>();
-    for (NPw nPw : nPws.getPws()) {
+    List<NPw> nPws = l2Vpn.getPws().getPws();
+    for (NPw nPw : nPws) {
 
     }
     return sSncPws;
   }
+
 }

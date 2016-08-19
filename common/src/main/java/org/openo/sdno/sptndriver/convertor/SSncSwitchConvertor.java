@@ -1,8 +1,4 @@
-package org.openo.sdno.sptndriver.convertor;
-
-import org.openo.sdno.sptndriver.models.south.SSncSwitch;
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -15,6 +11,15 @@ import org.openo.sdno.sptndriver.models.south.SSncSwitch;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
+package org.openo.sdno.sptndriver.convertor;
+
+import org.openo.sdno.sptndriver.enums.south.sncswitch.SLinearProtectionProtocal;
+import org.openo.sdno.sptndriver.enums.south.sncswitch.SLinearProtectionType;
+import org.openo.sdno.sptndriver.enums.south.sncswitch.SRevertiveMode;
+import org.openo.sdno.sptndriver.enums.south.sncswitch.SSwitchMode;
+import org.openo.sdno.sptndriver.models.south.SSncSwitch;
+
 public class SSncSwitchConvertor {
 
   public static SSncSwitch initPwSncSwitch(String ElineUuid, boolean hasProt) {
@@ -51,67 +56,4 @@ public class SSncSwitchConvertor {
     return pwSncSwitch;
   }
 
-  public static enum SLinearProtectionType {
-    unprotected(0),
-    path_protection_1_to_1(1),
-    path_protection_1_plus_1(2),
-    unprotected_with_recovery(3),
-    with_recovery_1_to_1(4),
-    with_recovery_1_plus_1(5),
-    permanent_1_plus_1_protection(6);
-    private Integer value;
-
-    SLinearProtectionType(Integer value) {
-      this.value = value;
-    }
-
-    public String toString() {
-      return String.valueOf(value);
-    }
-  }
-
-  public static enum SLinearProtectionProtocal {
-    APS(0),
-    PSC(1);
-
-    private Integer value;
-
-    SLinearProtectionProtocal(Integer value) {
-      this.value = value;
-    }
-
-    public String toString() {
-      return String.valueOf(value);
-    }
-  }
-
-  public static enum SSwitchMode {
-    single_ended_switch(0),
-    double_end_switch(1);
-
-    private Integer value;
-
-    SSwitchMode(Integer value) {
-      this.value = value;
-    }
-
-    public String toString() {
-      return String.valueOf(value);
-    }
-  }
-
-  public static enum SRevertiveMode {
-    no_revertive(0),
-    revertive(1);
-
-    private Integer value;
-
-    SRevertiveMode(Integer value) {
-      this.value = value;
-    }
-
-    public String toString() {
-      return String.valueOf(value);
-    }
-  }
 }

@@ -624,7 +624,7 @@ definitions:
    required:
     - user-label
    properties:
-    Name: 
+    name:
      type: string 
      description: Only used within domain, for driver, it is empty
      format: string
@@ -650,12 +650,16 @@ definitions:
      format: int16
      enum: [0,1]
      default: 0
-    Type: 
+    type:
      type: integer
      description: Type of tunnel, including 1(linear), 2(ring)
      enum: [1, 2]
      default: 1
      format: int16
+    is-shared:
+     type: boolean
+     description: Whether PW share tunnel
+     default: false
     qos: 
      $ref: '#/definitions/QOS'
     snc-switch:
@@ -667,10 +671,6 @@ definitions:
      format: int16
     lsp-oam:
      $ref: '#/definitions/OAM'
-    is-shared:
-     type: boolean
-     description: Whether the tunnel is sharing bandwidth, true(shared), false(not shared)
-     default: false
   RouteCalResult:
    type: object
    description: Tunnel route calculate result
@@ -704,9 +704,11 @@ definitions:
      description: Latency of tunnel in us, range from 0 to 60000000
      format: int32
     max-availble-bandwidth:
-     type: integer
+     type: int
      description: The minimum max available bandwidth of all links bearing the tunnel in kps, range from 0 to 4000000000
-     format: int32
+     minimum: 0
+     maximum: 4000000000
+     format: int64
     xcs:
       type: array
       items:

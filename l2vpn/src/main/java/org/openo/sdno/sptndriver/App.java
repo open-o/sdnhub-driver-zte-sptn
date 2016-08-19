@@ -1,14 +1,4 @@
-package org.openo.sdno.sptndriver;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import org.openo.sdno.sptndriver.resources.L2Resource;
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -21,6 +11,16 @@ import org.openo.sdno.sptndriver.resources.L2Resource;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
+package org.openo.sdno.sptndriver;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import org.openo.sdno.sptndriver.resources.L2Resource;
 
 public class App extends Application<Config> {
 

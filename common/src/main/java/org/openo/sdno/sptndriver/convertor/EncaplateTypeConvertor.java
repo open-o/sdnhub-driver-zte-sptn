@@ -1,6 +1,4 @@
-package org.openo.sdno.sptndriver.convertor;
-
-/**
+/*
  * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -13,30 +11,33 @@ package org.openo.sdno.sptndriver.convertor;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-public class CtrlWordConvertor {
+
+package org.openo.sdno.sptndriver.convertor;
+
+public class EncaplateTypeConvertor {
 
   public static Integer NToS(String nType) {
-    if (nType != null && nType.equals(NCtrlWord.disable.toString())) {
-      return Integer.getInteger(SCtrlWord.disable.toString());
+    if (nType != null && nType.equals(NEncaplateType.eth.toString())) {
+      return Integer.getInteger(SEncaplateType.ethernet.toString());
     } else {
-      return Integer.getInteger(SCtrlWord.enable.toString());
+      return Integer.getInteger(SEncaplateType.vlan.toString());
     }
   }
 
   public static String SToN(Integer sType) {
-    if (sType != null && sType.equals(Integer.getInteger(SCtrlWord.disable.toString()))) {
-      return NCtrlWord.disable.toString();
+    if (sType != null && sType.equals(Integer.getInteger(SEncaplateType.ethernet.toString()))) {
+      return NEncaplateType.eth.toString();
     } else {
-      return NCtrlWord.enable.toString();
+      return NEncaplateType.vlan.toString();
     }
   }
 
-  public static enum SCtrlWord {
-    disable(0),
-    enable(1);
+  public enum SEncaplateType {
+    vlan(4),
+    ethernet(5);
     private Integer value;
 
-    SCtrlWord(Integer value) {
+    SEncaplateType(Integer value) {
       this.value = value;
     }
 
@@ -45,12 +46,12 @@ public class CtrlWordConvertor {
     }
   }
 
-  public static enum NCtrlWord {
-    disable("disable"),
-    enable("enable");
+  public enum NEncaplateType {
+    vlan("eth"),
+    eth("vlan");
     private String value;
 
-    NCtrlWord(String value) {
+    NEncaplateType(String value) {
       this.value = value;
     }
 
@@ -58,4 +59,6 @@ public class CtrlWordConvertor {
       return value;
     }
   }
+
+
 }

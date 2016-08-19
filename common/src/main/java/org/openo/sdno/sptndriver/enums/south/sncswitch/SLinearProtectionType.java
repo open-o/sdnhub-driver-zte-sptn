@@ -12,35 +12,23 @@
  * the License.
  */
 
-package openo.sdno.driver.zte.sptn;
+package org.openo.sdno.sptndriver.enums.south.sncswitch;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+public enum SLinearProtectionType {
+  unprotected(0),
+  path_protection_1_to_1(1),
+  path_protection_1_plus_1(2),
+  unprotected_with_recovery(3),
+  with_recovery_1_to_1(4),
+  with_recovery_1_plus_1(5),
+  permanent_1_plus_1_protection(6);
+  private Integer value;
 
-public class AppTest
-    extends TestCase {
-
-  /**
-   * Create the test case
-   *
-   * @param testName name of the test case
-   */
-  public AppTest(String testName) {
-    super(testName);
+  SLinearProtectionType(Integer value) {
+    this.value = value;
   }
 
-  /**
-   * @return the suite of tests being tested
-   */
-  public static Test suite() {
-    return new TestSuite(AppTest.class);
-  }
-
-  /**
-   * Rigourous Test :-)
-   */
-  public void testApp() {
-    assertTrue(true);
+  public String toString() {
+    return String.valueOf(value);
   }
 }
