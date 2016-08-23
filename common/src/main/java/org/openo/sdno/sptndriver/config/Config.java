@@ -12,11 +12,22 @@
  * the License.
  */
 
-package org.openo.sdno.sptndriver;
+package org.openo.sdno.sptndriver.config;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import io.dropwizard.Configuration;
 
 public class Config extends Configuration {
 
+  @JsonProperty
+  @NotEmpty
+  private String controllerUrl;
+
+  public String getControllerUrl() {
+    return controllerUrl;
+  }
 }

@@ -21,8 +21,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openo.sdno.sptndriver</groupId>
-    <artifactId>org-openo-sdno-sptndirver-l3vpn</artifactId>
+    <groupId>org.openo.sdno</groupId>
+    <artifactId>sptndirver-l3vpn</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   <dependencies>
      <dependency>
@@ -65,8 +65,8 @@
           <version>2.7</version>
       </dependency>
 	<dependency>
-	    <groupId>org.openo.sdno.sptndriver</groupId>
-        <artifactId>org-openo-sdno-sptndirver-models</artifactId>
+	    <groupId>org.openo.sdno</groupId>
+        <artifactId>sptndirver-models</artifactId>
         <version>0.0.1-SNAPSHOT</version>
 	  </dependency>
   </dependencies>
@@ -83,40 +83,6 @@
 		<encoding>UTF-8</encoding>
 		</configuration>
 	</plugin>
-	 <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-shade-plugin</artifactId>
-               <version>2.2</version>
-               <configuration>
-                   <createDependencyReducedPom>true</createDependencyReducedPom>
-                   <filters>
-                       <filter>
-                           <artifact>*:*</artifact>
-                           <excludes>
-                               <exclude>META-INF/*.SF</exclude>
-                               <exclude>META-INF/*.DSA</exclude>
-                               <exclude>META-INF/*.RSA</exclude>
-                           </excludes>
-                       </filter>
-                   </filters>
-               </configuration>
-               <executions>
-                   <execution>
-                       <phase>package</phase>
-                       <goals>
-                           <goal>shade</goal>
-                       </goals>
-                       <configuration>
-                           <transformers>
-                               <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                               <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                   <mainClass>org.openo.sdno.driver.sptn.App</mainClass>
-                               </transformer>
-                           </transformers>
-                       </configuration>
-                   </execution>
-               </executions>
-     </plugin>	
 </plugins>
 </build>
 </project>

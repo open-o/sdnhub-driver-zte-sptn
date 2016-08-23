@@ -14,20 +14,28 @@
 
 package org.openo.sdno.sptndriver.exception;
 
-import retrofit2.Response;
+import org.openo.sdno.sptndriver.models.south.SCommandResult;
 
-public class HttpErrorException extends Exception {
+import javax.ws.rs.core.Response;
 
-  private Response response;
+public class CommandErrorException extends Exception {
 
-  public HttpErrorException(Response response) {
-    this.response = response;
+  private SCommandResult m_cmdResult;
+
+  public CommandErrorException(SCommandResult cmdResult) {
+    m_cmdResult = cmdResult;
   }
 
-  public javax.ws.rs.core.Response getResponse() {
-    return javax.ws.rs.core.Response
-        .status(response.code())
-        .entity(response.message())
+  public Response getResponse() {
+    String errorMsg = null;
+    if (m_cmdResult != null && m_cmdResult.getFailedResources() != null) {
+      errorMsg = m_cmdResult.getFailedResources().getErrorMessage();
+    } else {
+      errorMsg = "Command Result is null.";
+    }
+    return Response
+        .status(Response.Status.NOT_IMPLEMENTED)
+        .entity(errorMsg)
         .build();
   }
 }

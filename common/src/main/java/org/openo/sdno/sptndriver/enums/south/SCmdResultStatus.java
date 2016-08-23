@@ -12,11 +12,19 @@
  * the License.
  */
 
-package org.openo.sdno.sptndriver;
+package org.openo.sdno.sptndriver.enums.south;
 
+public enum SCmdResultStatus {
+  success(1),
+  failed(2),
+  partly_failed(3);
+  private Integer value;
 
-import io.dropwizard.Configuration;
+  SCmdResultStatus(Integer value) {
+    this.value = value;
+  }
 
-public class Config extends Configuration {
-
+  public String toString() {
+    return String.valueOf(value);
+  }
 }

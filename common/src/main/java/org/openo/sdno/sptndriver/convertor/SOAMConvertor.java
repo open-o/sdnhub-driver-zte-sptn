@@ -14,12 +14,24 @@
 
 package org.openo.sdno.sptndriver.convertor;
 
+import org.openo.sdno.sptndriver.enums.south.oam.SDmMode;
+import org.openo.sdno.sptndriver.enums.south.oam.SLmMode;
+import org.openo.sdno.sptndriver.enums.south.qos.STrafficClass;
 import org.openo.sdno.sptndriver.models.south.SOAM;
 
 public class SOAMConvertor {
-    public static SOAM initOAM() {
-       SOAM oam = new SOAM();
 
-      return oam;
-    }
+  public static SOAM initOAM() {
+    SOAM oam = new SOAM();
+    oam.setBelongedId(null);
+    oam.setName(null);
+    oam.setMegId(null);
+    oam.setMeps(null);
+    oam.setCcAllow(false);
+    oam.setCcExp(Integer.getInteger(STrafficClass.CS7.toString()));
+    oam.setCcInterval(SOAM.CcIntervalEnum.NUMBER_3_DOT_3);
+    oam.setLmMode(Integer.getInteger(SLmMode.disable.toString()));
+    oam.setDmMode(Integer.getInteger(SDmMode.disable.toString()));
+    return oam;
+  }
 }

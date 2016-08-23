@@ -14,13 +14,14 @@
 
 package org.openo.sdno.sptndriver;
 
+import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.resources.L2Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.openo.sdno.sptndriver.resources.L3Resource;
 
 public class App extends Application<Config> {
 
@@ -40,7 +41,7 @@ public class App extends Application<Config> {
     LOGGER.info("Method App#run() called");
 
     // Add the resource to the environment
-    e.jersey().register(new L3Resource(e.getValidator()));
+    e.jersey().register(new L2Resource(e.getValidator()));
 
 
   }

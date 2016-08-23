@@ -25,7 +25,7 @@ public class SSncTunnelCreatePolicyConvertor {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(SSncTunnelCreatePolicyConvertor.class);
 
-  private static SSncTunnelCreatePolicy initTunnelPolicy(NL2Vpn nl2Vpn) {
+  public static SSncTunnelCreatePolicy initTunnelPolicy(NL2Vpn nl2Vpn) {
     if (nl2Vpn == null || nl2Vpn.getTunnelService() == null) {
       LOGGER.error("l2vpn or tunnelService is null.");
       return null;
@@ -42,6 +42,8 @@ public class SSncTunnelCreatePolicyConvertor {
     tunnelCreatePolicy.setIsShared(false);
     tunnelCreatePolicy.setQos(SQosConvertor.initQos(nl2Vpn.getTunnelService().getMplsTe()));
     tunnelCreatePolicy.setAdminStatus(AdminStatusConvertor.s_adminUp);
+    tunnelCreatePolicy.setLspOam(SOAMConvertor.initOAM());
+    tunnelCreatePolicy.setSncSwitch(SSncSwitchConvertor.initLspSncSwitch(nl2Vpn.getTunnelService().getMplsTe()));
     return tunnelCreatePolicy;
   }
 

@@ -12,35 +12,19 @@
  * the License.
  */
 
-package openo.sdno.driver.zte.sptn;
+package org.openo.sdno.sptndriver.enums.south.oam;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+public enum SLmMode {
+  disable(0),
+  preactive(1),
+  on_demand(2);
+  private Integer value;
 
-public class AppTest
-    extends TestCase {
-
-  /**
-   * Create the test case
-   *
-   * @param testName name of the test case
-   */
-  public AppTest(String testName) {
-    super(testName);
+  SLmMode(Integer value) {
+    this.value = value;
   }
 
-  /**
-   * @return the suite of tests being tested
-   */
-  public static Test suite() {
-    return new TestSuite(AppTest.class);
-  }
-
-  /**
-   * Rigourous Test :-)
-   */
-  public void testApp() {
-    assertTrue(true);
+  public String toString() {
+    return String.valueOf(value);
   }
 }

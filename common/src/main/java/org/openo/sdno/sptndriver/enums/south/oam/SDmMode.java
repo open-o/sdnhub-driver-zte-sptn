@@ -12,22 +12,19 @@
  * the License.
  */
 
-package org.openo.sdno.sptndriver.exception;
+package org.openo.sdno.sptndriver.enums.south.oam;
 
-import retrofit2.Response;
+public enum SDmMode {
+  disable(0),
+  preactive(1),
+  on_demand(2);
+  private Integer value;
 
-public class HttpErrorException extends Exception {
-
-  private Response response;
-
-  public HttpErrorException(Response response) {
-    this.response = response;
+  SDmMode(Integer value) {
+    this.value = value;
   }
 
-  public javax.ws.rs.core.Response getResponse() {
-    return javax.ws.rs.core.Response
-        .status(response.code())
-        .entity(response.message())
-        .build();
+  public String toString() {
+    return String.valueOf(value);
   }
 }

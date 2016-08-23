@@ -28,7 +28,7 @@ paths:
       responses:
         '200':
           description: Create a Eline connection
-  /sptndriver/v1/sbi-elines:service/create-eline-tunnels:
+  /restconf/operations/sptn-service-eline:create-snc-eline-tunnels:
     post:
       summary: Create Eline and Tunnels
       description: Creates a Eline Connection instance and Corresponding Tunnels
@@ -42,39 +42,10 @@ paths:
           schema:
             $ref: '#/definitions/CreateElineAndTunnels'
       responses:
-        '200':
-          description: Create a Eline connection and Corresponding Tunnels
-  /sptndriver/v1/sbi-elines:service/eline:
-    delete:
-      summary: Delete a Eline Connection
-      description: Delete a Eline Connection, need to pass in Eline id
-      produces:
-        - application/json
-      parameters:
-        - name: eline-id
-          in: header
-          description: Eline Connection uuid
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Delete a Eline connection 
-    get:
-      summary: Query a Eline Connection
-      description: Query a Eline Connection, need to pass in Eline id
-      produces:
-        - application/json
-      parameters:
-        - name: elineid
-          in: header
-          description: Eline Connection uuid
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Query a Eline connection 
+        '204':
+          description: NCD ID to Eline ID map
           schema:
-            $ref: '#/definitions/Eline'
+            $ref: '#/definitions/CommandResult'
   /sptndriver/v1/sbi-l3vpns:service/l3vpn:
     post:
       summary: Create L3vpn Connection
@@ -90,7 +61,7 @@ paths:
             $ref: '#/definitions/L3vpn'
       responses:
         '200':
-          description: Create a L3vpn connection          
+          description: Create a L3vpn connection
 definitions:
   CreateElineAndTunnels:
    type: object
@@ -145,7 +116,7 @@ definitions:
        description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
        enum: [0,1]
        format: int16
-      snc-type: 
+      snc-type:
         type: integer
         description: The Type of Eline, currently only use 1(Simple)
         format: int16
@@ -214,7 +185,7 @@ definitions:
      format: int16
     access-action:
      type: integer
-     description: The access action type, including 1(Keep), 2(Push), 3(Pop), 4(Swap) 
+     description: The access action type, including 1(Keep), 2(Push), 3(Pop), 4(Swap)
      enum: [1,2,3,4]
      format: int16
     access-vlan-id:
@@ -244,12 +215,12 @@ definitions:
      type: string
      description: UUID of tunnel or UUID of Eline
      format: string
-    layer-rate: 
+    layer-rate:
      type: integer
      description: Rate of the connection, including 0(LSP), 1(PW)
      enum: [0,1]
      format: int16
-    linear-protection-type: 
+    linear-protection-type:
      type: integer
      description: Linear protection type, including 0(unprotected), 1(path-protection-1-to-1), 2(path-protection-1-plus-1), 3(unprotected-with-recovery), 4(with-recovery-1-to-1), 5(with-recovery-1-plus-1), 6(permanent-1-plus-1-protection)
      enum: [0,1,2,3,4,5,6]
@@ -281,7 +252,7 @@ definitions:
      format: int32
     hold-off-time:
      type: integer
-     description: hode off time in ms 
+     description: hode off time in ms
      minimum: 0
      maximum: 10000
      default: 0
@@ -315,7 +286,7 @@ definitions:
      format: int32
   QOS:
    type: object
-   required: 
+   required:
     - belonged-id
    properties:
     belonged-id:
@@ -381,7 +352,7 @@ definitions:
     z2a-cbs:
      type: integer
      description: The z2a committed burst Size in  bytes
-     format: int32 
+     format: int32
     a2z-pbs:
      type: integer
      description: The a2z peak burst Size in bytes
@@ -389,7 +360,7 @@ definitions:
     z2a-pbs:
      type: integer
      description: The z2a peak burst Size in bytes
-     format: int32 
+     format: int32
     a2z-color-mode:
       type: integer
       description: The a2z color mode, including 0(blind), 1(aware)
@@ -410,7 +381,7 @@ definitions:
      format: int16
   OAM:
    type: object
-   required: 
+   required:
     - belonged-id
    properties:
     belonged-id:
@@ -461,7 +432,7 @@ definitions:
     $ref: '#/definitions/SncPw'
   SncPw:
    type: object
-   required: 
+   required:
     - id
    properties:
     id:
@@ -505,10 +476,8 @@ definitions:
     tunnel-ids:
       type: array
       description: List of binding Tunnel ID, Only used within domain
-      items: 
-       type: string
-       description: binding Tunnel ID 
-       format: string
+      items:
+       $ref: '#/definitions/TunnelId'
     admin-status:
      type: integer
      description: Connection  management status, including 0(adminUp) and 1(adminDown)
@@ -548,19 +517,23 @@ definitions:
      $ref: '#/definitions/OAM'
     qos:
      $ref: '#/definitions/QOS'
+  TunnelId:
+   type: string
+   description: Tunnel UUID
+   format: string
   SncRoute:
    type: object
    description: The route of service
-   required: 
+   required:
     - id
     - snc-id
    properties:
-    id: 
+    id:
      type: string
      description: UUID of route
      format: string
     name:
-     type: string 
+     type: string
      description: Only used within domain, for driver, it is empty
      format: string
     layer-rate:
@@ -579,7 +552,7 @@ definitions:
   XC:
    type: object
    description: Node on the route
-   required: 
+   required:
     - ne-id
    properties:
     ne-id:
@@ -625,7 +598,7 @@ definitions:
     - user-label
    properties:
     name:
-     type: string 
+     type: string
      description: Only used within domain, for driver, it is empty
      format: string
     user-label:
@@ -636,7 +609,7 @@ definitions:
      type: string
      description: Tenant ID
      format: string
-    creater: 
+    creater:
      type: string
      description: APP ID
      format: string
@@ -644,7 +617,7 @@ definitions:
      type: string
      description: Only used within domain, for driver, it is empty
      format: string
-    direction: 
+    direction:
      type: integer
      description: Direction of tunnel, including 0(unidirection), 1(bidirection)
      format: int16
@@ -660,7 +633,7 @@ definitions:
      type: boolean
      description: Whether PW share tunnel
      default: false
-    qos: 
+    qos:
      $ref: '#/definitions/QOS'
     snc-switch:
      $ref: '#/definitions/SncSwitch'
@@ -695,7 +668,7 @@ definitions:
      type: string
      description: Source NE UUID
      format: string
-    egress-ne-id: 
+    egress-ne-id:
      type: string
      description: Destination NE UUID
      format: string
@@ -704,7 +677,7 @@ definitions:
      description: Latency of tunnel in us, range from 0 to 60000000
      format: int32
     max-availble-bandwidth:
-     type: int
+     type: integer
      description: The minimum max available bandwidth of all links bearing the tunnel in kps, range from 0 to 4000000000
      minimum: 0
      maximum: 4000000000
@@ -737,7 +710,7 @@ definitions:
      description: Connection  management status, including 0(adminUp) and 1(adminDown)
      enum: [0,1]
      format: int16
-    operate-status: 
+    operate-status:
      type: integer
      description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
      enum: [0,1]
@@ -759,11 +732,11 @@ definitions:
      description: The traffic class, including 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7)
      enum: [0,1,2,3,4,5,6,7]
      default: 0
-     format: int16 
+     format: int16
   L3ac:
    type: object
    properties:
-    id: 
+    id:
      type: string
      description: L3vpn AC UUID
      format: string
@@ -776,7 +749,7 @@ definitions:
      description: LTP UUID
      format: string
     ip-addr:
-     type: string 
+     type: string
      description: New private IP address of LTP after  added to L3vpn
      format: string
   L3BindRelation:
@@ -842,8 +815,39 @@ definitions:
      description: Route Status, including 1(down), 2(up), only used when querying a route
      enum: [1,2]
      format: int16
-    
-    
-     
-  
+  CommandResult:
+   type: object
+   description: Command execution result
+   properties:
+     result:
+      type: integer
+      description: Inluding 1(success), 2(failed), 3(partly failed)
+      format: int8
+      enum: [1,2,3]
+     success-resources:
+      type: array
+      items:
+       $ref: '#/definitions/SuccessResource'
+     failed-resources:
+      $ref: '#/definitions/FailedResource'
+  SuccessResource:
+   type: string
+   format: string
+  FailedResource:
+   type: object
+   properties:
+    resouce-id:
+     type: string
+     format: string
+    error-code:
+     type: string
+     format: string
+    error-message:
+     type: string
+     format: string
+
+
+
+
+
 

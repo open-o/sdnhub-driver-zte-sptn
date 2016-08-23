@@ -21,8 +21,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openo.sdno.sptndriver</groupId>
-    <artifactId>org-openo-sdno-sptndirver-models</artifactId>
+    <groupId>org.openo.sdno</groupId>
+    <artifactId>sptndirver-models</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   <dependencies>
       <dependency>

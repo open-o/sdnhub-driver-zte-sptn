@@ -32,6 +32,7 @@ public class SQosConvertor {
      qos.setTunnelMode(Integer.getInteger(STunnelMode.pipeline.toString()));
 
      qos.setConvgMode(Integer.getInteger(SConvergeMode.not_converge.toString()));
+     // todo Whether support auto_adjust, equals to bandwidthMode in mplsTePolicy?
      qos.setTrafficAdjMode(Integer.getInteger(STrafficAdjustMode.not_adjust.toString()));
      // todo not sure how to config pir, cbs and pbs, need test
      if (policy != null && policy.getBandwidth() != null)

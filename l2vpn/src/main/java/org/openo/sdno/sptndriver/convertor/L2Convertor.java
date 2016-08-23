@@ -42,18 +42,20 @@ public class L2Convertor {
 
   public static SCreateElineAndTunnels L2ToElineTunnerCreator(NL2Vpn l2vpn) {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
-    createElineAndTunnels.setSncEline(L2ToEline(l2vpn));
+    // todo: check L2 LCM must assign the L2 ID
+    createElineAndTunnels.setSncEline(L2ToEline(l2vpn, l2vpn.getId()));
+    createElineAndTunnels.setSncTunnelCreatePolicy(SSncTunnelCreatePolicyConvertor.initTunnelPolicy(l2vpn));
     return createElineAndTunnels;
   }
 
-  public static SEline L2ToEline(NL2Vpn nl2Vpn) {
+  public static SEline L2ToEline(NL2Vpn nl2Vpn, String SElineId) {
     if (nl2Vpn == null) {
       LOGGER.error("input l2vpn is null.");
       return null;
     }
 
     SEline sEline = new SEline();
-    sEline.setId(getSouthElineId(nl2Vpn.getId()));
+    sEline.setId(SElineId);
     sEline.setName(new String());
     sEline.setUserLabel(nl2Vpn.getName());
     sEline.setParentNcdId(null);
@@ -65,7 +67,7 @@ public class L2Convertor {
     sEline.setEgressEndPoints(NToS(nl2Vpn.getAcs(), false));
     boolean hasProtect = hasBackupPw(nl2Vpn.getPws());
     sEline.setSncSwitch(
-        SSncSwitchConvertor.initPwSncSwitch(nl2Vpn.getId(), hasProtect));
+        SSncSwitchConvertor.initPwSncSwitch(SElineId,hasProtect));
     sEline.setSncPws(initPws(nl2Vpn, hasProtect));
     return sEline;
   }
