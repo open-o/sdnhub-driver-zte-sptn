@@ -14,20 +14,24 @@
 
 package org.openo.sdno.sptndriver.services;
 
-import org.openo.sdno.sptndriver.models.south.SCommandResult;
+import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
+import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface ISElineService {
 
+  @Headers(Config.controllerICTAuth)
   @POST("restconf/operations/sptn-service-eline:create-snc-eline-tunnels")
-  Call<SCommandResult> createElineAndTunnels(@Body SCreateElineAndTunnels createElineAndTunnels);
+  Call<SCommandResultOutput> createElineAndTunnels(
+      @Body SCreateElineAndTunnels createElineAndTunnels);
 
-  @DELETE("restconf/operations/sptn-service-eline:delete-snc-eline")
-  Call<Response> deleteEline(@Body String elineId);
+  @Headers(Config.controllerICTAuth)
+  @POST("restconf/operations/sptn-service-eline:delete-snc-eline")
+  Call<SCommandResultOutput> deleteEline(@Body SDeleteElineInput elineId);
 }

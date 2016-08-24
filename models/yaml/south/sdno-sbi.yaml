@@ -42,10 +42,43 @@ paths:
           schema:
             $ref: '#/definitions/CreateElineAndTunnels'
       responses:
-        '204':
+        '200':
           description: NCD ID to Eline ID map
           schema:
             $ref: '#/definitions/CommandResult'
+  /restconf/operations/sptn-service-eline:delete-snc-eline:
+      post:
+        summary: Delete a Eline Connection
+        description: Delete a Eline Connection, need to pass in Eline id
+        produces:
+         - application/json
+        parameters:
+          - name: eline-id
+            in: body
+            description: Eline Connection uuid
+            required: true
+            schema:
+              $ref: '#/definitions/DeleteElineInput'
+        responses:
+          '204':
+            description: Delete a Eline connection
+  /restconf/data/sptn-service-eline:service/snc-elines/snc-eline={id}:
+      get:
+        summary: Query a Eline Connection
+        description: Query a Eline Connection, need to pass in Eline id
+        produces:
+          - application/json
+        parameters:
+          - name: id
+            in: path
+            description: Eline Connection uuid
+            required: true
+            type: string
+        responses:
+          '200':
+            description: Query a Eline connection
+            schema:
+              $ref: '#/definitions/Eline'
   /sptndriver/v1/sbi-l3vpns:service/l3vpn:
     post:
       summary: Create L3vpn Connection
@@ -521,6 +554,20 @@ definitions:
    type: string
    description: Tunnel UUID
    format: string
+  DeleteElineInput:
+   type: object
+   description: Input structure of delete Eline
+   properties:
+    input:
+       $ref: '#/definitions/DeleteEline'
+  DeleteEline:
+   type: object
+   description: Struct for delete Eline
+   properties:
+    eline-id:
+     type: string
+     description: Eline UUID
+     format: string
   SncRoute:
    type: object
    description: The route of service
@@ -815,6 +862,12 @@ definitions:
      description: Route Status, including 1(down), 2(up), only used when querying a route
      enum: [1,2]
      format: int16
+  CommandResultOutput:
+   type: object
+   description: Output structure containing CommandResult
+   properties:
+    output:
+      $ref: '#/definitions/CommandResult'
   CommandResult:
    type: object
    description: Command execution result

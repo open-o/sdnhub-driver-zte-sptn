@@ -23,6 +23,8 @@ import io.dropwizard.Configuration;
 
 public class Config extends Configuration {
 
+  public static final String controllerICTAuth =
+      "ICTAuthentication:21232F297A57A5A743894A0E4A801FC3";
   @JsonProperty
   @NotEmpty
   private String controllerUrl;
@@ -30,4 +32,5 @@ public class Config extends Configuration {
   public String getControllerUrl() {
     return controllerUrl;
   }
+
 }

@@ -41,11 +41,11 @@
           <artifactId>retrofit</artifactId>
           <version>2.1.0</version>
       </dependency>
-	<dependency>
-	    <groupId>org.openo.sdno.sptndriver</groupId>
-        <artifactId>org-openo-sdno-sptndirver-models</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-	  </dependency>
+      <dependency>
+          <groupId>org.openo.sdno</groupId>
+          <artifactId>sptndirver-models</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+      </dependency>
   </dependencies>
   <build>
 
@@ -55,8 +55,8 @@
 	<artifactId>maven-compiler-plugin</artifactId>
 	<version>3.1</version>
 		<configuration>
-		<source>1.7</source>
-		<target>1.7</target>
+		<source>1.8</source>
+		<target>1.8</target>
 		<encoding>UTF-8</encoding>
 		</configuration>
 	</plugin>

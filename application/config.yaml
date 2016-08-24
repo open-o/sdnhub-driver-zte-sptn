@@ -1,4 +1,4 @@
-controllerUrl: http://10.8.10.210:21180
+controllerUrl: http://10.8.10.210:21180/
 server:
   type: simple
   applicationContextPath: /

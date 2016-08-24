@@ -14,6 +14,8 @@
 
 package org.openo.sdno.sptndriver.exception;
 
+import java.io.IOException;
+
 import retrofit2.Response;
 
 public class HttpErrorException extends Exception {
@@ -24,10 +26,18 @@ public class HttpErrorException extends Exception {
     this.response = response;
   }
 
-  public javax.ws.rs.core.Response getResponse() {
+  public javax.ws.rs.core.Response getResponse(){
+
+    String errorStr = "unknown error";
+    try {
+      errorStr = response.errorBody().string();
+    } catch (IOException e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
     return javax.ws.rs.core.Response
         .status(response.code())
-        .entity(response.message())
+        .entity(errorStr)
         .build();
+
   }
 }

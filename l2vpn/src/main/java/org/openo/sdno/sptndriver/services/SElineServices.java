@@ -14,63 +14,67 @@
 
 package org.openo.sdno.sptndriver.services;
 
-import org.openo.sdno.sptndriver.config.Config;
-import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
-import org.openo.sdno.sptndriver.models.south.SCommandResult;
+import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
+import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
+import org.openo.sdno.sptndriver.utils.ServiceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-
-import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Eline service CRUD
+ */
 public class SElineServices {
 
-  @Inject
-  Config configuration;
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(SElineServices.class);
+  private String baseUrl;
+
+  /**
+   * constructor
+   * @param baseUrl  url of SPTN controller
+   */
+  public SElineServices(String baseUrl) {
+    this.baseUrl = baseUrl;
+  }
 
   public void createElineAndTunnels(SCreateElineAndTunnels createElineAndTunnels)
       throws HttpErrorException, IOException, CommandErrorException {
+    String printText = "Create eline and tunnels " + createElineAndTunnels.getSncEline().getId();
+    LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(configuration.getControllerUrl())
+        .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     ISElineService service = retrofit.create(ISElineService.class);
-    Call<SCommandResult> repos = service.createElineAndTunnels(createElineAndTunnels);
-
-    Response<SCommandResult> response = repos.execute();
-    if (response.isSuccessful()) {
-      SCommandResult commandResult = response.body();
-      if (commandResult.getResult() != null &&
-          commandResult.getResult()
-              .equals(Integer.getInteger(SCmdResultStatus.success.toString()))) {
-        return;
-      } else {
-        throw new CommandErrorException(commandResult);
-      }
-    } else {
-      throw new HttpErrorException(response);
-    }
+    Call<SCommandResultOutput> repos = service.createElineAndTunnels(createElineAndTunnels);
+    Response<SCommandResultOutput> response = repos.execute();
+    ServiceUtil.parseCommandResultOutput(response, LOGGER, printText);
+    LOGGER.debug(printText + " end. ");
   }
 
-  public void deleteEline(String elineId) throws IOException, HttpErrorException {
+  public void deleteEline(SDeleteElineInput elineId)
+      throws IOException, HttpErrorException, CommandErrorException {
+    String printText = "Delete Eline " + elineId.getInput().getElineId();
+    LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(configuration.getControllerUrl())
+        .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     ISElineService service = retrofit.create(ISElineService.class);
-    Call<Response> repos = service.deleteEline(elineId);
-    Response<Response> response = repos.execute();
-    if (response.isSuccessful()) {
-      return;
-    } else {
-      throw new HttpErrorException(response);
-    }
+    Call<SCommandResultOutput> repos = service.deleteEline(elineId);
+    Response<SCommandResultOutput> response = repos.execute();
+    ServiceUtil.parseRPCResult(response, LOGGER, printText);
+    LOGGER.debug(printText + " end. ");
   }
+
 }
