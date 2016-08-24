@@ -18,7 +18,6 @@ import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.convertor.L2Convertor;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
-import org.openo.sdno.sptndriver.models.north.NDeleteL2vpn;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
 import org.openo.sdno.sptndriver.models.south.SDeleteEline;
@@ -33,11 +32,12 @@ import javax.validation.Validator;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/openoapi/sbi-l2vpn-vpws/v1")
+@Path("/openoapi/sbi-l2vpn-vpws/v1/")
 @Produces(MediaType.APPLICATION_JSON)
 
 public class L2Resource {
@@ -77,9 +77,10 @@ public class L2Resource {
   }
 
   @DELETE
-  public Response deleteEline(NDeleteL2vpn ElineId) throws URISyntaxException {
-    String sElineId = L2Convertor.getSouthElineId(ElineId.getVpnid());
-    if (sElineId == null || ElineId.getVpnid() == null) {
+  @Path("{vpnid}")
+  public Response deleteEline(@PathParam("vpnid") String vpnid) throws URISyntaxException {
+    String sElineId = L2Convertor.getSouthElineId(vpnid);
+    if (sElineId == null || vpnid == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .entity("Can not find Eline.")
@@ -87,7 +88,7 @@ public class L2Resource {
     }
     SDeleteElineInput elineDeleteInput = new SDeleteElineInput();
     SDeleteEline deleteEline = new SDeleteEline();
-    deleteEline.setElineId(ElineId.getVpnid());
+    deleteEline.setElineId(vpnid);
     elineDeleteInput.setInput(deleteEline);
 
     SElineServices elineServices = new SElineServices(config.getControllerUrl());
