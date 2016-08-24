@@ -15,13 +15,10 @@
 package org.openo.sdno.sptndriver.services;
 
 
-import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.brs.SME;
 
 import java.io.IOException;
-
-import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -30,12 +27,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SNEService {
 
-  @Inject
-  Config configuration;
+  private String baseUrl;
+
+  public SNEService(String baseUrl) {
+    this.baseUrl = baseUrl;
+  }
 
   public SME getNeByID(String neid) throws HttpErrorException, IOException {
     Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(configuration.getControllerUrl())
+        .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     ISNEService service = retrofit.create(ISNEService.class);

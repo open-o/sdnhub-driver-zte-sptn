@@ -41,7 +41,7 @@ public class App extends Application<Config> {
     LOGGER.info("Method App#run() called");
 
     // Add the resource to the environment
-    e.jersey().register(new L2Resource(e.getValidator()));
+    e.jersey().register(new L2Resource(e.getValidator(), c));
 
 
   }

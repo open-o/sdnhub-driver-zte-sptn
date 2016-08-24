@@ -14,26 +14,28 @@
 
 package org.openo.sdno.sptndriver.resources;
 
+import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.convertor.L2Convertor;
+import org.openo.sdno.sptndriver.exception.CommandErrorException;
+import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.models.north.NDeleteL2vpn;
+import org.openo.sdno.sptndriver.models.north.NL2Vpn;
+import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
+import org.openo.sdno.sptndriver.models.south.SDeleteEline;
+import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
+import org.openo.sdno.sptndriver.services.SElineServices;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.openo.sdno.sptndriver.convertor.L2Convertor;
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
-import org.openo.sdno.sptndriver.models.north.NL2Vpn;
-import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
-import org.openo.sdno.sptndriver.services.SElineServices;
 
 @Path("/openoapi/sbi-l2vpn-vpws/v1")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,9 +43,11 @@ import org.openo.sdno.sptndriver.services.SElineServices;
 public class L2Resource {
 
   private final Validator validator;
+  private Config config;
 
-  public L2Resource(Validator validator) {
+  public L2Resource(Validator validator, Config config) {
     this.validator = validator;
+    this.config = config;
   }
 
   @POST
@@ -55,20 +59,17 @@ public class L2Resource {
           .entity("Input L2 can not be converted to Eline.")
           .build();
     }
-    SElineServices elineServices = new SElineServices();
+    SElineServices elineServices = new SElineServices(config.getControllerUrl());
     try {
       elineServices.createElineAndTunnels(createElineAndTunnels);
     } catch (HttpErrorException e) {
-      e.printStackTrace();
       return e.getResponse();
     } catch (IOException e) {
-      e.printStackTrace();
       return Response
           .status(Response.Status.BAD_GATEWAY)
           .entity("IO Exception when creating Eline.")
           .build();
     } catch (CommandErrorException e) {
-      e.printStackTrace();
       return e.getResponse();
     }
     return Response.created(new
@@ -76,22 +77,27 @@ public class L2Resource {
   }
 
   @DELETE
-  public Response deleteEline(String ElineId) throws URISyntaxException {
-    String sElineId = L2Convertor.getSouthElineId(ElineId);
-    if (sElineId == null) {
+  public Response deleteEline(NDeleteL2vpn ElineId) throws URISyntaxException {
+    String sElineId = L2Convertor.getSouthElineId(ElineId.getVpnid());
+    if (sElineId == null || ElineId.getVpnid() == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .entity("Can not find Eline.")
           .build();
     }
-    SElineServices elineServices = new SElineServices();
+    SDeleteElineInput elineDeleteInput = new SDeleteElineInput();
+    SDeleteEline deleteEline = new SDeleteEline();
+    deleteEline.setElineId(ElineId.getVpnid());
+    elineDeleteInput.setInput(deleteEline);
+
+    SElineServices elineServices = new SElineServices(config.getControllerUrl());
     try {
-      elineServices.deleteEline(sElineId);
+      elineServices.deleteEline(elineDeleteInput);
     } catch (HttpErrorException e) {
-      e.printStackTrace();
+      return e.getResponse();
+    } catch (CommandErrorException e) {
       return e.getResponse();
     } catch (IOException e) {
-      e.printStackTrace();
       return Response
           .status(Response.Status.BAD_GATEWAY)
           .entity("IO Exception when creating Eline.")
