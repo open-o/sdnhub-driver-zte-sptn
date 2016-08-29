@@ -16,13 +16,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
    <parent>
-        <groupId>org.openo.sdno</groupId>
+        <groupId>org.openo.sdno.driver-zte-sptn</groupId>
         <artifactId>sptndriver</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openo.sdno</groupId>
-    <artifactId>sptndirver-l3vpn</artifactId>
+    <groupId>org.openo.sdno.driver-zte-sptn</groupId>
+    <artifactId>l3vpn</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   <dependencies>
      <dependency>
@@ -65,8 +65,8 @@
           <version>2.7</version>
       </dependency>
 	<dependency>
-	    <groupId>org.openo.sdno</groupId>
-        <artifactId>sptndirver-models</artifactId>
+	    <groupId>org.openo.sdno.driver-zte-sptn</groupId>
+        <artifactId>models</artifactId>
         <version>0.0.1-SNAPSHOT</version>
 	  </dependency>
   </dependencies>
