@@ -14,26 +14,28 @@
 
 package org.openo.sdno.sptndriver.convertor;
 
+import org.openo.sdno.sptndriver.convertor.ac.AccessActionConvertor;
+import org.openo.sdno.sptndriver.convertor.ac.AccessTypeConvertor;
+import org.openo.sdno.sptndriver.enums.north.ac.NACAccessAction;
+import org.openo.sdno.sptndriver.enums.south.SElineSncType;
+import org.openo.sdno.sptndriver.enums.south.SInterConnectionMode;
+import org.openo.sdno.sptndriver.enums.south.ac.SACRole;
+import org.openo.sdno.sptndriver.enums.south.pw.SPwRole;
+import org.openo.sdno.sptndriver.enums.south.pw.SSnSupport;
 import org.openo.sdno.sptndriver.models.north.NL2Ac;
+import org.openo.sdno.sptndriver.models.north.NL2Access;
 import org.openo.sdno.sptndriver.models.north.NL2Acs;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
-import org.openo.sdno.sptndriver.models.north.NOverrideFlow;
-import org.openo.sdno.sptndriver.models.north.NOverrideFlows;
 import org.openo.sdno.sptndriver.models.north.NPw;
 import org.openo.sdno.sptndriver.models.north.NPws;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
 import org.openo.sdno.sptndriver.models.south.SEline;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoints;
+import org.openo.sdno.sptndriver.models.south.SSncPw;
 import org.openo.sdno.sptndriver.models.south.SSncPws;
-import org.openo.sdno.sptndriver.enums.south.SElineSncType;
-import org.openo.sdno.sptndriver.enums.south.SInterConnectionMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class L2Convertor {
 
@@ -44,7 +46,8 @@ public class L2Convertor {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
     // todo: check L2 LCM must assign the L2 ID
     createElineAndTunnels.setSncEline(L2ToEline(l2vpn, l2vpn.getId()));
-    createElineAndTunnels.setSncTunnelCreatePolicy(SSncTunnelCreatePolicyConvertor.initTunnelPolicy(l2vpn));
+    createElineAndTunnels
+        .setSncTunnelCreatePolicy(SSncTunnelCreatePolicyConvertor.initTunnelPolicy(l2vpn));
     return createElineAndTunnels;
   }
 
@@ -67,7 +70,7 @@ public class L2Convertor {
     sEline.setEgressEndPoints(NToS(nl2Vpn.getAcs(), false));
     boolean hasProtect = hasBackupPw(nl2Vpn.getPws());
     sEline.setSncSwitch(
-        SSncSwitchConvertor.initPwSncSwitch(SElineId,hasProtect));
+        SSncSwitchConvertor.initPwSncSwitch(SElineId, hasProtect));
     sEline.setSncPws(initPws(nl2Vpn, hasProtect));
     return sEline;
   }
@@ -77,35 +80,61 @@ public class L2Convertor {
     return northElineId;
   }
 
-  // todo: API need update
+  /**
+   * Convert ingress or egress ac list, only support 2 ACs
+   */
   private static SServiceEndPoints NToS(NL2Acs acList, boolean isIngress) {
-    if (acList == null) {
-      LOGGER.error("input acList is null");
+    if (acList == null
+        || acList.getAc() == null
+        || acList.getAc().size() != 2) {
+      LOGGER.error("input acList size is not 2.");
       return null;
     }
-
     SServiceEndPoints epList = new SServiceEndPoints();
-    for (NL2Ac ac : acList.getAc()) {
-      NOverrideFlows overflows = ac.getOverrideFlows();
-      if (ac.getOverrideFlows() != null) {
-        for (NOverrideFlow overFlow : overflows.getOverrideFlow()) {
-          if (isIngress && overFlow.getDirection().equals("ingress")
-              || !isIngress && overFlow.getDirection().equals("egress")) {
-            epList.add(NToS(ac));
-          }
-        }
-      }
+    if (isIngress) {
+      epList.add(NToS(acList.getAc().get(0)));
+    } else {
+      epList.equals(NToS(acList.getAc().get(1)));
     }
+
     return epList;
   }
 
-  // todo: API need update
   private static SServiceEndPoint NToS(NL2Ac ac) {
     if (ac == null) {
       LOGGER.error("input ac is null.");
       return null;
     }
     SServiceEndPoint ep = new SServiceEndPoint();
+    ep.setId(ac.getId());
+    ep.setNeId(ac.getNeId());
+    ep.setLtpId(ac.getLtpId());
+
+    NL2Access nl2Access = ac.getL2Access();
+    if (nl2Access != null) {
+      ep.setAccessType(AccessTypeConvertor.NToS(nl2Access.getAccessType()));
+      ep.setDot1qVlanBitmap(nl2Access.getDot1qVlanBitmap());
+      ep.setQinqCvlanBitmap(nl2Access.getQinqCvlanBitmap());
+      ep.setQinqSvlanBitmap(nl2Access.getQinqSvlanBitmap());
+      String accessAction = nl2Access.getAccessAction();
+      ep.setAccessAction(AccessActionConvertor.NToS(accessAction));
+      if (accessAction != null) {
+        if (accessAction.equals(NACAccessAction.push.toString())) {
+          ep.setAccessVlanId(nl2Access.getPushVlanId());
+        } else if (accessAction.equals(NACAccessAction.swap.toString())) {
+          ep.setAccessVlanId(nl2Access.getSwapVlanId());
+        } else {
+          LOGGER.debug(
+              "No need to config access vlan id since access action is " + accessAction + ".");
+        }
+      }
+
+      ep.setQos(SQosConvertor
+                    .initAcQos(ep.getId(), ac.getUpstreamBandwidth(), ac.getDownstreamBandwidth()));
+    }
+
+    ep.setRole(Integer.getInteger(SACRole.master.toString()));
+
     return ep;
   }
 
@@ -115,31 +144,51 @@ public class L2Convertor {
       return false;
     }
     for (NPw pw : pwList.getPws()) {
-      if (pw.getProtectionRole().equals("backup")) {
+      if (pw.getProtectionRole().equals(NPw.ProtectionRoleEnum.BACKUP)) {
         return true;
       }
     }
     return false;
   }
-  // todo; NE ID and IP ad
+
+  // todo; pw protection is not supported now,so there is only 2 NEs, NE_A and NE_Z and pw role is always master
   private static SSncPws initPws(NL2Vpn l2Vpn, boolean hasProtect) {
     if (l2Vpn == null || l2Vpn.getPws() == null) {
       LOGGER.error("l2vpn or pwList is null.");
       return null;
     }
 
-    SSncPws sSncPws = new SSncPws();
-    Integer encaplateType = EncaplateTypeConvertor.NToS(l2Vpn.getEncapsulationType());
-    Integer ctrlWord = CtrlWordConvertor.NToS(l2Vpn.getCtrlWordType());
-    Integer adminStatus = AdminStatusConvertor.NToS(l2Vpn.getAdminStatus());
-    Integer operateStatus = OperateStatusConvertor.NToS(l2Vpn.getOperStatus());
-
-    Set<String> NePairSet = new HashSet<String>();
-    List<NPw> nPws = l2Vpn.getPws().getPws();
-    for (NPw nPw : nPws) {
-
+    if (l2Vpn.getPws().getPws().size() != 2) {
+      LOGGER.error("l2vpn or pwList size is not 2 or 3.");
+      return null;
     }
-    return sSncPws;
+    SSncPws pwList = new SSncPws();
+    if (l2Vpn.getPws().getPws().size() == 2) {
+      NPw pwA = l2Vpn.getPws().getPws().get(0);
+      NPw pwZ = l2Vpn.getPws().getPws().get(1);
+
+      SSncPw sncPw = new SSncPw();
+      sncPw.setId(l2Vpn.getPws().getUuid());
+      sncPw.setName(null);
+      sncPw.setUserLabel(pwA.getName());
+      sncPw.setRole(Integer.getInteger(SPwRole.master.toString()));
+      sncPw.setEncaplateType(EncaplateTypeConvertor.NToS(l2Vpn.getEncapsulation().toString()));
+      sncPw.setIngressNeId(pwA.getNeId());
+      sncPw.setEgressNeId(pwZ.getNeId());
+      sncPw.setDestinationIp(pwA.getPeerAddress());
+      sncPw.setSourceIp(pwZ.getPeerAddress());
+      sncPw.setAdminStatus(AdminStatusConvertor.NToS(l2Vpn.getAdminStatus()));
+      sncPw.setOperateStatus(OperateStatusConvertor.NToS(l2Vpn.getOperStatus()));
+      sncPw.setCtrlWordSupport(CtrlWordConvertor.NToS(l2Vpn.getCtrlWordType().toString()));
+      sncPw.setSnSupport(Integer.getInteger(SSnSupport.not_support.toString()));
+      sncPw.setVccvType(0);
+      sncPw.setConnAckType(0);
+      sncPw.setQos(SQosConvertor.initCacClosedQos(sncPw.getId()));
+      sncPw.setOam(SOamConvertor.initOAM(sncPw.getId()));
+      pwList.add(sncPw);
+    }
+
+    return pwList;
   }
 
 }

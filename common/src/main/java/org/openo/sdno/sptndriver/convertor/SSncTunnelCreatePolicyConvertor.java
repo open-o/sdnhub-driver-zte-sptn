@@ -42,7 +42,7 @@ public class SSncTunnelCreatePolicyConvertor {
     tunnelCreatePolicy.setIsShared(false);
     tunnelCreatePolicy.setQos(SQosConvertor.initQos(nl2Vpn.getTunnelService().getMplsTe()));
     tunnelCreatePolicy.setAdminStatus(AdminStatusConvertor.s_adminUp);
-    tunnelCreatePolicy.setLspOam(SOAMConvertor.initOAM());
+    tunnelCreatePolicy.setLspOam(SOamConvertor.initOAM(null));
     tunnelCreatePolicy.setSncSwitch(SSncSwitchConvertor.initLspSncSwitch(nl2Vpn.getTunnelService().getMplsTe()));
     return tunnelCreatePolicy;
   }

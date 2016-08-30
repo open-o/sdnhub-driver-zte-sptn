@@ -82,4 +82,24 @@ public class ServiceUtil {
       throw new HttpErrorException(response);
     }
   }
+
+  /**
+   * pares response
+   *
+   * @param response  http response
+   * @param LOGGER    log information
+   * @param printText text print in the log
+   * @param <T>       body of response
+   */
+  public static <T> T parseResponse(Response<T> response,
+                                    Logger LOGGER,
+                                    String printText)
+      throws CommandErrorException, HttpErrorException {
+    if (response.isSuccessful()) {
+      return response.body();
+    } else {
+      LOGGER.error(printText + " failed, response unsuccessful.");
+      throw new HttpErrorException(response);
+    }
+  }
 }

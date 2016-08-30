@@ -21,7 +21,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openo.driver-zte-sptn</groupId>
+    <groupId>org.openo.sdno.driver-zte-sptn</groupId>
     <artifactId>models</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   <dependencies>

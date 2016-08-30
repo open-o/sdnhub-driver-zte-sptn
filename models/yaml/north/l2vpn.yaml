@@ -4,7 +4,7 @@ info:
   title: L2VpnService Sbi Adapter Interface
   description: Orchestrator SDN-O SBI Reference V1.0-L2VPN
 host: sdno.openo.org
-basePath: /rest
+basePath: /openoapi/sbi-l2vpn-vpws/v1
 schemes:
   - http
 consumes:
@@ -12,16 +12,18 @@ consumes:
 produces:
   - application/json
 paths:
-  /plugin_adapter_nsp/v1/controllers/{controllerid}/united-sbi-service-l2vpn-vpws:service/l2vpnVpwss:
+ /l2vpn_vpwss:
     post:
       summary: Create L2Vpn Connection
       description: Creates a L2Vpn Connection instance, need to pass in controller id
+      consumes:
+        - application/json;charset=UTF-8
       produces:
-        - application/json
+        - application/json;charset=UTF-8
       parameters:
-        - name: controllerid
-          in: path
-          description: controller uuid
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
           required: true
           type: string
         - name: l2vpnVpws
@@ -31,20 +33,39 @@ paths:
           schema:
             $ref: '#/definitions/L2Vpn'
       responses:
-        '200':
-          description: Create L2Vpn connection 
+        201:
+          description: create L2Vpn connection.
           schema:
             $ref: '#/definitions/L2Vpn'
-  /plugin_adapter_nsp/v1/controllers/{controllerid}/united-sbi-service-l2vpn-vpws:service/l2vpnVpwss/l2vpnVpws/{vpnid}:
+        400:
+          description: create L2Vpn Instances failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: create L2Vpn Instances failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: create L2Vpn Instances failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
+
+ /l2vpn_vpwss/{vpnid}:
     delete:
       summary: Delete a L2Vpn Connection
       description: Delete a L2Vpn Connection, need to pass in controller id and vpn id
+      consumes:
+        - application/json;charset=UTF-8
       produces:
-        - application/json
+        - application/json;charset=UTF-8
       parameters:
-        - name: controllerid
-          in: path
-          description: controller uuid
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
           required: true
           type: string
         - name: vpnid
@@ -53,19 +74,38 @@ paths:
           required: true
           type: string
       responses:
-        '200':
-          description: Delete a L2Vpn connection 
+        200:
+          description: Delete a L2Vpn connection
           schema:
             $ref: '#/definitions/L2Vpn'
+        400:
+          description: delete a L2Vpn Instance failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: delete a L2Vpn Instance failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: delete a L2Vpn Instance failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
+
     get:
       summary: Query a L2Vpn Connection
       description: Query a L2Vpn Connection, need to pass in controller id and vpn id
+      consumes:
+        - application/json;charset=UTF-8
       produces:
-        - application/json
+        - application/json;charset=UTF-8
       parameters:
-        - name: controllerid
-          in: path
-          description: controller uuid
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
           required: true
           type: string
         - name: vpnid
@@ -74,19 +114,38 @@ paths:
           required: true
           type: string
       responses:
-        '200':
-          description: Query a L2Vpn connection 
+        200:
+          description: Query a L2Vpn connection
           schema:
             $ref: '#/definitions/L2Vpn'
+        400:
+          description: query a L2Vpn failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: query a L2Vpn failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: query a L2Vpn failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
+
     put:
       summary: Update a L2Vpn Connection
       description: Update a L2Vpn Connection, need to pass in controller id and vpn id
+      consumes:
+        - application/json;charset=UTF-8
       produces:
-        - application/json
+        - application/json;charset=UTF-8
       parameters:
-        - name: controllerid
-          in: path
-          description: controller uuid
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
           required: true
           type: string
         - name: vpnid
@@ -101,98 +160,25 @@ paths:
           schema:
             $ref: '#/definitions/L2Vpn'
       responses:
-        '200':
-          description: Update a L2Vpn connection 
+        200:
+          description: Update a L2Vpn connection
           schema:
             $ref: '#/definitions/L2Vpn'
-  /svc/sbiadp/config/{controllerid}/united-sbi-service-l2vpn-vpws:service/l2vpnVpwss/l2vpnVpws/{vpnid}/acs:
-    post:
-      summary: Add a L2Ac Configuration to L2Vpn
-      description: Add a L2Ac Configuration to L2Vpn, need to pass in controller id and vpn id
-      produces:
-        - application/json
-      parameters:
-        - name: controllerid
-          in: path
-          description: controller uuid
-          required: true
-          type: string
-        - name: vpnid
-          in: path
-          description: L2Vpn connection uuid
-          required: true
-          type: string
-        - name: ac
-          in: body
-          description: L2Ac Object
-          required: true
+        400:
+          description: L2Vpn resource provided in body is missing with required properties.
           schema:
-            $ref: '#/definitions/L2Ac'
-      responses:
-        '200':
-          description: Add a L2Ac Configuration to L2Vpn 
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+        404:
+          description: not found
+        500:
+          description: L2Vpn service failed to process the request.
           schema:
-            $ref: '#/definitions/L2Ac'
-  /rest/svc/sbiadp/config/{controllerid}/united-sbi-service-l2vpn-vpws:service/l2vpnVpwss/l2vpnVpws/{vpnid}/acs/ac/{acid}:
-      delete:
-        summary: Delete a L2Ac Configuration
-        description: Delete a L2Ac Configuration, need to pass in controller id, vpn id and acid
-        produces:
-          - application/json
-        parameters:
-          - name: controllerid
-            in: path
-            description: controller uuid
-            required: true
-            type: string
-          - name: vpnid
-            in: path
-            description: L2Vpn Connection uuid
-            required: true
-            type: string
-          - name: acid
-            in: path
-            description: L2Ac uuid
-            required: true
-            type: string
-        responses:
-          '200':
-            description: Delete a L2Ac Configuration 
-            schema:
-              $ref: '#/definitions/L2Ac'
-      put:
-        summary: Update a L2Ac configuration
-        description: Update a L2Ac configuration, need to pass in controller id, vpn id and acid
-        produces:
-          - application/json
-        parameters:
-          - name: controllerid
-            in: path
-            description: controller uuid
-            required: true
-            type: string
-          - name: vpnid
-            in: path
-            description: L2Vpn Connection uuid
-            required: true
-            type: string
-          - name: acid
-            in: path
-            description: L2Ac uuid
-            required: true
-            type: string
-          - name: ac
-            in: body
-            description: L2Ac instance
-            required: true
-            schema:
-              $ref: '#/definitions/L2Ac'
-        responses:
-          '200':
-            description: Update a L2Ac configuration
-            schema:
-              $ref: '#/definitions/L2Ac'
+            $ref: '#/definitions/Error'
+
 definitions:
+
   L2Vpn:
     type: object
     required:
@@ -202,7 +188,7 @@ definitions:
       id:
         type: string
         description: L2Vpn Connection UUID
-        format: string
+        format: uuid
       name:
         type: string
         description: L2Vpn Connection name
@@ -229,17 +215,28 @@ definitions:
         format: int16
       acs:
         $ref: '#/definitions/L2Acs'
-      CtrlWordType: 
+      ctrlWordType:
         type: string
+        enum:
+          - disable
+          - enable
         description: Control Word type, including disable and enable
-      Pws:
+      pws:
         $ref: '#/definitions/Pws'
-      SignalType:
+      signalingType:
         type: string
-        description: Singaling Type of L2Vpn, including static,ldp,ldp and sr-te
-      EncapsulationType:
+        enum:
+          - static
+          - ldp
+          - rsvp-te
+        description: Signaling Type of L2Vpn, including static,ldp and rsvp-te
+      encapsulation:
         type: string
+        enum:
+          - eth
+          - vlan
         description: Encapsulation Type of L2Vpn, including eth and vlan
+
   TunnelService:
     type: object
     required:
@@ -247,8 +244,12 @@ definitions:
     properties:
       type:
         type: string
-        description: Type of tunnel policy, including auto-select°¢mpls-te°¢vxlan°¢gre
-        format: string
+        enum:
+          - auto-select
+          - mpls-te
+          - vxlan
+          - gre
+        description: Type of tunnel policy, including auto-select„ÄÅmpls-te„ÄÅvxlan„ÄÅgre
       autoSelect:
         $ref: '#/definitions/AutoSelectPolicy'
       mplsTe:
@@ -270,23 +271,27 @@ definitions:
     type: object
     required:
       - autoSelectTunnel
-    properties: 
+    properties:
       autoSelectTunnel:
+        type: array
         items:
             $ref: '#/definitions/AutoSelectTunnel'
   AutoSelectTunnel:
     type: object
     required:
       - type
-    properties: 
+    properties:
       type:
         type: string
+        enum:
+          - ldp
+          - te
+          - gre
         description: Tunnel type of Auto select tunnel policy
-        format: string
       priority:
         type: integer
         description: Tunnel priority of Auto select tunnel policy
-        format: int64
+        format: int32
   ParticularConstraints:
     type: object
     required:
@@ -312,8 +317,10 @@ definitions:
         format: string
       type:
         type: string
+        enum:
+          - binding
+          - particular-mpls-te-tunnel
         description: Type of tunnel constraint including binding and particular-mpls-te-tunnel
-        format: string
       bindingTunnel:
         type: array
         description: List of binding tunnel
@@ -328,25 +335,30 @@ definitions:
     properties:
       signalType:
         type: string
-        description: Tunnel type of Manual Select, including rsvp-te°¢sr-te°¢static-lsp
+        enum:
+          - rsvp-te
+          - sr-te
+          - static-lsp
+        description: Tunnel type of Manual Select, including rsvp-te„ÄÅsr-te„ÄÅstatic-lsp
       manageProtocol:
         type: string
-        description: Manage protocol, including netconf°¢pcep
+        description: Manage protocol, including netconf„ÄÅpcep
       sharing:
         type: boolean
-        description: Whether is shared, including true°¢false
+        description: Whether is shared, including true„ÄÅfalse
       besteffort:
         type: boolean
-        description: Whether is best effort, including true°¢false
+        description: Whether is best effort, including true„ÄÅfalse
       bandwidth:
         type: integer
         description: Tunnel bandwidth in kbps
+        format: int32
       coRoute:
         type: boolean
-        description: Whether to re Route, including true°¢false
+        description: Whether to re Route, including true„ÄÅfalse
       bfdEnable:
         type: boolean
-        description: Whether to enable BFD Protocol, including true°¢false
+        description: Whether to enable BFD Protocol, including true„ÄÅfalse
       pathConstraint:
         $ref: '#/definitions/PathConstraint'
       pathProtectPolicy:
@@ -355,7 +367,7 @@ definitions:
     type: object
     required:
       - setupPriority
-    properties: 
+    properties:
       setupPriority:
         type: integer
         description: Setup priority of tunnel route constraints, range from 0 to 7
@@ -372,42 +384,89 @@ definitions:
     type: object
     required:
       - type
-    properties: 
+    properties:
       type:
         type: string
-        description: Type of tunnel protection policy 
+        description: Type of tunnel protection policy
       hotStandbyEnable:
         type: boolean
-        description: Whether to enable hotstandby in tunnel protection, including true°¢false
+        description: Whether to enable hotstandby in tunnel protection, including true„ÄÅfalse
       revertive:
         type: boolean
-        description: Whether to revertive in tunnel protection including true°¢false
+        description: Whether to revertive in tunnel protection including true„ÄÅfalse
       bandwidthMode:
         type: string
-        description: Bandwidth mode of tunnel protection including original-bandwidth°¢dynamic-bandwidth
+        description: Bandwidth mode of tunnel protection including original-bandwidth„ÄÅdynamic-bandwidth
       wtr:
         type: integer
         description: Wtr time of tunnel protection revertive  in us, range from 0 to 60000000
         format: int32
   L2Acs:
     type: object
-    required: 
+    required:
       - ac
     properties:
       ac:
         type: array
-        description: Layer2 Vpn Access Point configuration
-        items: 
+        items:
           $ref: '#/definitions/L2Ac'
+        description: Layer2 Vpn Access Point configuration
   L2Ac:
     type: object
     required:
-      - externalQosPolicyId
+      - id
+      - name
     properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      tenantId:
+        type: string
+        format: uuid
+      localName:
+        type: string
+      description:
+        type: string
+      neId:
+        type: string
+        format: uuid
+      ltpId:
+        type: string
+        format: uuid
+      adminStatus:
+        type: string
+        enum:
+          - adminUp
+          - adminDown
+      operStatus:
+        type: string
+        enum:
+          - operateUp
+          - operateDown
+      l2Access:
+        $ref: '#/definitions/L2Access'
+      inboundQosPolicyId:
+        type: string
+      outboundQosPolicyId:
+        type: string
+      inboundQueuePolicyId:
+        type: string
+      outboundQueuePolicyId:
+        type: string
+      inboundQosIfPhb:
+        $ref: '#/definitions/QosIfPhb'
+      outboundQosIfPhb:
+        $ref: '#/definitions/QosIfPhb'
+      upstreamBandwidth:
+        $ref: '#/definitions/QosIfCar'
+      downstreamBandwidth:
+        $ref: '#/definitions/QosIfCar'
       externalQosPolicyId:
         type: string
         description: Id of External Qos Policy
-      overrideFlows:
+      overrideFlow:
         $ref: '#/definitions/OverrideFlows'
   OverrideFlows:
     type: object
@@ -432,7 +491,7 @@ definitions:
         description: Flow name in controller.
       direction:
         type: string
-        description: Direction of flow, including ingress, egress 
+        description: Direction of flow, including ingress, egress
       car:
         $ref: '#/definitions/QosIfCar'
   QosIfCar:
@@ -442,9 +501,9 @@ definitions:
       - cir
       - pir
     properties:
-      enable: 
+      enable:
         type: boolean
-        description: Whether to enable car configuration, including true°¢false
+        description: Whether to enable car configuration, including true„ÄÅfalse
       cir:
         type: integer
         description: Committed speed in kbps
@@ -463,7 +522,7 @@ definitions:
         format: int32
   Pws:
     type: object
-    required: 
+    required:
       - uuid
     properties:
       uuid:
@@ -477,10 +536,11 @@ definitions:
   Pw:
     type: object
     required:
-      - uuid 
+      - id
     properties:
-      uuid:
+      id:
         type: string
+        format: maxLen36
         description: uuid of private wire
       name:
         type: string
@@ -490,9 +550,11 @@ definitions:
         description: description of private wire
       tenantId:
         type: string
+        format: maxLen36
         description: tenant uuid
       neId:
         type: string
+        format: maxLen36
         description: real device uuid allocated by sdno
       peerAddress:
         type: string
@@ -502,7 +564,62 @@ definitions:
         description: tunnel id
       topoRole:
         type: string
+        enum:
+          - hub
+          - spoke
         description: topology role, including hub, spoke
       protectionRole:
-        type: string 
+        type: string
+        enum:
+          - primary
+          - backup
         description: protection role, including primary, backup
+  L2Access:
+    type: object
+    properties:
+      accessType:
+        type: string
+        enum:
+          - port
+          - dot1q
+          - qing
+      dot1qVlanBitmap:
+        type: string
+        description: 1-4095
+      qinqSvlanBitmap:
+        type: string
+      qinqCvlanBitmap:
+        type: string
+      pushVlanId:
+        type: integer
+        format: int32
+      swapVlanId:
+        type: integer
+        format: int32
+      accessAction:
+        type: string
+        enum:
+          - keep
+          - push
+          - pop
+          - swap
+
+  QosIfPhb:
+    type: object
+    properties:
+      trust8021p:
+        type: boolean
+      trustUpstream:
+        type: boolean
+      phbMap:
+        type: boolean
+  Error:
+    type: object
+    required:
+      - code
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

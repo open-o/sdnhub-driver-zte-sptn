@@ -95,6 +95,24 @@ paths:
       responses:
         '200':
           description: Create a L3vpn connection
+  /restconf/operations/sptn-service-route:request-routes:
+    post:
+      summary: Calculate route of tunnel
+      description: Calculate route of tunnel
+      produces:
+       - application/json
+      parameters:
+        - name: request-routes
+          in: body
+          description: Calculate routes request
+          required: true
+          schema:
+            $ref: '#/definitions/RouteCalReqsInput'
+      responses:
+        '200':
+         description: Calculate routes request
+         schema:
+           $ref: '#/definitions/RouteCalResultsOutput'
 definitions:
   CreateElineAndTunnels:
    type: object
@@ -234,9 +252,9 @@ definitions:
      default: 0
      format: int16
     oam:
-      $ref: '#/definitions/OAM'
+      $ref: '#/definitions/Oam'
     qos:
-      $ref: '#/definitions/QOS'
+      $ref: '#/definitions/Qos'
   SncSwitch:
    type: object
    required:
@@ -317,7 +335,7 @@ definitions:
     id:
      type: integer
      format: int32
-  QOS:
+  Qos:
    type: object
    required:
     - belonged-id
@@ -412,7 +430,7 @@ definitions:
      enum: [0,1,2,3,4,5,6,7]
      default: 0
      format: int16
-  OAM:
+  Oam:
    type: object
    required:
     - belonged-id
@@ -547,9 +565,9 @@ definitions:
      default: 0
      format: int16
     oam:
-     $ref: '#/definitions/OAM'
+     $ref: '#/definitions/Oam'
     qos:
-     $ref: '#/definitions/QOS'
+     $ref: '#/definitions/Qos'
   TunnelId:
    type: string
    description: Tunnel UUID
@@ -595,8 +613,8 @@ definitions:
     xcs:
      type: array
      items:
-      $ref: '#/definitions/XC'
-  XC:
+      $ref: '#/definitions/Xc'
+  Xc:
    type: object
    description: Node on the route
    required:
@@ -681,7 +699,7 @@ definitions:
      description: Whether PW share tunnel
      default: false
     qos:
-     $ref: '#/definitions/QOS'
+     $ref: '#/definitions/Qos'
     snc-switch:
      $ref: '#/definitions/SncSwitch'
     admin-status:
@@ -690,7 +708,16 @@ definitions:
      enum: [0,1]
      format: int16
     lsp-oam:
-     $ref: '#/definitions/OAM'
+     $ref: '#/definitions/Oam'
+  RouteCalResultsOutput:
+   type: object
+   properties:
+    output:
+      $ref: '#/definitions/RouteCalResults'
+  RouteCalResults:
+   type: array
+   items:
+    $ref: '#/definitions/RouteCalResult'
   RouteCalResult:
    type: object
    description: Tunnel route calculate result
@@ -732,7 +759,7 @@ definitions:
     xcs:
       type: array
       items:
-       $ref: '#/definitions/XC'
+       $ref: '#/definitions/Xc'
   L3vpn:
    type: object
    properties:
@@ -898,8 +925,105 @@ definitions:
     error-message:
      type: string
      format: string
-
-
+  RouteCalReqsInput:
+   type: object
+   properties:
+    route-cal-reqs:
+      $ref: '#/definitions/RouteCalReqs'
+  RouteCalReqs:
+   type: array
+   items:
+     $ref: '#/definitions/RouteCalReq'
+  RouteCalReq:
+   type: object
+   properties:
+    sequence-no:
+     type: string
+     format: string
+     description: Sequence number
+    calculate-policy:
+     type: integer
+     format: int16
+     description: Calculate policy, including 0(master), 1(master-and-slave), 2(local-protection), local-protection is used for uni-uni mode
+     enum: [0,1,2]
+    calculate-type:
+     type: integer
+     format: int16
+     description: Calculate type, including 0(strict-separate), 1(besteffort-separate)
+     enum: [0,1]
+    calculate-mode:
+     type: integer
+     format: int16
+     description: Calculate mode, including 0(one-one), 1(one-two), 2(two-two)
+     enum: [0,1,2]
+    calculate-interconnection-mode:
+     type: integer
+     format: int16
+     description: Calculate interconnection mode, including 1(nni-nni), 2(uni-uni)
+     enum: [1,2]
+    layer-rate:
+     type: integer
+     format: int16
+     description: Layer rate, including 0(lsp), 1(pw)
+     enum: [0,1]
+    left-ne-ids:
+     type: array
+     items:
+      $ref: '#/definitions/NeId'
+    right-ne-ids:
+     type: array
+     items:
+      $ref: '#/definitions/NeId'
+    work-calculate-constraint:
+      $ref: '#/definitions/CalculateConstraint'
+    protect-calculate-constraint:
+      $ref: '#/definitions/CalculateConstraint'
+  CalculateConstraint:
+   type: object
+   properties:
+    bandwidth:
+     type: integer
+     format: int64
+     description: Requested bandwidth in kbps
+    cal-policy:
+     type: integer
+     format: int32
+     description: Route calculation policy, including 0(Minimum Hop), 1(bandwidth balancing), 2(Minimum Latency)
+     enum: [0,1,2]
+     default: 0
+    ne-link-constraint:
+     $ref: '#/definitions/NeLinkConstraints'
+  NeLinkConstraints:
+   type: object
+   properties:
+    explicit-include-ne:
+     type: array
+     items:
+      $ref: '#/definitions/NeId'
+    explicit-include-link:
+     type: array
+     items:
+      $ref: '#/definitions/LinkId'
+    explicit-exclude-ne:
+     type: array
+     items:
+      $ref: '#/definitions/NeId'
+    explicit-exclude-link:
+     type: array
+     items:
+       $ref: '#/definitions/LinkId'
+  NeId:
+   type: object
+   properties:
+    ne-id:
+     type: string
+     format: string
+  LinkId:
+   type: object
+   properties:
+    link-id:
+     type: string
+     format: string
 
 
 
