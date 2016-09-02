@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.services;
+
+
+import org.openo.sdno.sptndriver.models.south.brs.SME;
+
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 /**
- *  Enum of OAM lm mode.
+ * Interface of SBI NE service.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
-  private Integer value;
+public interface ISNeService {
 
-  SLmMode(Integer value) {
-    this.value = value;
-  }
-
-  public String toString() {
-    return String.valueOf(value);
-  }
+  /**
+   * Get NE information by NE ID.
+   *
+   * @param neid NE UUID in controller.
+   * @return NE information.
+   */
+  @GET("restconf/data/sptn-resources-module:resources/nes/ne-list/ne={id}")
+  Call<SME> getNeByID(@Path("id") String neid);
 }

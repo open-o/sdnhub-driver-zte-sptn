@@ -14,22 +14,33 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.enums.south.routecal;
 
 /**
- *  Enum of OAM lm mode.
+ * Enum of Route calculate policy.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
+public enum SRouteCalculatePolicy {
+  MASTER(0),
+  MASTER_AND_SLAVE(1),
+  /**
+   * Used in UNI_UNI Eline LSP creation.
+   */
+  LOCAL_PROTECTION(2);
   private Integer value;
 
-  SLmMode(Integer value) {
+  SRouteCalculatePolicy(Integer value) {
     this.value = value;
   }
 
   public String toString() {
     return String.valueOf(value);
+  }
+
+  /**
+   *  Get Integer route calculate policy value.
+   * @return Integer route calculate policy value.
+   */
+  public Integer getValue() {
+    return value;
   }
 }

@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.enums.south.routecal;
 
 /**
- *  Enum of OAM lm mode.
+ * Enum of the route separate policy when calculate work route and protection route.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
+public enum SRouteSeparate {
+  STRICT_SEPARATE(0),
+  BEST_EFFORT_SEPARATE(1);
   private Integer value;
 
-  SLmMode(Integer value) {
+  SRouteSeparate(Integer value) {
     this.value = value;
   }
 
   public String toString() {
     return String.valueOf(value);
+  }
+
+  /**
+   * Get Integer route separate policy value.
+   *
+   * @return Integer route separate policy value.
+   */
+  public Integer getValue() {
+    return value;
   }
 }

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.services;
+
+import org.openo.sdno.sptndriver.models.north.brs.NME;
 
 /**
- *  Enum of OAM lm mode.
+ * The NBI NE service.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
-  private Integer value;
+public class NeService {
 
-  SLmMode(Integer value) {
-    this.value = value;
-  }
-
-  public String toString() {
-    return String.valueOf(value);
+  /**
+   * Get NE information from BRS.
+   *
+   * @param globalID Global ID of NE.
+   * @return NE information.
+   */
+  public static NME getNNEByGlobalID(String globalID) {
+    return null;
   }
 }

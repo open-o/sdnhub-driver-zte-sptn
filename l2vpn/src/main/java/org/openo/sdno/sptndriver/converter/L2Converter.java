@@ -1,25 +1,30 @@
 /*
- * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
+ * Copyright 2016 ZTE, Inc. and others.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.convertor;
+package org.openo.sdno.sptndriver.converter;
 
-import org.openo.sdno.sptndriver.convertor.ac.AccessActionConvertor;
-import org.openo.sdno.sptndriver.convertor.ac.AccessTypeConvertor;
-import org.openo.sdno.sptndriver.enums.north.ac.NACAccessAction;
+import org.openo.sdno.sptndriver.enums.AdminStatusEnum;
+import org.openo.sdno.sptndriver.enums.OperateStatusEnum;
+import org.openo.sdno.sptndriver.enums.ac.AccessActionEnum;
+import org.openo.sdno.sptndriver.enums.ac.AccessTypeEnum;
+import org.openo.sdno.sptndriver.enums.pw.CtrlWordEnum;
+import org.openo.sdno.sptndriver.enums.pw.EncapsulateTypeEnum;
 import org.openo.sdno.sptndriver.enums.south.SElineSncType;
 import org.openo.sdno.sptndriver.enums.south.SInterConnectionMode;
-import org.openo.sdno.sptndriver.enums.south.ac.SACRole;
+import org.openo.sdno.sptndriver.enums.south.ac.SAcRole;
 import org.openo.sdno.sptndriver.enums.south.pw.SPwRole;
 import org.openo.sdno.sptndriver.enums.south.pw.SSnSupport;
 import org.openo.sdno.sptndriver.models.north.NL2Ac;
@@ -37,20 +42,35 @@ import org.openo.sdno.sptndriver.models.south.SSncPws;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class L2Convertor {
+/**
+ * The class to convert from L2vpn to Eline.
+ */
+public class L2Converter {
 
   private static final Logger LOGGER =
-      LoggerFactory.getLogger(L2Convertor.class);
+      LoggerFactory.getLogger(L2Converter.class);
 
+  /**
+   * Convert create L2vpn to Eline.
+   *
+   * @param l2vpn L2vpn creating parameters in NBI.
+   * @return Eline and tunnel creating parameters in SBI.
+   */
   public static SCreateElineAndTunnels L2ToElineTunnerCreator(NL2Vpn l2vpn) {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
-    // todo: check L2 LCM must assign the L2 ID
     createElineAndTunnels.setSncEline(L2ToEline(l2vpn, l2vpn.getId()));
     createElineAndTunnels
-        .setSncTunnelCreatePolicy(SSncTunnelCreatePolicyConvertor.initTunnelPolicy(l2vpn));
+        .setSncTunnelCreatePolicy(SSncTunnelCreatePolicyInitiator.initTunnelPolicy(l2vpn));
     return createElineAndTunnels;
   }
 
+  /**
+   * convert L2vpn to Eline.
+   *
+   * @param nl2Vpn   NBI L2vpn.
+   * @param SElineId Eline uuid.
+   * @return SBI Eline.
+   */
   public static SEline L2ToEline(NL2Vpn nl2Vpn, String SElineId) {
     if (nl2Vpn == null) {
       LOGGER.error("input l2vpn is null.");
@@ -62,26 +82,36 @@ public class L2Convertor {
     sEline.setName(new String());
     sEline.setUserLabel(nl2Vpn.getName());
     sEline.setParentNcdId(null);
-    sEline.setAdminStatus(AdminStatusConvertor.NToS(nl2Vpn.getAdminStatus()));
-    sEline.setOperateStatus(OperateStatusConvertor.NToS(nl2Vpn.getOperStatus()));
-    sEline.setSncType(Integer.getInteger(SElineSncType.Simple.toString()));
-    sEline.setInterconnectionMode(Integer.getInteger(SInterConnectionMode.uni_uni.toString()));
+    sEline.setAdminStatus(AdminStatusEnum.getIndex(nl2Vpn.getAdminStatus()));
+    sEline.setOperateStatus(OperateStatusEnum.getIndex(nl2Vpn.getOperStatus()));
+    sEline.setSncType(Integer.getInteger(SElineSncType.SIMPLE.toString()));
+    sEline.setInterconnectionMode(Integer.getInteger(SInterConnectionMode.UNI_UNI.toString()));
     sEline.setIngressEndPoints(NToS(nl2Vpn.getAcs(), true));
     sEline.setEgressEndPoints(NToS(nl2Vpn.getAcs(), false));
     boolean hasProtect = hasBackupPw(nl2Vpn.getPws());
     sEline.setSncSwitch(
-        SSncSwitchConvertor.initPwSncSwitch(SElineId, hasProtect));
-    sEline.setSncPws(initPws(nl2Vpn, hasProtect));
+        SSncSwitchInitiator.initPwSncSwitch(SElineId, hasProtect));
+    sEline.setSncPws(initPws(nl2Vpn));
     return sEline;
   }
 
-  // todo: Currently controller Eline id is equal to eline id in sdno, may get id from map in the future
+  /**
+   * Get SBI Eline UUID from NBI L2vpn UUID.Currently controller Eline id is equal to Eline id in
+   * SDN-O, may get id from map in the future.
+   *
+   * @param northElineId NBI L2vpn UUID.
+   * @return SBI Eline UUID.
+   */
   public static String getSouthElineId(String northElineId) {
     return northElineId;
   }
 
   /**
-   * Convert ingress or egress ac list, only support 2 ACs
+   * Convert ingress or egress ac list, only support 2 ACs.
+   *
+   * @param acList    NBI AC list.
+   * @param isIngress Whether is ingress or egress AC.
+   * @return SBI AC list, if input NBI AC list size is not 2, return null.
    */
   private static SServiceEndPoints NToS(NL2Acs acList, boolean isIngress) {
     if (acList == null
@@ -100,6 +130,12 @@ public class L2Convertor {
     return epList;
   }
 
+  /**
+   * Convert NBI AC to SBI AC.
+   *
+   * @param ac NBI AC.
+   * @return SBI AC.
+   */
   private static SServiceEndPoint NToS(NL2Ac ac) {
     if (ac == null) {
       LOGGER.error("input ac is null.");
@@ -112,16 +148,16 @@ public class L2Convertor {
 
     NL2Access nl2Access = ac.getL2Access();
     if (nl2Access != null) {
-      ep.setAccessType(AccessTypeConvertor.NToS(nl2Access.getAccessType()));
+      ep.setAccessType(AccessTypeEnum.getIndex(nl2Access.getAccessType()));
       ep.setDot1qVlanBitmap(nl2Access.getDot1qVlanBitmap());
       ep.setQinqCvlanBitmap(nl2Access.getQinqCvlanBitmap());
       ep.setQinqSvlanBitmap(nl2Access.getQinqSvlanBitmap());
       String accessAction = nl2Access.getAccessAction();
-      ep.setAccessAction(AccessActionConvertor.NToS(accessAction));
+      ep.setAccessAction(AccessActionEnum.getIndex(accessAction));
       if (accessAction != null) {
-        if (accessAction.equals(NACAccessAction.push.toString())) {
+        if (accessAction.equals(AccessActionEnum.PUSH.getName())) {
           ep.setAccessVlanId(nl2Access.getPushVlanId());
-        } else if (accessAction.equals(NACAccessAction.swap.toString())) {
+        } else if (accessAction.equals(AccessActionEnum.SWAP.getName())) {
           ep.setAccessVlanId(nl2Access.getSwapVlanId());
         } else {
           LOGGER.debug(
@@ -129,15 +165,21 @@ public class L2Convertor {
         }
       }
 
-      ep.setQos(SQosConvertor
+      ep.setQos(SQosInitiator
                     .initAcQos(ep.getId(), ac.getUpstreamBandwidth(), ac.getDownstreamBandwidth()));
     }
 
-    ep.setRole(Integer.getInteger(SACRole.master.toString()));
+    ep.setRole(Integer.getInteger(SAcRole.MASTER.toString()));
 
     return ep;
   }
 
+  /**
+   * Whether has backup PW.
+   *
+   * @param pwList PW list.
+   * @return true when one of the PW is backup PW, return false when PW list is null or empty.
+   */
   private static boolean hasBackupPw(NPws pwList) {
     if (pwList == null) {
       LOGGER.error("pwList is empty.");
@@ -151,8 +193,14 @@ public class L2Convertor {
     return false;
   }
 
-  // todo; pw protection is not supported now,so there is only 2 NEs, NE_A and NE_Z and pw role is always master
-  private static SSncPws initPws(NL2Vpn l2Vpn, boolean hasProtect) {
+  /**
+   * Init PW from NBI L2vpn, PW protection is not supported now,so there is only 2 NEs, NE_A and
+   * NE_Z and pw role is always MASTER.
+   *
+   * @param l2Vpn NBI L2vpn.
+   * @return SBI PW list.
+   */
+  private static SSncPws initPws(NL2Vpn l2Vpn) {
     if (l2Vpn == null || l2Vpn.getPws() == null) {
       LOGGER.error("l2vpn or pwList is null.");
       return null;
@@ -171,20 +219,20 @@ public class L2Convertor {
       sncPw.setId(l2Vpn.getPws().getUuid());
       sncPw.setName(null);
       sncPw.setUserLabel(pwA.getName());
-      sncPw.setRole(Integer.getInteger(SPwRole.master.toString()));
-      sncPw.setEncaplateType(EncaplateTypeConvertor.NToS(l2Vpn.getEncapsulation().toString()));
+      sncPw.setRole(Integer.getInteger(SPwRole.MASTER.toString()));
+      sncPw.setEncaplateType(EncapsulateTypeEnum.getIndex(l2Vpn.getEncapsulation().toString()));
       sncPw.setIngressNeId(pwA.getNeId());
       sncPw.setEgressNeId(pwZ.getNeId());
       sncPw.setDestinationIp(pwA.getPeerAddress());
       sncPw.setSourceIp(pwZ.getPeerAddress());
-      sncPw.setAdminStatus(AdminStatusConvertor.NToS(l2Vpn.getAdminStatus()));
-      sncPw.setOperateStatus(OperateStatusConvertor.NToS(l2Vpn.getOperStatus()));
-      sncPw.setCtrlWordSupport(CtrlWordConvertor.NToS(l2Vpn.getCtrlWordType().toString()));
-      sncPw.setSnSupport(Integer.getInteger(SSnSupport.not_support.toString()));
+      sncPw.setAdminStatus(AdminStatusEnum.getIndex(l2Vpn.getAdminStatus()));
+      sncPw.setOperateStatus(OperateStatusEnum.getIndex(l2Vpn.getOperStatus()));
+      sncPw.setCtrlWordSupport(CtrlWordEnum.getIndex(l2Vpn.getCtrlWordType().toString()));
+      sncPw.setSnSupport(Integer.getInteger(SSnSupport.NOT_SUPPORT.toString()));
       sncPw.setVccvType(0);
       sncPw.setConnAckType(0);
-      sncPw.setQos(SQosConvertor.initCacClosedQos(sncPw.getId()));
-      sncPw.setOam(SOamConvertor.initOAM(sncPw.getId()));
+      sncPw.setQos(SQosInitiator.initCacClosedQos(sncPw.getId()));
+      sncPw.setOam(SOamInitiator.initOam(sncPw.getId()));
       pwList.add(sncPw);
     }
 

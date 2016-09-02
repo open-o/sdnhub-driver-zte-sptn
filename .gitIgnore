@@ -1,0 +1,48 @@
+
+
+###############
+#    folder   #
+###############
+/idea
+
+###############
+#  fixed file #
+###############
+.gitignore
+*.exe
+*.txt
+*.vcproj
+*.sln
+*.lib
+*.dll
+*.o
+*.exp
+*.ilk
+*.pdb
+*.sln
+*.vcxproj
+*.user
+*.sdf
+*.suo
+*.opensdf
+*.filters
+*.iml
+*.idea
+*.exec
+*dependency-reduced-pom.xml
+*.class
+*.jar
+
+###############
+#  temp file  #
+###############
+~*
+*.log
+*.bak
+
+###############
+#    script   #
+###############
+*.bat
+
+

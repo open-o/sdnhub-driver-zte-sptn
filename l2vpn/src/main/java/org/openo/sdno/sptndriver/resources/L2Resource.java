@@ -1,21 +1,23 @@
 /*
- * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
+ * Copyright 2016 ZTE, Inc. and others.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.openo.sdno.sptndriver.resources;
 
 import org.openo.sdno.sptndriver.config.Config;
-import org.openo.sdno.sptndriver.convertor.L2Convertor;
+import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
@@ -37,22 +39,35 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ *  The class to provide L2vpn resource.
+ */
 @Path("/openoapi/sbi-l2vpn-vpws/v1/")
 @Produces(MediaType.APPLICATION_JSON)
-
 public class L2Resource {
 
   private final Validator validator;
   private Config config;
 
+  /**
+   *  The constructor.
+   * @param validator  validation parameter.
+   * @param config   Configurations read from configuration file.
+   */
   public L2Resource(Validator validator, Config config) {
     this.validator = validator;
     this.config = config;
   }
 
+  /**
+   *  The post method to create Eline.
+   * @param L2 Parameter of create L2vpn.
+   * @return 200 if success
+   * @throws URISyntaxException
+   */
   @POST
   public Response createEline(NL2Vpn L2) throws URISyntaxException {
-    SCreateElineAndTunnels createElineAndTunnels = L2Convertor.L2ToElineTunnerCreator(L2);
+    SCreateElineAndTunnels createElineAndTunnels = L2Converter.L2ToElineTunnerCreator(L2);
     if (createElineAndTunnels == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
@@ -76,10 +91,16 @@ public class L2Resource {
                                 URI(String.valueOf(L2))).build();
   }
 
+  /**
+   *  The delete method to delete Eline.
+   * @param vpnid Global UUID of Eline(UUID in SDN-O).
+   * @return  200 if success
+   * @throws URISyntaxException
+   */
   @DELETE
   @Path("{vpnid}")
   public Response deleteEline(@PathParam("vpnid") String vpnid) throws URISyntaxException {
-    String sElineId = L2Convertor.getSouthElineId(vpnid);
+    String sElineId = L2Converter.getSouthElineId(vpnid);
     if (sElineId == null || vpnid == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)

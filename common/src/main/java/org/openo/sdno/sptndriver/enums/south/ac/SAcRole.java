@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.enums.south.ac;
 
 /**
- *  Enum of OAM lm mode.
+ *  Enum of AC role.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
+public enum SAcRole {
+  MASTER(0),
+  SLAVE(1);
   private Integer value;
 
-  SLmMode(Integer value) {
+  SAcRole(Integer value) {
     this.value = value;
   }
 

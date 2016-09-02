@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.enums.south.sncswitch;
 
 /**
- *  Enum of OAM lm mode.
+ *  Enum of linear protection protocol in snc switch.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
+public enum SLinearProtectionProtocol {
+  APS(0),
+  PSC(1);
   private Integer value;
 
-  SLmMode(Integer value) {
+  SLinearProtectionProtocol(Integer value) {
     this.value = value;
   }
 

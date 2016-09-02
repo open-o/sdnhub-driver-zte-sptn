@@ -1,15 +1,17 @@
 /*
- * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
+ * Copyright 2016 ZTE, Inc. and others.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.openo.sdno.sptndriver.services;
@@ -31,7 +33,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Eline service CRUD
+ * Eline service CRUD.
  */
 public class SElineServices {
 
@@ -40,13 +42,19 @@ public class SElineServices {
   private String baseUrl;
 
   /**
-   * constructor
-   * @param baseUrl  url of SPTN controller
+   * The constructor
+   *
+   * @param baseUrl Url of SPTN controller.
    */
   public SElineServices(String baseUrl) {
     this.baseUrl = baseUrl;
   }
 
+  /**
+   * Send REST to controller to create Eline and tunnels.
+   *
+   * @param createElineAndTunnels Eline and tunnels information
+   */
   public void createElineAndTunnels(SCreateElineAndTunnels createElineAndTunnels)
       throws HttpErrorException, IOException, CommandErrorException {
     String printText = "Create eline and tunnels " + createElineAndTunnels.getSncEline().getId();
@@ -62,6 +70,11 @@ public class SElineServices {
     LOGGER.debug(printText + " end. ");
   }
 
+  /**
+   * Send REST to controller to delete Eline..
+   *
+   * @param elineId Eline UUID
+   */
   public void deleteEline(SDeleteElineInput elineId)
       throws IOException, HttpErrorException, CommandErrorException {
     String printText = "Delete Eline " + elineId.getInput().getElineId();

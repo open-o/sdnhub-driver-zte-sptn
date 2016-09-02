@@ -1,15 +1,17 @@
 /*
- * Copyright (C) 2016 ZTE, Inc. and others. All rights reserved. (ZTE)
+ * Copyright 2016 ZTE, Inc. and others.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.openo.sdno.sptndriver.utils;
@@ -24,16 +26,16 @@ import org.slf4j.Logger;
 import retrofit2.Response;
 
 /**
- * Util for REST commands processing services.
+ * Util class for REST commands processing services.
  */
 public class ServiceUtil {
 
   /**
-   * Parse the result of REST commands that the return type is SCommandResultOutput
+   * Parse the result of REST commands that the return type is SCommandResultOutput.
    *
-   * @param response response of execution
-   * @throws CommandErrorException when command result is not successful
-   * @throws HttpErrorException    when receive http error
+   * @param response Response of execution.
+   * @throws CommandErrorException When command result is not successful.
+   * @throws HttpErrorException    When receives http error.
    */
   public static void parseCommandResultOutput(Response<SCommandResultOutput> response,
                                               Logger LOGGER,
@@ -51,7 +53,7 @@ public class ServiceUtil {
       }
       if (commandResult.getResult() != null) {
         if (commandResult.getResult()
-            .equals(Integer.getInteger(SCmdResultStatus.success.toString()))) {
+            .equals(Integer.getInteger(SCmdResultStatus.SUCCESS.toString()))) {
           LOGGER.debug(printText + " successfully. ");
           return;
         } else {
@@ -67,9 +69,9 @@ public class ServiceUtil {
 
   /**
    * Parse the result of REST commands that return no data, the use of SCommandResultOutput is only
-   * to avoid use callback function
+   * to avoid use callback function.
    *
-   * @throws HttpErrorException when command execution failed
+   * @throws HttpErrorException When command execution FAILED.
    */
   public static void parseRPCResult(Response<SCommandResultOutput> response,
                                     Logger LOGGER,
@@ -84,12 +86,12 @@ public class ServiceUtil {
   }
 
   /**
-   * pares response
+   * Parse response.
    *
-   * @param response  http response
-   * @param LOGGER    log information
-   * @param printText text print in the log
-   * @param <T>       body of response
+   * @param response  http response.
+   * @param LOGGER    Log information.
+   * @param printText Text print in the log.
+   * @param <T>       Body of response.
    */
   public static <T> T parseResponse(Response<T> response,
                                     Logger LOGGER,

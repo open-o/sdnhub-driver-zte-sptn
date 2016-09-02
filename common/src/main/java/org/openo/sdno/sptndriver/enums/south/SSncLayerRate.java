@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enum of OAM lm mode.
+ * Enum of snc switch layer rate.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
+public enum SSncLayerRate {
+  LSP(0),
+  PW(1);
   private Integer value;
 
-  SLmMode(Integer value) {
+  SSncLayerRate(Integer value) {
     this.value = value;
   }
 
   public String toString() {
     return String.valueOf(value);
+  }
+
+  /**
+   * Get Integer value of layer rate.
+   *
+   * @return Integer value of layer rate.
+   */
+  public Integer getValue() {
+    return value;
   }
 }

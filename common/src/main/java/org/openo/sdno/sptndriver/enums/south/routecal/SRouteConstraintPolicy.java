@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums.south.oam;
+package org.openo.sdno.sptndriver.enums.south.routecal;
 
 /**
- *  Enum of OAM lm mode.
+ * Enum of Route calculate policy in route constraint.
  */
-public enum SLmMode {
-  DISABLE(0),
-  PREACTIVE(1),
-  ON_DEMAND(2);
+public enum SRouteConstraintPolicy {
+  MINIMUM_HOP(0),
+  BANDWIDTH_BALANCING(1),
+  MINIMUM_LATENCY(2);
   private Integer value;
 
-  SLmMode(Integer value) {
+  SRouteConstraintPolicy(Integer value) {
     this.value = value;
   }
 
   public String toString() {
     return String.valueOf(value);
+  }
+
+  /**
+   * Get Integer route calculate policy value in route constraint.
+   *
+   * @return Integer route calculate policy value in route constraint.
+   */
+  public Integer getValue() {
+    return value;
   }
 }
