@@ -174,11 +174,10 @@ definitions:
         enum: [1]
         default: 1
       interconnection-mode:
-       type: integer
-       description: Mode of inter-connection between sub-domains, including 1(nni-nni), 2(uni-uni)
-       enum: [1,2]
-       default: 2
-       format: int16
+       type: string
+       description: Mode of inter-connection between sub-domains.
+       enum: ["nni-nni","uni-uni"]
+       format: string
       ingress-end-points:
        $ref: '#/definitions/ServiceEndPoints'
       egress-end-points:
@@ -928,13 +927,26 @@ definitions:
   RouteCalReqsInput:
    type: object
    properties:
-    route-cal-reqs:
+    input:
       $ref: '#/definitions/RouteCalReqs'
   RouteCalReqs:
-   type: array
-   items:
-     $ref: '#/definitions/RouteCalReq'
+   type: object
+   properties:
+     route-cal-reqs:
+        $ref: '#/definitions/RouteCalReq'
   RouteCalReq:
+   type: object
+   properties:
+    route-cal-req:
+     type: array
+     items:
+          $ref: '#/definitions/RouteCalReqContainer'
+  RouteCalReqContainer:
+   type: object
+   properties:
+     route-cal-req-container:
+       $ref: '#/definitions/RouteCalReqElement'
+  RouteCalReqElement:
    type: object
    properties:
     sequence-no:
@@ -942,38 +954,44 @@ definitions:
      format: string
      description: Sequence number
     calculate-policy:
-     type: integer
-     format: int16
-     description: Calculate policy, including 0(master), 1(master-and-slave), 2(local-protection), local-protection is used for uni-uni mode
-     enum: [0,1,2]
+     type: string
+     format: string
+     description: Calculate policy, local-protection is used for uni-uni mode.
+     enum: ["master","master-and-slave","local-protection"]
     calculate-type:
-     type: integer
-     format: int16
-     description: Calculate type, including 0(strict-separate), 1(besteffort-separate)
-     enum: [0,1]
+     type: string
+     format: string
+     description: Calculate type.
+     enum: ["strict-separate","besteffort-separate"]
     calculate-mode:
-     type: integer
-     format: int16
-     description: Calculate mode, including 0(one-one), 1(one-two), 2(two-two)
-     enum: [0,1,2]
+     type: string
+     format: string
+     description: Calculate mode, including simple(one-one), add-drop(one-two), (double-drop)two-two
+     enum: ["simple","add-drop","double-drop"]
     calculate-interconnection-mode:
-     type: integer
-     format: int16
-     description: Calculate interconnection mode, including 1(nni-nni), 2(uni-uni)
-     enum: [1,2]
+     type: string
+     format: string
+     description: Calculate interconnection mode.
+     enum: ["nni-nni","uni-uni"]
     layer-rate:
-     type: integer
-     format: int16
-     description: Layer rate, including 0(lsp), 1(pw)
-     enum: [0,1]
+     type: string
+     format: string
+     description: Layer rate.
+     enum: ["lsp","pw"]
     left-ne-ids:
-     type: array
-     items:
-      $ref: '#/definitions/NeId'
+     type: object
+     properties:
+      left-ne-id:
+       type: array
+       items:
+         $ref: '#/definitions/NeId'
     right-ne-ids:
-     type: array
-     items:
-      $ref: '#/definitions/NeId'
+     type: object
+     properties:
+       right-ne-id:
+         type: array
+         items:
+          $ref: '#/definitions/NeId'
     work-calculate-constraint:
       $ref: '#/definitions/CalculateConstraint'
     protect-calculate-constraint:
@@ -982,15 +1000,14 @@ definitions:
    type: object
    properties:
     bandwidth:
-     type: integer
-     format: int64
+     type: string
+     format: string
      description: Requested bandwidth in kbps
     cal-policy:
-     type: integer
-     format: int32
-     description: Route calculation policy, including 0(Minimum Hop), 1(bandwidth balancing), 2(Minimum Latency)
-     enum: [0,1,2]
-     default: 0
+     type: string
+     format: string
+     description: Route calculation policy.
+     enum: ["min-hop","bandwidth-balancing","min-latency"]
     ne-link-constraint:
      $ref: '#/definitions/NeLinkConstraints'
   NeLinkConstraints:
@@ -1024,7 +1041,3 @@ definitions:
     link-id:
      type: string
      format: string
-
-
-
-

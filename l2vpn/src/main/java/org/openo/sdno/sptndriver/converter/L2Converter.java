@@ -23,7 +23,6 @@ import org.openo.sdno.sptndriver.enums.ac.AccessTypeEnum;
 import org.openo.sdno.sptndriver.enums.pw.CtrlWordEnum;
 import org.openo.sdno.sptndriver.enums.pw.EncapsulateTypeEnum;
 import org.openo.sdno.sptndriver.enums.south.SElineSncType;
-import org.openo.sdno.sptndriver.enums.south.SInterConnectionMode;
 import org.openo.sdno.sptndriver.enums.south.ac.SAcRole;
 import org.openo.sdno.sptndriver.enums.south.pw.SPwRole;
 import org.openo.sdno.sptndriver.enums.south.pw.SSnSupport;
@@ -85,7 +84,7 @@ public class L2Converter {
     sEline.setAdminStatus(AdminStatusEnum.getIndex(nl2Vpn.getAdminStatus()));
     sEline.setOperateStatus(OperateStatusEnum.getIndex(nl2Vpn.getOperStatus()));
     sEline.setSncType(Integer.getInteger(SElineSncType.SIMPLE.toString()));
-    sEline.setInterconnectionMode(Integer.getInteger(SInterConnectionMode.UNI_UNI.toString()));
+    sEline.setInterconnectionMode(SEline.InterconnectionModeEnum.UNI_UNI);
     sEline.setIngressEndPoints(NToS(nl2Vpn.getAcs(), true));
     sEline.setEgressEndPoints(NToS(nl2Vpn.getAcs(), false));
     boolean hasProtect = hasBackupPw(nl2Vpn.getPws());

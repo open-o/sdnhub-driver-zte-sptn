@@ -39,7 +39,4 @@
         <module>l3vpn</module>
         <module>application</module>
     </modules>
-
-    <properties>
-    </properties>
 </project>

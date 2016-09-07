@@ -18,12 +18,14 @@ package org.openo.sdno.sptndriver;
 
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.resources.L2Resource;
+import org.openo.sdno.sptndriver.resources.L3Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
 
 /**
  * SDN-O SPTN driver application class.
@@ -45,23 +47,24 @@ public class App extends Application<Config> {
   /**
    * Initialize before the service started.
    *
-   * @param b bootstrap
+   * @param bootstrap Bootstrap.
    */
   @Override
-  public void initialize(Bootstrap<Config> b) {
+  public void initialize(Bootstrap<Config> bootstrap) {
   }
 
   /**
    * Run application.
    *
-   * @param c configuration settings read from configuration file
-   * @param e Environment
+   * @param config      configuration settings read from configuration file.
+   * @param environment Environment.
    */
   @Override
-  public void run(Config c, Environment e) {
+  public void run(Config config, Environment environment) {
     LOGGER.info("Method App#run() called");
 
     // Add the resource to the environment
-    e.jersey().register(new L2Resource(e.getValidator(), c));
+    environment.jersey().register(new L2Resource(environment.getValidator(), config));
+    environment.jersey().register(new L3Resource(environment.getValidator()));
   }
 }

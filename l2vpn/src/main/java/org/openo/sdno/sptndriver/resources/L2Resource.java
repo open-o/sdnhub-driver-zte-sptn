@@ -18,13 +18,17 @@ package org.openo.sdno.sptndriver.resources;
 
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L2Converter;
+import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
 import org.openo.sdno.sptndriver.models.south.SDeleteEline;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
+import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
+import org.openo.sdno.sptndriver.models.south.SRouteCalResultsOutput;
 import org.openo.sdno.sptndriver.services.SElineServices;
+import org.openo.sdno.sptndriver.services.STunnelServices;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,7 +44,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *  The class to provide L2vpn resource.
+ * The class to provide L2vpn resource.
  */
 @Path("/openoapi/sbi-l2vpn-vpws/v1/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -50,9 +54,10 @@ public class L2Resource {
   private Config config;
 
   /**
-   *  The constructor.
-   * @param validator  validation parameter.
-   * @param config   Configurations read from configuration file.
+   * The constructor.
+   *
+   * @param validator validation parameter.
+   * @param config    Configurations read from configuration file.
    */
   public L2Resource(Validator validator, Config config) {
     this.validator = validator;
@@ -60,48 +65,54 @@ public class L2Resource {
   }
 
   /**
-   *  The post method to create Eline.
-   * @param L2 Parameter of create L2vpn.
+   * The post method to create Eline.
+   *
+   * @param l2vpn Parameter of create L2vpn.
    * @return 200 if success
-   * @throws URISyntaxException
    */
   @POST
-  public Response createEline(NL2Vpn L2) throws URISyntaxException {
-    SCreateElineAndTunnels createElineAndTunnels = L2Converter.L2ToElineTunnerCreator(L2);
-    if (createElineAndTunnels == null) {
+  public Response createEline(NL2Vpn l2vpn) throws URISyntaxException {
+    SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
+    STunnelServices tunnelServices = new STunnelServices(config.getControllerUrl());
+    SCreateElineAndTunnels createElineAndTunnels = L2Converter.L2ToElineTunnerCreator(l2vpn);
+    if (createElineAndTunnels == null || routeCalInput == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .entity("Input L2 can not be converted to Eline.")
           .build();
     }
-    SElineServices elineServices = new SElineServices(config.getControllerUrl());
+
     try {
+      // Calculate LSP route first.
+      SRouteCalResultsOutput routeCalResultsOutput = tunnelServices.calcRoutes(routeCalInput);
+      createElineAndTunnels.setRouteCalResult(routeCalResultsOutput.getOutput());
+      // Create Eline.
+      SElineServices elineServices = new SElineServices(config.getControllerUrl());
       elineServices.createElineAndTunnels(createElineAndTunnels);
-    } catch (HttpErrorException e) {
-      return e.getResponse();
-    } catch (IOException e) {
+    } catch (HttpErrorException ex) {
+      return ex.getResponse();
+    } catch (IOException ex) {
       return Response
           .status(Response.Status.BAD_GATEWAY)
           .entity("IO Exception when creating Eline.")
           .build();
-    } catch (CommandErrorException e) {
-      return e.getResponse();
+    } catch (CommandErrorException ex) {
+      return ex.getResponse();
     }
-    return Response.created(new
-                                URI(String.valueOf(L2))).build();
+    return Response.created(new URI(String.valueOf(l2vpn))).build();
   }
 
   /**
-   *  The delete method to delete Eline.
+   * The delete method to delete Eline.
+   *
    * @param vpnid Global UUID of Eline(UUID in SDN-O).
-   * @return  200 if success
-   * @throws URISyntaxException
+   * @return 200 if success
    */
   @DELETE
   @Path("{vpnid}")
   public Response deleteEline(@PathParam("vpnid") String vpnid) throws URISyntaxException {
-    String sElineId = L2Converter.getSouthElineId(vpnid);
-    if (sElineId == null || vpnid == null) {
+    String southElineId = L2Converter.getSouthElineId(vpnid);
+    if (southElineId == null || vpnid == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .entity("Can not find Eline.")
@@ -115,11 +126,11 @@ public class L2Resource {
     SElineServices elineServices = new SElineServices(config.getControllerUrl());
     try {
       elineServices.deleteEline(elineDeleteInput);
-    } catch (HttpErrorException e) {
-      return e.getResponse();
-    } catch (CommandErrorException e) {
-      return e.getResponse();
-    } catch (IOException e) {
+    } catch (HttpErrorException ex) {
+      return ex.getResponse();
+    } catch (CommandErrorException ex) {
+      return ex.getResponse();
+    } catch (IOException ex) {
       return Response
           .status(Response.Status.BAD_GATEWAY)
           .entity("IO Exception when creating Eline.")

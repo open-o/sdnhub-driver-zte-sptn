@@ -35,11 +35,11 @@ public class SQosInitiator {
   /**
    * NBI cbs in bytes and SBI cbs in KBytes.
    */
-  private final static int CBS_MULTIPLIER = 1000;
+  private static final int CBS_MULTIPLIER = 1000;
   /**
    * NBI pbs in bytes and SBI pbs in KBytes.
    */
-  private final static int PBS_MULTIPLIER = 1000;
+  private static final int PBS_MULTIPLIER = 1000;
 
   /**
    * Init LSP Qos parameters according to MplsTePolicy.

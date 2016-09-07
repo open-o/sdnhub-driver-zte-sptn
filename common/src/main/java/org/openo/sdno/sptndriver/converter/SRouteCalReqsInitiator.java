@@ -16,12 +16,6 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import org.openo.sdno.sptndriver.enums.south.SInterConnectionMode;
-import org.openo.sdno.sptndriver.enums.south.SSncLayerRate;
-import org.openo.sdno.sptndriver.enums.south.routecal.SRouteCalculateMode;
-import org.openo.sdno.sptndriver.enums.south.routecal.SRouteCalculatePolicy;
-import org.openo.sdno.sptndriver.enums.south.routecal.SRouteConstraintPolicy;
-import org.openo.sdno.sptndriver.enums.south.routecal.SRouteSeparate;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.north.NMplsTePolicy;
 import org.openo.sdno.sptndriver.models.north.NParticularConstraint;
@@ -29,17 +23,30 @@ import org.openo.sdno.sptndriver.models.north.NTunnelService;
 import org.openo.sdno.sptndriver.models.south.SCalculateConstraint;
 import org.openo.sdno.sptndriver.models.south.SNeId;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReq;
+import org.openo.sdno.sptndriver.models.south.SRouteCalReqContainer;
+import org.openo.sdno.sptndriver.models.south.SRouteCalReqElement;
+import org.openo.sdno.sptndriver.models.south.SRouteCalReqElementLeftneids;
+import org.openo.sdno.sptndriver.models.south.SRouteCalReqElementRightneids;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqs;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The class to init route calculate request.
+ */
 public class SRouteCalReqsInitiator {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SRouteCalReqsInitiator.class);
   private static final String WORK_SEQUENCE_NO = "1";
   private static final String PROTECTION_SEQUENCE_NO = "2";
 
+  /**
+   * Init LSP route calculate request of L2.
+   *
+   * @param l2vpn L2vpn create parameters.
+   * @return LSP route calculate request.
+   */
   public static SRouteCalReqsInput initElineLspCalRoute(NL2Vpn l2vpn) {
     if (l2vpn == null) {
       LOGGER.error("Input l2vpn is null.");
@@ -63,7 +70,9 @@ public class SRouteCalReqsInitiator {
       egressNe = particularConstraint.getEgressNe();
     }
     // If get mplsTePolicy from particular constraints failed, try to get it from tunnel service.
-    if (mplsTePolicy == null && tunnelService.getMplsTe() != null) {
+    if (mplsTePolicy == null
+        && tunnelService != null
+        && tunnelService.getMplsTe() != null) {
       mplsTePolicy = tunnelService.getMplsTe();
     }
     // if init ingress NE or egress NE failed, try to get the information from ACs.
@@ -80,8 +89,8 @@ public class SRouteCalReqsInitiator {
       if (l2vpn.getPws() != null
           && l2vpn.getPws().getPws() != null
           && l2vpn.getPws().getPws().size() == 2) {
-          ingressNe = l2vpn.getPws().getPws().get(0).getNeId();
-          egressNe = l2vpn.getPws().getPws().get(1).getNeId();
+        ingressNe = l2vpn.getPws().getPws().get(0).getNeId();
+        egressNe = l2vpn.getPws().getPws().get(1).getNeId();
       }
     }
 
@@ -95,44 +104,64 @@ public class SRouteCalReqsInitiator {
       LOGGER.error("Ingress NE or egress NE is null.");
       return null;
     }
-    SRouteCalReqsInput routeCalReqsInput = new SRouteCalReqsInput();
+
     SRouteCalReqs routeCalReqs = new SRouteCalReqs();
     boolean hasBackupLsp = hasProtection(mplsTePolicy);
-    SRouteCalReq workRouteCalReq = new SRouteCalReq();
-    workRouteCalReq.setSequenceNo(WORK_SEQUENCE_NO);
-    workRouteCalReq.setCalculatePolicy(SRouteCalculatePolicy.LOCAL_PROTECTION.getValue());
-    workRouteCalReq.setCalculateMode(SRouteCalculateMode.ONE_ONE.getValue());
+    SRouteCalReqContainer routeCalReqContainer
+        = initElineLspCalRoute(mplsTePolicy, ingressNe, egressNe, hasBackupLsp);
+    routeCalReqs.setRouteCalReqs(new SRouteCalReq());
+    routeCalReqs.getRouteCalReqs().getRouteCalReq().add(routeCalReqContainer);
+
+    SRouteCalReqsInput routeCalReqsInput = new SRouteCalReqsInput();
+    routeCalReqsInput.setInput(routeCalReqs);
+    return routeCalReqsInput;
+  }
+
+  private static SRouteCalReqContainer initElineLspCalRoute(NMplsTePolicy mplsTePolicy,
+                                                            String ingressNe,
+                                                            String egressNe,
+                                                            boolean hasProtect) {
+    SRouteCalReqElement routeCalReq = new SRouteCalReqElement();
+    routeCalReq.setSequenceNo(WORK_SEQUENCE_NO);
+
+    routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.LOCAL_PROTECTION);
+    routeCalReq.setCalculateMode(SRouteCalReqElement.CalculateModeEnum.SIMPLE);
     if (isBestEffort(mplsTePolicy)) {
-      workRouteCalReq.setCalculateType(SRouteSeparate.BEST_EFFORT_SEPARATE.getValue());
+      routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.BESTEFFORT_SEPARATE);
     } else {
-      workRouteCalReq.setCalculateType(SRouteSeparate.STRICT_SEPARATE.getValue());
+      routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.STRICT_SEPARATE);
     }
 
-    workRouteCalReq.setCalculateInterconnectionMode(SInterConnectionMode.UNI_UNI.getValue());
-    workRouteCalReq.setLayerRate(SSncLayerRate.LSP.getValue());
+    routeCalReq.setCalculateInterconnectionMode(SRouteCalReqElement
+        .CalculateInterconnectionModeEnum.UNI_UNI);
+    routeCalReq.setLayerRate(SRouteCalReqElement.LayerRateEnum.LSP);
     SNeId leftNe = new SNeId();
     leftNe.setNeId(ingressNe);
     SNeId rightNe = new SNeId();
     rightNe.setNeId(egressNe);
-    workRouteCalReq.getLeftNeIds().add(leftNe);
-    workRouteCalReq.getRightNeIds().add(rightNe);
-    SCalculateConstraint workCalcConstraint = new SCalculateConstraint();
-    workCalcConstraint.setBandwidth(mplsTePolicy.getBandwidth());
-  //  workCalcConstraint.setCalPolicy(SRouteConstraintPolicy.BANDWIDTH_BALANCING.getValue());
-  //  workRouteCalReq.setProtectCalculateConstraint();
-    return routeCalReqsInput;
+    routeCalReq.setLeftNeIds(new SRouteCalReqElementLeftneids());
+    routeCalReq.getLeftNeIds().getLeftNeId().add(leftNe);
+    routeCalReq.setRightNeIds(new SRouteCalReqElementRightneids());
+    routeCalReq.getRightNeIds().getRightNeId().add(rightNe);
+    SCalculateConstraint calculateConstraint = new SCalculateConstraint();
+    calculateConstraint.setBandwidth(mplsTePolicy.getBandwidth().toString());
+    calculateConstraint.setCalPolicy(SCalculateConstraint.CalPolicyEnum.BANDWIDTH_BALANCING);
+    routeCalReq.setWorkCalculateConstraint(calculateConstraint);
+    if (hasProtect) {
+      routeCalReq.setProtectCalculateConstraint(calculateConstraint);
+    }
+    SRouteCalReqContainer routeCalReqContainer = new SRouteCalReqContainer();
+    routeCalReqContainer.setRouteCalReqContainer(routeCalReq);
+    return routeCalReqContainer;
   }
 
   private static boolean hasProtection(NMplsTePolicy mplsTePolicy) {
-    if (mplsTePolicy == null) {
-      return false;
-    }
-    return mplsTePolicy != null
-           && mplsTePolicy.getPathProtectPolicy() != null;
+    return mplsTePolicy != null && mplsTePolicy.getPathProtectPolicy() != null;
   }
 
   private static boolean isBestEffort(NMplsTePolicy mplsTePolicy) {
-    return mplsTePolicy != null && mplsTePolicy.getBesteffort();
+    return mplsTePolicy != null && mplsTePolicy.getBesteffort() != null;
   }
+
 
 }
