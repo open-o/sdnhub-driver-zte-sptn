@@ -123,9 +123,7 @@ definitions:
     snc-eline:
      $ref: '#/definitions/Eline'
     route-cal-result:
-     type: array
-     items:
-      $ref: '#/definitions/RouteCalResult'
+     $ref: '#/definitions/RouteCalResultContainer'
     snc-tunnel-create-policy:
      $ref: '#/definitions/SncTunnelCreatePolicy'
   ElineSncAndRoute:
@@ -610,9 +608,14 @@ definitions:
      description: UUID of service related to the route, LSP ID or PW ID
      format: string
     xcs:
-     type: array
-     items:
-      $ref: '#/definitions/Xc'
+      $ref: '#/definitions/Xcs'
+  Xcs:
+   type: object
+   properties:
+    xc-list:
+      type: array
+      items:
+        $ref: '#/definitions/Xc'
   Xc:
    type: object
    description: Node on the route
@@ -628,11 +631,11 @@ definitions:
      description: UUID of XC's ingress port. For LSP, it is PTP or FTP; For destination node of PW, it is empty
      format: string
     forward-in-label:
-     type: integer
+     type: string
      description: Inlabel of ingress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
      format: int32
     backward-out-label:
-     type: integer
+     type: string
      description: Outlabel of ingress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
      format: int32
     backward-peer-id:
@@ -644,11 +647,11 @@ definitions:
      description: UUID of XC's egress port. For LSP, it is PTP or FTP; For source node of PW, it is empty
      format: string
     forward-out-label:
-     type: integer
+     type: string
      description: Outlabel of egress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
      format: int32
     backward-in-label:
-     type: integer
+     type: string
      description: Inlabel of egress port, for driver it is 0, controller will fill this field, range from 16 to 1048575
      format: int32
     forward-peer-id:
@@ -714,10 +717,23 @@ definitions:
     output:
       $ref: '#/definitions/RouteCalResults'
   RouteCalResults:
-   type: array
-   items:
-    $ref: '#/definitions/RouteCalResult'
+   type: object
+   properties:
+    route-cal-results:
+      $ref: '#/definitions/RouteCalResult'
   RouteCalResult:
+   type: object
+   properties:
+     route-cal-result:
+      type: array
+      items:
+        $ref: '#/definitions/RouteCalResultContainer'
+  RouteCalResultContainer:
+   type: object
+   properties:
+    route-cal-result-container:
+     $ref: '#/definitions/RouteCalResultElement'
+  RouteCalResultElement:
    type: object
    description: Tunnel route calculate result
    required:
@@ -734,9 +750,10 @@ definitions:
      description: Group number of tunnel
      format: string
     role:
-     type: integer
-     description: Role of tunnel, including 1(master),2(slave), 3(reroute)
-     format: int16
+     type: string
+     description: Role of tunnel.
+     format: string
+     enum: ["master","slave","restore","master-restore","slave-restore"]
     ingress-ne-id:
      type: string
      description: Source NE UUID
@@ -746,19 +763,17 @@ definitions:
      description: Destination NE UUID
      format: string
     latency:
-     type: integer
+     type: string
      description: Latency of tunnel in us, range from 0 to 60000000
      format: int32
     max-availble-bandwidth:
-     type: integer
+     type: string
      description: The minimum max available bandwidth of all links bearing the tunnel in kps, range from 0 to 4000000000
      minimum: 0
      maximum: 4000000000
      format: int64
     xcs:
-      type: array
-      items:
-       $ref: '#/definitions/Xc'
+     $ref: '#/definitions/Xcs'
   L3vpn:
    type: object
    properties:

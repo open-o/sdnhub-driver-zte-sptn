@@ -85,7 +85,8 @@ public class L2Resource {
     try {
       // Calculate LSP route first.
       SRouteCalResultsOutput routeCalResultsOutput = tunnelServices.calcRoutes(routeCalInput);
-      createElineAndTunnels.setRouteCalResult(routeCalResultsOutput.getOutput());
+      createElineAndTunnels.setRouteCalResult(
+          routeCalResultsOutput.getOutput().getRouteCalResults().getRouteCalResult().get(0));
       // Create Eline.
       SElineServices elineServices = new SElineServices(config.getControllerUrl());
       elineServices.createElineAndTunnels(createElineAndTunnels);
