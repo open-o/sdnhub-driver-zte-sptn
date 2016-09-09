@@ -16,9 +16,9 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import org.openo.sdno.sptndriver.enums.AdminStatusEnum;
 import org.openo.sdno.sptndriver.enums.south.SDirection;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
+import org.openo.sdno.sptndriver.models.south.SAdminStatus;
 import org.openo.sdno.sptndriver.models.south.SSncTunnelCreatePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,14 +45,14 @@ public class SSncTunnelCreatePolicyInitiator {
     tunnelCreatePolicy.setName(null);
     // todo where to find the user label?
     tunnelCreatePolicy.setUserLabel(null);
-    tunnelCreatePolicy.setTenantId(nl2Vpn.getTenantId());
+    // todo tunnelCreatePolicy.setTenantId(nl2Vpn.getTenantId());
     tunnelCreatePolicy.setCreater(null);
     tunnelCreatePolicy.setParentNcdId(null);
-    tunnelCreatePolicy.setDirection(Integer.getInteger(SDirection.BI_DIRECTION.toString()));
-    tunnelCreatePolicy.setType(Integer.getInteger(SncType.line_mpls.toString()));
-    tunnelCreatePolicy.setIsShared(false);
+    tunnelCreatePolicy.setDirection(SSncTunnelCreatePolicy.DirectionEnum.BIDIRECTION);
+    tunnelCreatePolicy.setType(SncType.line_mpls.toString());
+    // todo tunnelCreatePolicy.setIsShared(false);
     tunnelCreatePolicy.setQos(SQosInitiator.initQos(nl2Vpn.getTunnelService().getMplsTe()));
-    tunnelCreatePolicy.setAdminStatus(AdminStatusEnum.UP.getIndex());
+    tunnelCreatePolicy.setAdminStatus(SAdminStatus.UP);
     tunnelCreatePolicy.setLspOam(SOamInitiator.initOam(null));
     tunnelCreatePolicy.setSncSwitch(
         SSncSwitchInitiator.initLspSncSwitch(nl2Vpn.getTunnelService().getMplsTe()));

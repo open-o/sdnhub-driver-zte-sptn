@@ -16,61 +16,63 @@
 
 package org.openo.sdno.sptndriver.enums;
 
+import org.openo.sdno.sptndriver.models.south.SAdminStatus;
+
 /**
- * Enum of admin status
+ * Enum of admin status.
  */
 public enum AdminStatusEnum {
-  UP("adminUp", 0),
-  DOWN("adminDown", 1);
-  private String name;
-  private Integer index;
+  UP("adminUp", SAdminStatus.UP),
+  DOWN("adminDown", SAdminStatus.DOWN);
+  private String north;
+  private SAdminStatus south;
 
-  private AdminStatusEnum(String name, Integer index) {
-    this.name = name;
-    this.index = index;
+  AdminStatusEnum(String north, SAdminStatus south) {
+    this.north = north;
+    this.south = south;
   }
 
   /**
-   * Convert SBI integer admin status to NBI string admin status
+   * Convert SBI integer admin status to NBI string admin status.
    *
-   * @param index Integer value of NBI admin status
-   * @return String value of SBI admin status
+   * @param southValue SBI admin status
+   * @return NBI admin status
    */
-  public static String getName(Integer index) {
-    for (AdminStatusEnum e : AdminStatusEnum.values()) {
-      if (e.getIndex().equals(index)) {
-        return e.name;
+  public static String convertSbiToNbi(SAdminStatus southValue) {
+    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+      if (adminStatusEnum.getSouthValue().equals(southValue)) {
+        return adminStatusEnum.north;
       }
     }
     return null;
   }
 
   /**
-   * Convert NBI string admin status to NBI integer admin status
+   * Convert NBI admin status to SBI admin status.
    *
-   * @param name String value of SBI admin status
-   * @return Integer value of NBI admin status
+   * @param north NBI admin status
+   * @return SBI admin status
    */
-  public static Integer getIndex(String name) {
-    for (AdminStatusEnum e : AdminStatusEnum.values()) {
-      if (e.getName().equals(name)) {
-        return e.index;
+  public static SAdminStatus convertNbiToSbi(String north) {
+    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+      if (adminStatusEnum.getNorthValue().equals(north)) {
+        return adminStatusEnum.south;
       }
     }
     return null;
   }
 
   /**
-   * Get NBI admin status
+   * Get NBI admin status.
    */
-  public String getName() {
-    return name;
+  public String getNorthValue() {
+    return north;
   }
 
   /**
-   * Get SBI admin status
+   * Get SBI admin status.
    */
-  public Integer getIndex() {
-    return index;
+  public SAdminStatus getSouthValue() {
+    return south;
   }
 }

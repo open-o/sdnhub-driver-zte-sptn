@@ -16,46 +16,48 @@
 
 package org.openo.sdno.sptndriver.enums.ac;
 
+import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
+
 /**
  * Enum of access type.
  */
 public enum AccessTypeEnum {
-  PORT("port", 1),
-  DOT1Q("dot1q", 2),
-  QINQ("qinq", 3);
-  private String name;
-  private Integer index;
+  PORT("port", SServiceEndPoint.AccessTypeEnum.PORT),
+  DOT1Q("dot1q", SServiceEndPoint.AccessTypeEnum.DOT1Q),
+  QINQ("qinq", SServiceEndPoint.AccessTypeEnum.QINQ);
+  private String north;
+  private SServiceEndPoint.AccessTypeEnum south;
 
-  private AccessTypeEnum(String name, Integer index) {
-    this.name = name;
-    this.index = index;
+  AccessTypeEnum(String north, SServiceEndPoint.AccessTypeEnum south) {
+    this.north = north;
+    this.south = south;
   }
 
   /**
-   * Convert SBI integer access type to NBI string access type.
+   * Convert SBI access type to NBI access type.
    *
-   * @param index Integer value of NBI access type.
-   * @return String value of SBI access type.
+   * @param south SBI access type.
+   * @return NBI access type.
    */
-  public static String getName(Integer index) {
-    for (AccessTypeEnum e : AccessTypeEnum.values()) {
-      if (e.getIndex().equals(index)) {
-        return e.name;
+  public static String convertSouthToNorth(SServiceEndPoint.AccessTypeEnum south) {
+    for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
+      if (accessTypeEnum.getSouth().equals(south)) {
+        return accessTypeEnum.north;
       }
     }
     return null;
   }
 
   /**
-   * Convert NBI string access type to NBI integer access type.
+   * Convert NBI access type to SBI access type.
    *
-   * @param name String value of SBI access type.
-   * @return Integer value of NBI access type.
+   * @param north NBI access type.
+   * @return SBI access type.
    */
-  public static Integer getIndex(String name) {
+  public static SServiceEndPoint.AccessTypeEnum convertNbiToSbi(String north) {
     for (AccessTypeEnum e : AccessTypeEnum.values()) {
-      if (e.getName().equals(name)) {
-        return e.index;
+      if (e.getNorth().equals(north)) {
+        return e.south;
       }
     }
     return null;
@@ -64,14 +66,14 @@ public enum AccessTypeEnum {
   /**
    * Get NBI access type.
    */
-  public String getName() {
-    return name;
+  public String getNorth() {
+    return north;
   }
 
   /**
    * Get SBI access type.
    */
-  public Integer getIndex() {
-    return index;
+  public SServiceEndPoint.AccessTypeEnum getSouth() {
+    return south;
   }
 }

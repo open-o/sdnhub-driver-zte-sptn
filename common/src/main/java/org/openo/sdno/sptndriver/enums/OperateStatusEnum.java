@@ -16,61 +16,63 @@
 
 package org.openo.sdno.sptndriver.enums;
 
+import org.openo.sdno.sptndriver.models.south.SOperateStatus;
+
 /**
- * Enum of operate status
+ * Enum of operate status.
  */
 public enum OperateStatusEnum {
-  UP("operateUp", 0),
-  DOWN("operateDown", 1);
-  private String name;
-  private Integer index;
+  UP("operateUp", SOperateStatus.UP),
+  DOWN("operateDown", SOperateStatus.DOWN);
+  private String northValue;
+  private SOperateStatus southValue;
 
-  private OperateStatusEnum(String name, Integer index) {
-    this.name = name;
-    this.index = index;
+  OperateStatusEnum(String northValue, SOperateStatus southValue) {
+    this.northValue = northValue;
+    this.southValue = southValue;
   }
 
   /**
-   * Convert SBI integer operate status to NBI string operate status
+   * Convert SBI operate status to NBI operate status.
    *
-   * @param index Integer value of NBI operate status
-   * @return String value of SBI operate status
+   * @param southValue SBI operate status
+   * @return NBI operate status
    */
-  public static String getName(Integer index) {
+  public static String convertSbiToNbi(SOperateStatus southValue) {
     for (OperateStatusEnum e : OperateStatusEnum.values()) {
-      if (e.getIndex().equals(index)) {
-        return e.name;
+      if (e.getSouthValue().equals(southValue)) {
+        return e.northValue;
       }
     }
     return null;
   }
 
   /**
-   * Convert NBI string operate status to NBI integer operate status
+   * Convert NBI operate status to SBI operate status.
    *
-   * @param name String value of SBI operate status
-   * @return Integer value of NBI operate status
+   * @param northValue NBI operate status
+   * @return SBI operate status
    */
-  public static Integer getIndex(String name) {
+  public static SOperateStatus convertNbiToSbi(String northValue) {
     for (OperateStatusEnum e : OperateStatusEnum.values()) {
-      if (e.getName().equals(name)) {
-        return e.index;
+      if (e.getNorthValue().equals(northValue)) {
+        return e.southValue;
       }
     }
     return null;
   }
 
   /**
-   * Get NBI operate status
+   * Get NBI operate status.
    */
-  public String getName() {
-    return name;
+  public String getNorthValue() {
+    return northValue;
   }
 
   /**
-   * Get SBI operate status
+   * Get SBI operate status.
    */
-  public Integer getIndex() {
-    return index;
+  public SOperateStatus getSouthValue() {
+    return southValue;
   }
 }

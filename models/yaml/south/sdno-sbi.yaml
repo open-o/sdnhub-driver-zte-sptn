@@ -40,12 +40,12 @@ paths:
           description: Eline Connection
           required: true
           schema:
-            $ref: '#/definitions/CreateElineAndTunnels'
+            $ref: '#/definitions/CreateElineAndTunnelsInput'
       responses:
         '200':
           description: NCD ID to Eline ID map
           schema:
-            $ref: '#/definitions/CommandResult'
+            $ref: '#/definitions/CmdResultAndNcdResRelationsOutput'
   /restconf/operations/sptn-service-eline:delete-snc-eline:
       post:
         summary: Delete a Eline Connection
@@ -114,6 +114,11 @@ paths:
          schema:
            $ref: '#/definitions/RouteCalResultsOutput'
 definitions:
+  CreateElineAndTunnelsInput:
+   type: object
+   properties:
+     input:
+      $ref: '#/definitions/CreateElineAndTunnels'
   CreateElineAndTunnels:
    type: object
    required:
@@ -122,8 +127,8 @@ definitions:
    properties:
     snc-eline:
      $ref: '#/definitions/Eline'
-    route-cal-result:
-     $ref: '#/definitions/RouteCalResultContainer'
+    route-cal-results:
+     $ref: '#/definitions/RouteCalResultObj'
     snc-tunnel-create-policy:
      $ref: '#/definitions/SncTunnelCreatePolicy'
   ElineSncAndRoute:
@@ -148,46 +153,42 @@ definitions:
         description: Eline Connection name(Only used within domain)
         format: string
       user-label:
-       type: string
-       description: Eline Connection userlabel
-       format: string
+        type: string
+        description: Eline Connection userlabel
+        format: string
       parent-ncd-id:
-       type: string
-       description: ID of parent NCD
-       format: string
+        type: string
+        description: ID of parent NCD
+        format: string
       admin-status:
-       type: integer
-       description: Connection  management status, including 0(adminUp) and 1(adminDown)
-       enum: [0,1]
-       format: int16
+        $ref: '#/definitions/AdminStatus'
       operate-status:
-       type: integer
-       description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
-       enum: [0,1]
-       format: int16
+        $ref: '#/definitions/OperateStatus'
       snc-type:
-        type: integer
-        description: The Type of Eline, currently only use 1(Simple)
-        format: int16
-        enum: [1]
-        default: 1
+        $ref: '#/definitions/SncType'
       interconnection-mode:
        type: string
        description: Mode of inter-connection between sub-domains.
        enum: ["nni-nni","uni-uni"]
        format: string
       ingress-end-points:
-       $ref: '#/definitions/ServiceEndPoints'
+       $ref: '#/definitions/IngressEps'
       egress-end-points:
-       $ref: '#/definitions/ServiceEndPoints'
+       $ref: '#/definitions/EgressEps'
       snc-switch:
        $ref: '#/definitions/SncSwitch'
       snc-pws:
        $ref: '#/definitions/SncPws'
-  ServiceEndPoints:
-   type: array
-   items:
-    $ref: '#/definitions/ServiceEndPoint'
+  IngressEps:
+    type: object
+    properties:
+     ingress-end-point:
+      $ref: '#/definitions/ServiceEndPoint'
+  EgressEps:
+    type: object
+    properties:
+     egress-end-point:
+      $ref: '#/definitions/ServiceEndPoint'
   ServiceEndPoint:
    type: object
    description: The service end points(EP)
@@ -209,45 +210,43 @@ definitions:
       description: Logical terminal point UUID
       format: string
     access-type:
-     type: integer
-     description: The access type, including 1(Port), 2(Dot1Q), 3(QinQ)
-     enum: [1,2,3]
-     format: int16
+     type: string
+     description: The access type
+     enum: ["Port","Dot1Q","QinQ"]
+     format: string
     dot1q-vlan-bitmap:
-     type: integer
+     type: string
      description: The vlan bitmap of Dot1Q, range from 1 to 4094
      minimum: 1
      maximum: 4094
      format: int16
     qinq-svlan-bitmap:
-     type: integer
+     type: string
      description: the svlan bitmap of QinQ, range from 1 to 4094
      minimum: 1
      maximum: 4094
      format: int16
     qinq-cvlan-bitmap:
-     type: integer
+     type: string
      description: the cvlan bitmap of QinQ, range from 1 to 4094
      minimum: 1
      maximum: 4094
      format: int16
     access-action:
-     type: integer
-     description: The access action type, including 1(Keep), 2(Push), 3(Pop), 4(Swap)
-     enum: [1,2,3,4]
-     format: int16
+     type: string
+     description: The access action type
+     enum: ["Keep","Push","Pop","Swap"]
+     format: string
     access-vlan-id:
-     type: integer
+     type: string
      description: The access vlan id, range from 1 to 4094
      minimum: 1
      maximum: 4094
      format: int16
     role:
-     type: integer
+     type: string
      description: The role of EP, including 0(master), 1(slave)
-     enum: [0,1]
-     default: 0
-     format: int16
+     enum: ["master","slave"]
     oam:
       $ref: '#/definitions/Oam'
     qos:
@@ -264,57 +263,48 @@ definitions:
      description: UUID of tunnel or UUID of Eline
      format: string
     layer-rate:
-     type: integer
-     description: Rate of the connection, including 0(LSP), 1(PW)
-     enum: [0,1]
-     format: int16
+     type: string
+     description: Rate of the connection
+     enum: ["LSP","PW"]
+     format: string
     linear-protection-type:
-     type: integer
-     description: Linear protection type, including 0(unprotected), 1(path-protection-1-to-1), 2(path-protection-1-plus-1), 3(unprotected-with-recovery), 4(with-recovery-1-to-1), 5(with-recovery-1-plus-1), 6(permanent-1-plus-1-protection)
-     enum: [0,1,2,3,4,5,6]
-     default: 0
-     format: int16
+     type: string
+     description: Linear protection type, default value is unprotected
+     enum: ["unprotected","path-protection-1-to-1","path-protection-1-plus-1","unprotected-with-recovery","with-recovery-1-to-1","with-recovery-1-plus-1","permanent-1-plus-1-protection"]
+     format: string
     linear-protection-protocol:
-     type: integer
+     type: string
      description: Linear protection protocol, including 0(APS), 1(PSC)
-     enum: [0,1]
-     default: 0
-     format: int16
+     enum: ["APS","PSC"]
+     format: string
     switch-mode:
-     type: integer
+     type: string
      description: Switch mode, including 0(single-ended-switch), 1(double-end-switch)
-     enum: [0,1]
-     format: int16
-     default: 1
+     enum: ["single-ended-switch","double-end-switch"]
+     format: string
     revertive-mode:
-     type: integer
+     type: string
      description: Revertive mode, including 0(no-revertive), 1(revertive)
-     enum: [0,1]
-     format: int16
-     default: 1
+     enum: ["no-revertive","revertive"]
+     format: string
     wtr:
-     type: integer
-     description: wait time in seconds
-     minimum: 0
-     default: 300
+     type: string
+     description: wait time in seconds, default value is 300 s, minimum value is 0 s
      format: int32
     hold-off-time:
-     type: integer
-     description: hode off time in ms
-     minimum: 0
-     maximum: 10000
-     default: 0
+     type: string
+     description: hode off time in ms, range from 0 ms to 10000 ms, default value is 0 ms
      format: int32
-    reroute-revertive-mode:
-     type: integer
-     description: Reroute revertive mode, including 0(no-revertive), 1(revertive)
-     default: 0
-     format: int32
-    reroute-wtr:
-     type: integer
-     description: wait time for reroute in seconds
-     default: 50
-     format: int32
+    #reroute-revertive-mode:
+     #type: integer
+     #description: Reroute revertive mode, including 0(no-revertive), 1(revertive)
+     #default: 0
+     #format: int32
+    #reroute-wtr:
+     #type: integer
+     #description: wait time for reroute in seconds
+     #default: 50
+     #format: int32
   Meps:
    type: array
    description: MEPs of MEG, assigned by controller
@@ -330,7 +320,7 @@ definitions:
      description: Assigned by EMS
      format: string
     id:
-     type: integer
+     type: string
      format: int32
   Qos:
    type: object
@@ -342,91 +332,76 @@ definitions:
      description: The UUID of QOS related object
      format: string
     tunnel-mode:
-     type: integer
-     description: The tunnel mode, including 1(pipeline), 2(short-pipeline), 3(unified-pattern)
-     enum: [1,2,3]
-     default: 1
-     format: int16
+     type: string
+     description: The tunnel mode, default value is pipeline
+     enum: ["pipeline","short-pipeline","unified-pattern"]
+     format: string
     cac-mode:
-     type: integer
-     description: Whether CAC is enabled, including 0(disable), 1(enable)
-     enum: [0,1]
-     default: 0
+     type: string
+     description: Whether CAC is enabled, including 0(disabled), 1(enable), default value is 0(disabled)
      format: int16
     convg-mode:
-     type: integer
-     description: Whether the tunnel inherits the convege rate of TMS, including 0(not convergence), 1(use TMS convergence rate)
-     enum: [0,1]
-     default: 0
+     type: string
+     description: Whether the tunnel inherits the convege rate of TMS, including 0(not convergence), 1(use TMS convergence rate), default value is 0(not convergence)
      format: int16
     traffic-adj-mode:
-     type: integer
-     description: Whether the traffic parameters(like Cir, Pir) of the tunnel can be automatically changed with the change of client service, including 0(not support auto-adjust), 1(support auto-adjust)
-     enum: [0,1]
-     default: 0
+     type: string
+     description: Whether the traffic parameters(like Cir, Pir) of the tunnel can be automatically changed with the change of client service, including 0(not support auto-adjust), 1(support auto-adjust), default value is 0(not support auto-adjust)
      format: int16
     a2z-policing:
-     type: integer
-     description: Whether a2z policing is enabled, including 0(disabled), 1(enabled)
-     enum: [0,1]
-     default: 0
+     type: string
+     description: Whether a2z policing is enabled, including 0(disabled), 1(enabled), default value is 0(disabled)
      format: int16
     z2a-policing:
-     type: integer
-     description: Whether z2a policing is enabled, including 0(disabled), 1(enabled)
-     enum: [0,1]
-     default: 0
+     type: string
+     description: Whether z2a policing is enabled, including 0(disabled), 1(enabled), default value is 0(disabled)
      format: int16
     a2z-cir:
-     type: integer
+     type: string
      description: The a2z committed speed in kbps
      format: int32
     z2a-cir:
-     type: integer
-     description: The z2a Committed speed in kbps
+     type: string
+     description: The z2a committed speed in kbps
      format: int32
     a2z-pir:
-     type: integer
+     type: string
      description: The a2z peak speed in kbps
      format: int32
     z2a-pir:
-     type: integer
+     type: string
      description: The z2a peak speed in kbps
      format: int32
     a2z-cbs:
-     type: integer
-     description: The a2z committed burst Size in  bytes
+     type: string
+     description: The a2z committed burst Size in kbytes
      format: int32
     z2a-cbs:
-     type: integer
-     description: The z2a committed burst Size in  bytes
+     type: string
+     description: The z2a committed burst Size in kbytes
      format: int32
     a2z-pbs:
-     type: integer
-     description: The a2z peak burst Size in bytes
+     type: string
+     description: The a2z peak burst Size in kbytes
      format: int32
     z2a-pbs:
-     type: integer
-     description: The z2a peak burst Size in bytes
+     type: string
+     description: The z2a peak burst Size in kbytes
      format: int32
     a2z-color-mode:
-      type: integer
+      type: string
       description: The a2z color mode, including 0(blind), 1(aware)
-      enum: [0,1]
-      default: 0
       format: int16
     z2a-color-mode:
-      type: integer
+      type: string
       description: The z2a color mode, including 0(blind), 1(aware)
-      enum: [0,1]
-      default: 0
       format: int16
     traffic-class:
-     type: integer
-     description: The traffic class, including 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7)
-     enum: [0,1,2,3,4,5,6,7]
-     default: 0
-     format: int16
+     $ref: '#/definitions/TrafficClass'
+  TrafficClass:
+   type: string
+   format: string
+   enum: ["BE", "AF1", "AF2", "AF3", "AF4", "AF5", "CS6", "CS7"]
   Oam:
    type: object
    required:
@@ -444,7 +419,7 @@ definitions:
      type: string
      description: MEG ID, 1-13 bytes
      maxLength: 13
-     format: string
+     format: int32
     meps:
      $ref: '#/definitions/Meps'
     cc-allow:
@@ -452,32 +427,25 @@ definitions:
      description: false(not allowed), true(allowed), default value is false(not allowed)
      default: false
     cc-exp:
-     type: integer
-     description: 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7), default value is 7(CS7)
-     enum: [0,1,2,3,4,5,6,7]
-     default: 7
-     format: int16
+      $ref: '#/definitions/TrafficClass'
     cc-interval:
      type: number
      description: The interval of CC in ms, including 3.3, 10, 100, 1000, default value is 3.3 ms
      format: double
      enum: [3.3, 10, 100, 1000]
     lm-mode:
-     type: integer
-     description: The lm mode, 0(including disable), 1(preactive), 2(on-demand)
-     enum: [0,1,2]
-     default: 0
-     format: int16
+     $ref: '#/definitions/OamMode'
     dm-mode:
-     type: integer
-     description: The lm mode, 0(including disable), 1(preactive), 2(on-demand)
-     enum: [0,1,2]
-     default: 0
-     format: int16
+     $ref: '#/definitions/OamMode'
+  OamMode:
+   type: string
+   format: string
+   enum: ["disable","preactive","on-demand"]
   SncPws:
-   type: array
-   items:
-    $ref: '#/definitions/SncPw'
+   type: object
+   properties:
+    snc-pw:
+     $ref: '#/definitions/SncPw'
   SncPw:
    type: object
    required:
@@ -496,15 +464,12 @@ definitions:
       description: User label of PW
       format: string
     role:
-      type: integer
+      type: string
       description: The role of PW, including 0(master), 1(slave), 2(DNI-PW)
-      enum: [0,1,2]
-      format: int16
+      enum: ["master","slave","DNI-PW"]
+      format: string
     encaplate-type:
-      type: integer
-      description: The encaplate type, including 0(NONE), 4(ethernet-vlan), 5(ethernet)
-      enum: [0, 4, 5]
-      format: int16
+      $ref: '#/definitions/EncapsulateType'
     ingress-ne-id:
       type: string
       description: UUID of source NE
@@ -522,53 +487,47 @@ definitions:
       description: destination NE IP address
       format: string
     tunnel-ids:
-      type: array
-      description: List of binding Tunnel ID, Only used within domain
-      items:
-       $ref: '#/definitions/TunnelId'
+      $ref: '#/definitions/TunnelIds'
     admin-status:
-     type: integer
-     description: Connection  management status, including 0(adminUp) and 1(adminDown)
-     enum: [0,1]
-     format: int16
+      $ref: '#/definitions/AdminStatus'
     operate-status:
-     type: integer
-     description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
-     enum: [0,1]
-     format: int16'
+      $ref: '#/definitions/OperateStatus'
     ctrl-word-support:
-     type: integer
+     type: string
      description: The control word type, including 0(Not support), 1(support)
-     enum: [0,1]
-     default: 1
+     default: "0"
      format: int16
     sn-support:
-     type: integer
+     type: string
      description: 0(Not support), 1(support)
-     enum: [0,1]
-     default: 0
+     default: "0"
      format: int16
     vccv-type:
-     type: integer
+     type: string
      description: 0(not support VCCV), 1(inbound), 2(outbound), 3(based on TTL), 4(inbound + outbound), 5(inbound +based on TTL), 6(outbound + based on TTL), 7(inbound + outbound + based onTTL)
-     enum: [0,1,2,3,4,5,6,7]
-     default: 0
+     default: "0"
      format: int16
     conn-ack-type:
-     type: integer
+     type: string
      description: 0(None), 1(lsp-ping), 2(lsp-ping+icmp-ping), 3(lsp-ping+bfd-pwach-fs), 4(lsp-ping+bfd-pwach-fo), 5(lsp-ping+bfd-pwach-fs+ bfd-pwach-fo), 6(lsp-ping+icmp-ping+bfd-pwach-fs), 7(lsp-ping+icmp-ping+bfd-pwach-fo), 8(lsp-ping+icmp-ping+bfd-pwach-fs+ bfd-pwach-fo), 9(lsp-ping+bfd-ipudp-fs), 10(lsp-ping+bfd-ipudp-fo), 11(lsp-ping+bfd-ipudp-fs+bfd-ipudp-fo), 12(lsp-ping+icmp-ping +bfd-ipudp-fs), 13(lsp-ping+icmp-ping +bfd-ipudp-fo), 14(lsp-ping+icmp-ping +bfd-ipudp-fs+bfd-ipudp-fo), 15(CCM)
-     minimum: 0
-     maximum: 15
-     default: 0
+     default: "0"
      format: int16
     oam:
      $ref: '#/definitions/Oam'
     qos:
      $ref: '#/definitions/Qos'
-  TunnelId:
+  EncapsulateType:
    type: string
-   description: Tunnel UUID
    format: string
+   description: The encapsulate type
+   enum: ["ethernet-vlan","ethernet"]
+  TunnelIds:
+   type: object
+   description: Tunnel UUID
+   properties:
+    tunnel-ids:
+     type: string
+     format: string
   DeleteElineInput:
    type: object
    description: Input structure of delete Eline
@@ -599,10 +558,10 @@ definitions:
      description: Only used within domain, for driver, it is empty
      format: string
     layer-rate:
-     type: integer
+     type: string
      description: Layer rate, 0(LSP) or 1(PW)
-     enum: [0,1]
-     format: int16
+     enum: ["LSP","PW"]
+     format: string
     snc-id:
      type: string
      description: UUID of service related to the route, LSP ID or PW ID
@@ -685,30 +644,25 @@ definitions:
      description: Only used within domain, for driver, it is empty
      format: string
     direction:
-     type: integer
+     type: string
      description: Direction of tunnel, including 0(unidirection), 1(bidirection)
-     format: int16
-     enum: [0,1]
-     default: 0
+     format: string
+     enum: ["bidirection","unidirection"]
     type:
-     type: integer
+     type: string
      description: Type of tunnel, including 1(linear), 2(ring)
-     enum: [1, 2]
-     default: 1
+     default: "1"
      format: int16
-    is-shared:
-     type: boolean
-     description: Whether PW share tunnel
-     default: false
+    #is-shared:
+     #type: boolean
+     #description: Whether PW share tunnel
+     #default: false
     qos:
      $ref: '#/definitions/Qos'
     snc-switch:
      $ref: '#/definitions/SncSwitch'
     admin-status:
-     type: integer
-     description: Connection  management status, including 0(adminUp) and 1(adminDown)
-     enum: [0,1]
-     format: int16
+     $ref: '#/definitions/AdminStatus'
     lsp-oam:
      $ref: '#/definitions/Oam'
   RouteCalResultsOutput:
@@ -728,11 +682,18 @@ definitions:
       type: array
       items:
         $ref: '#/definitions/RouteCalResultContainer'
+  RouteCalResultObj:
+   type: object
+   properties:
+    route-cal-result:
+     $ref: '#/definitions/RouteCalResultContainer'
   RouteCalResultContainer:
    type: object
    properties:
     route-cal-result-container:
      $ref: '#/definitions/RouteCalResultElement'
+    xcs:
+     $ref: '#/definitions/Xcs'
   RouteCalResultElement:
    type: object
    description: Tunnel route calculate result
@@ -772,8 +733,6 @@ definitions:
      minimum: 0
      maximum: 4000000000
      format: int64
-    xcs:
-     $ref: '#/definitions/Xcs'
   L3vpn:
    type: object
    properties:
@@ -794,15 +753,9 @@ definitions:
      description: UUID of parent ncd, is empty for driver
      format: string
     admin-status:
-     type: integer
-     description: Connection  management status, including 0(adminUp) and 1(adminDown)
-     enum: [0,1]
-     format: int16
+      $ref: '#/definitions/AdminStatus'
     operate-status:
-     type: integer
-     description: The running status of connection in controller, including 0(operateUp) and 1(operateDown)
-     enum: [0,1]
-     format: int16
+      $ref: '#/definitions/OperateStatus'
     ac-list:
      type: array
      items:
@@ -816,11 +769,7 @@ definitions:
      items:
       $ref: '#/definitions/StaticRoute'
     traffic-class:
-     type: integer
-     description: The traffic class, including 0(BE), 1(AF1), 2(AF2), 3(AF3), 4(AF4), 5(AF5), 6(CS6), 7(CS7)
-     enum: [0,1,2,3,4,5,6,7]
-     default: 0
-     format: int16
+      $ref: '#/definitions/TrafficClass'
   L3ac:
    type: object
    properties:
@@ -893,7 +842,7 @@ definitions:
      description: out interface(LTP) UUID
      format: string
     route-weight:
-     type: integer
+     type: string
      description: Route weight, range from 0 to 255
      minimum: 0
      maximum: 255
@@ -914,10 +863,9 @@ definitions:
    description: Command execution result
    properties:
      result:
-      type: integer
+      type: string
       description: Inluding 1(success), 2(failed), 3(partly failed)
       format: int8
-      enum: [1,2,3]
      success-resources:
       type: array
       items:
@@ -1056,3 +1004,43 @@ definitions:
     link-id:
      type: string
      format: string
+  AdminStatus:
+   type: string
+   format: string
+   description: Management status
+   enum: ["admin-up","admin-down"]
+  OperateStatus:
+   type: string
+   format: string
+   enum: ["operate-up","operate-down"]
+  SncType:
+   type: string
+   format: string
+   enum: ["simple","add-drop-a","add-drop-z","double-add-drop","inter-connect","double-inter-connect","open-add-drop","explicit","local-protection"]
+  CmdResultAndNcdResRelationsOutput:
+    type: object
+    properties:
+     output:
+      $ref: '#/definitions/CmdResultAndNcdResRelations'
+  CmdResultAndNcdResRelations:
+    type: object
+    properties:
+      command-result:
+        $ref: '#/definitions/CommandResult'
+      ncd-resource-relations:
+        $ref: '#/definitions/NcdResourceRelations'
+  NcdResourceRelations:
+    type: object
+    properties:
+      ncd-resource-relation:
+       type: array
+       items:
+        $ref: '#/definitions/NcdResourceRelation'
+  NcdResourceRelation:
+    type: object
+    properties:
+      ncd-id:
+       type: string
+      resource-id:
+       type: string
+

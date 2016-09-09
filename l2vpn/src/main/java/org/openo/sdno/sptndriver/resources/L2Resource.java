@@ -22,10 +22,11 @@ import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
-import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
+import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteEline;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
+import org.openo.sdno.sptndriver.models.south.SRouteCalResultObj;
 import org.openo.sdno.sptndriver.models.south.SRouteCalResultsOutput;
 import org.openo.sdno.sptndriver.services.SElineServices;
 import org.openo.sdno.sptndriver.services.STunnelServices;
@@ -74,7 +75,8 @@ public class L2Resource {
   public Response createEline(NL2Vpn l2vpn) throws URISyntaxException {
     SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
     STunnelServices tunnelServices = new STunnelServices(config.getControllerUrl());
-    SCreateElineAndTunnels createElineAndTunnels = L2Converter.L2ToElineTunnerCreator(l2vpn);
+    SCreateElineAndTunnelsInput createElineAndTunnels
+        = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
     if (createElineAndTunnels == null || routeCalInput == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
@@ -85,8 +87,10 @@ public class L2Resource {
     try {
       // Calculate LSP route first.
       SRouteCalResultsOutput routeCalResultsOutput = tunnelServices.calcRoutes(routeCalInput);
-      createElineAndTunnels.setRouteCalResult(
+      SRouteCalResultObj routeCalResultObj = new SRouteCalResultObj();
+      routeCalResultObj.setRouteCalResult(
           routeCalResultsOutput.getOutput().getRouteCalResults().getRouteCalResult().get(0));
+      createElineAndTunnels.getInput().setRouteCalResults(routeCalResultObj);
       // Create Eline.
       SElineServices elineServices = new SElineServices(config.getControllerUrl());
       elineServices.createElineAndTunnels(createElineAndTunnels);

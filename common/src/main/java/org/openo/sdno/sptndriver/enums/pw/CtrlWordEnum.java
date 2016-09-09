@@ -25,7 +25,7 @@ public enum CtrlWordEnum {
   private String name;
   private Integer index;
 
-  private CtrlWordEnum(String name, Integer index) {
+  CtrlWordEnum(String name, Integer index) {
     this.name = name;
     this.index = index;
   }

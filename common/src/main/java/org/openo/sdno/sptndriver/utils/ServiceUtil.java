@@ -19,6 +19,7 @@ package org.openo.sdno.sptndriver.utils;
 import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResult;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.slf4j.Logger;
@@ -38,31 +39,49 @@ public class ServiceUtil {
    * @throws HttpErrorException    When receives http error.
    */
   public static void parseCommandResultOutput(Response<SCommandResultOutput> response,
-                                              Logger LOGGER,
+                                              Logger logger,
                                               String printText)
       throws CommandErrorException, HttpErrorException {
     if (response.isSuccessful()) {
       if (response.body() == null || response.body().getOutput() == null) {
-        LOGGER.info(printText + " successfully, but response is null.");
+        logger.info(printText + " successfully, but response is null.");
         return;
       }
       SCommandResult commandResult = response.body().getOutput();
-      if (commandResult == null || commandResult.getResult() == null) {
-        LOGGER.info(printText + " successfully, but command result is null.");
+      checkSuccess(response, commandResult, logger,printText);
+    } else {
+      logger.error(printText + " failed, response unsuccessful.");
+      throw new HttpErrorException(response);
+    }
+  }
+
+  /**
+   * Parse the result of REST commands that the return type is SCmdResultAndNcdResRelationsOutput.
+   *
+   * @param response Response of execution.
+   * @throws CommandErrorException When command result is not successful.
+   * @throws HttpErrorException    When receives http error.
+   */
+  public static void parseCmdResultAndNcdResRelOutput(
+      Response<SCmdResultAndNcdResRelationsOutput> response,
+      Logger logger,
+      String printText)
+      throws CommandErrorException, HttpErrorException {
+    if (response.isSuccessful()) {
+      if (response.body() == null || response.body().getOutput() == null) {
+        logger.info(printText + " successfully, but response is null.");
         return;
       }
-      if (commandResult.getResult() != null) {
-        if (commandResult.getResult()
-            .equals(Integer.getInteger(SCmdResultStatus.SUCCESS.toString()))) {
-          LOGGER.debug(printText + " successfully. ");
-          return;
-        } else {
-          LOGGER.error(printText + " failed, command result error.");
-          throw new CommandErrorException(commandResult);
-        }
+      SCmdResultAndNcdResRelationsOutput commandResultOutput = response.body();
+      if (commandResultOutput == null
+          || commandResultOutput.getOutput() == null) {
+        logger.info(printText + " successfully, but command result output is null.");
+        return;
       }
+      SCommandResult commandResult = commandResultOutput.getOutput().getCommandResult();
+      checkSuccess(response, commandResult, logger, printText);
     } else {
-      LOGGER.error(printText + " failed, response unsuccessful.");
+      logger.error(printText + " failed, response unsuccessful.");
       throw new HttpErrorException(response);
     }
   }
@@ -73,14 +92,14 @@ public class ServiceUtil {
    *
    * @throws HttpErrorException When command execution FAILED.
    */
-  public static void parseRPCResult(Response<SCommandResultOutput> response,
-                                    Logger LOGGER,
+  public static void parseRpcResult(Response<SCommandResultOutput> response,
+                                    Logger logger,
                                     String printText)
       throws HttpErrorException {
     if (response.isSuccessful()) {
-      LOGGER.debug(printText + " successfully. ");
+      logger.debug(printText + " successfully. ");
     } else {
-      LOGGER.error(printText + " failed, response unsuccessful.");
+      logger.error(printText + " failed, response unsuccessful.");
       throw new HttpErrorException(response);
     }
   }
@@ -89,19 +108,40 @@ public class ServiceUtil {
    * Parse response.
    *
    * @param response  http response.
-   * @param LOGGER    Log information.
+   * @param logger    Log information.
    * @param printText Text print in the log.
    * @param <T>       Body of response.
    */
   public static <T> T parseResponse(Response<T> response,
-                                    Logger LOGGER,
+                                    Logger logger,
                                     String printText)
       throws CommandErrorException, HttpErrorException {
     if (response.isSuccessful()) {
       return response.body();
     } else {
-      LOGGER.error(printText + " failed, response unsuccessful.");
+      logger.error(printText + " failed, response unsuccessful.");
       throw new HttpErrorException(response);
     }
   }
+
+  private static <T> void checkSuccess(Response<T> response,
+                                       SCommandResult commandResult,
+                                       Logger logger,
+                                       String printText)
+      throws CommandErrorException, HttpErrorException {
+    if (commandResult == null || commandResult.getResult() == null) {
+      logger.info(printText + " successfully, but command result is null.");
+      return;
+    }
+    if (commandResult.getResult() != null) {
+      if (commandResult.getResult().equals(SCmdResultStatus.SUCCESS.toString())) {
+        logger.debug(printText + " successfully. ");
+      } else {
+        logger.error(printText + " failed, command result error.");
+        throw new CommandErrorException(commandResult);
+      }
+    }
+    return;
+  }
+
 }

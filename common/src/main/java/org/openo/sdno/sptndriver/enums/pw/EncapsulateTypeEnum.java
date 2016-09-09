@@ -16,45 +16,47 @@
 
 package org.openo.sdno.sptndriver.enums.pw;
 
+import org.openo.sdno.sptndriver.models.south.SEncapsulateType;
+
 /**
  * Enum of encapsulate type.
  */
 public enum EncapsulateTypeEnum {
-  VLAN("vlan", 4),
-  ETHERNET("eth", 5);
-  private String name;
-  private Integer index;
+  VLAN("vlan", SEncapsulateType.ETHERNET_VLAN),
+  ETHERNET("eth", SEncapsulateType.ETHERNET);
+  private String north;
+  private SEncapsulateType south;
 
-  private EncapsulateTypeEnum(String name, Integer index) {
-    this.name = name;
-    this.index = index;
+  EncapsulateTypeEnum(String north, SEncapsulateType south) {
+    this.north = north;
+    this.south = south;
   }
 
   /**
-   * Convert SBI integer encapsulate type to NBI string encapsulate type.
+   * Convert SBI encapsulate type to NBI encapsulate type.
    *
-   * @param index Integer value of NBI encapsulate type.
-   * @return String value of SBI encapsulate type.
+   * @param south SBI encapsulate type.
+   * @return NBI encapsulate type.
    */
-  public static String getName(Integer index) {
+  public static String convertSbiToNbi(SEncapsulateType south) {
     for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
-      if (e.getIndex().equals(index)) {
-        return e.name;
+      if (e.getSouth().equals(south)) {
+        return e.north;
       }
     }
     return null;
   }
 
   /**
-   * Convert NBI string encapsulate type to NBI integer encapsulate type.
+   * Convert NBI encapsulate type to SBI encapsulate type.
    *
-   * @param name String value of SBI encapsulate type.
-   * @return Integer value of NBI encapsulate type.
+   * @param name NBI encapsulate type.
+   * @return SBI encapsulate type.
    */
-  public static Integer getIndex(String name) {
+  public static SEncapsulateType convertNbiToSbi(String name) {
     for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
-      if (e.getName().equals(name)) {
-        return e.index;
+      if (e.getNorth().equals(name)) {
+        return e.south;
       }
     }
     return null;
@@ -63,14 +65,14 @@ public enum EncapsulateTypeEnum {
   /**
    * Get NBI encapsulate type.
    */
-  public String getName() {
-    return name;
+  public String getNorth() {
+    return north;
   }
 
   /**
    * Get SBI encapsulate type.
    */
-  public Integer getIndex() {
-    return index;
+  public SEncapsulateType getSouth() {
+    return south;
   }
 }

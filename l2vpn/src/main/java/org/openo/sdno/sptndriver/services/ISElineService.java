@@ -17,8 +17,10 @@
 package org.openo.sdno.sptndriver.services;
 
 import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
+import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 
 import retrofit2.Call;
@@ -38,8 +40,8 @@ public interface ISElineService {
    */
   @Headers(Config.CONTROLLER_ICT_AUTH)
   @POST("restconf/operations/sptn-service-eline:create-snc-eline-tunnels")
-  Call<SCommandResultOutput> createElineAndTunnels(
-      @Body SCreateElineAndTunnels createElineAndTunnels);
+  Call<SCmdResultAndNcdResRelationsOutput> createElineAndTunnels(
+      @Body SCreateElineAndTunnelsInput createElineAndTunnels);
 
   /**
    *  Delete Eline.

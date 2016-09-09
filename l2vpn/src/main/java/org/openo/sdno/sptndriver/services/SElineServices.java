@@ -18,8 +18,9 @@ package org.openo.sdno.sptndriver.services;
 
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
-import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
+import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
@@ -31,6 +32,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+
 
 /**
  * Eline service CRUD.
@@ -55,18 +58,20 @@ public class SElineServices {
    *
    * @param createElineAndTunnels Eline and tunnels information
    */
-  public void createElineAndTunnels(SCreateElineAndTunnels createElineAndTunnels)
+  public void createElineAndTunnels(SCreateElineAndTunnelsInput createElineAndTunnels)
       throws HttpErrorException, IOException, CommandErrorException {
-    String printText = "Create eline and tunnels " + createElineAndTunnels.getSncEline().getId();
+    String printText = "Create eline and tunnels "
+        + createElineAndTunnels.getInput().getSncEline().getId();
     LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     ISElineService service = retrofit.create(ISElineService.class);
-    Call<SCommandResultOutput> repos = service.createElineAndTunnels(createElineAndTunnels);
-    Response<SCommandResultOutput> response = repos.execute();
-    ServiceUtil.parseCommandResultOutput(response, LOGGER, printText);
+    Call<SCmdResultAndNcdResRelationsOutput> repos
+        = service.createElineAndTunnels(createElineAndTunnels);
+    Response<SCmdResultAndNcdResRelationsOutput> response = repos.execute();
+    ServiceUtil.parseCmdResultAndNcdResRelOutput(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
   }
 
@@ -86,7 +91,7 @@ public class SElineServices {
     ISElineService service = retrofit.create(ISElineService.class);
     Call<SCommandResultOutput> repos = service.deleteEline(elineId);
     Response<SCommandResultOutput> response = repos.execute();
-    ServiceUtil.parseRPCResult(response, LOGGER, printText);
+    ServiceUtil.parseRpcResult(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
   }
 

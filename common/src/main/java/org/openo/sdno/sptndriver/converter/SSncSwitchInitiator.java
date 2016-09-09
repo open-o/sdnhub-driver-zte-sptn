@@ -16,11 +16,6 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import org.openo.sdno.sptndriver.enums.south.sncswitch.SLinearProtectionProtocol;
-import org.openo.sdno.sptndriver.enums.south.sncswitch.SLinearProtectionType;
-import org.openo.sdno.sptndriver.enums.south.sncswitch.SRevertiveMode;
-import org.openo.sdno.sptndriver.enums.south.SSncLayerRate;
-import org.openo.sdno.sptndriver.enums.south.sncswitch.SSwitchMode;
 import org.openo.sdno.sptndriver.models.north.NMplsTePolicy;
 import org.openo.sdno.sptndriver.models.north.NPathProtectPolicy;
 import org.openo.sdno.sptndriver.models.south.SSncSwitch;
@@ -32,8 +27,9 @@ public class SSncSwitchInitiator {
 
   private static final int DEFAULT_WTR = 300;
   private static final int DEFAULT_HOLDOFF_TIME = 0;
-  private static final int DEFAULT_REROUTE_WTR = 50;
-  private static final SSwitchMode DEFAULT_SWITCH_MODE = SSwitchMode.DOUBLE_END_SWITCH;
+  //private static final int DEFAULT_REROUTE_WTR = 50;
+  private static final SSncSwitch.SwitchModeEnum DEFAULT_SWITCH_MODE
+      = SSncSwitch.SwitchModeEnum.DOUBLE_END_SWITCH;
   /**
    * NBI wtr in us, SBI wtr in seconds.
    */
@@ -50,27 +46,24 @@ public class SSncSwitchInitiator {
     SSncSwitch pwSncSwitch = new SSncSwitch();
 
     pwSncSwitch.setSncId(sncId);
-    pwSncSwitch.setLayerRate(SSncLayerRate.PW.getValue());
+    pwSncSwitch.setLayerRate(SSncSwitch.LayerRateEnum.PW);
 
     // todo return null or the protection type is UNPROTECTED, need test
     if (hasSncSwitch) {
       pwSncSwitch.setLinearProtectionType(
-          Integer.getInteger(
-              SLinearProtectionType.PATH_PROTECTION_1_TO_1.toString()));
+          SSncSwitch.LinearProtectionTypeEnum.PATH_PROTECTION_1_TO_1);
     } else {
-      pwSncSwitch.setLinearProtectionType(Integer.getInteger(
-          SLinearProtectionType.UNPROTECTED.toString()));
+      pwSncSwitch.setLinearProtectionType(SSncSwitch.LinearProtectionTypeEnum.UNPROTECTED);
     }
 
-    pwSncSwitch.setLinearProtectionProtocol(Integer.getInteger(
-        SLinearProtectionProtocol.APS.toString()));
-    pwSncSwitch.setSwitchMode(Integer.getInteger(
-        DEFAULT_SWITCH_MODE.toString()));
-    pwSncSwitch.setRevertiveMode(Integer.getInteger(SRevertiveMode.REVERTIVE.toString()));
-    pwSncSwitch.setWtr(Integer.valueOf(DEFAULT_WTR));
-    pwSncSwitch.setHoldOffTime(Integer.valueOf(DEFAULT_HOLDOFF_TIME));
-    pwSncSwitch.setRerouteRevertiveMode(Integer.getInteger(SRevertiveMode.NO_REVERTIVE.toString()));
-    pwSncSwitch.setRerouteWtr(Integer.valueOf(DEFAULT_REROUTE_WTR));
+    pwSncSwitch.setLinearProtectionProtocol(SSncSwitch.LinearProtectionProtocolEnum.APS);
+    pwSncSwitch.setSwitchMode(DEFAULT_SWITCH_MODE);
+    pwSncSwitch.setRevertiveMode(SSncSwitch.RevertiveModeEnum.REVERTIVE);
+    pwSncSwitch.setWtr(Integer.toString(DEFAULT_WTR));
+    pwSncSwitch.setHoldOffTime(Integer.toString(DEFAULT_HOLDOFF_TIME));
+    //pwSncSwitch.setRerouteRevertiveMode(
+    // Integer.getInteger(SRevertiveMode.NO_REVERTIVE.toString()));
+    //pwSncSwitch.setRerouteWtr(DEFAULT_REROUTE_WTR);
 
     return pwSncSwitch;
   }
@@ -85,38 +78,35 @@ public class SSncSwitchInitiator {
     SSncSwitch sncSwitch = new SSncSwitch();
     boolean hasProt = false;
     boolean coRoute = false;
-    SRevertiveMode revertiveMode = SRevertiveMode.REVERTIVE;
+    SSncSwitch.RevertiveModeEnum revertiveMode = SSncSwitch.RevertiveModeEnum.REVERTIVE;
     int wtr = DEFAULT_WTR;
     if (policy != null && policy.getCoRoute() != null) {
-      coRoute = policy.getCoRoute().booleanValue();
+      coRoute = policy.getCoRoute();
     }
 
     if (policy != null && policy.getPathProtectPolicy() != null) {
-      NPathProtectPolicy nPathProtectPolicy = policy.getPathProtectPolicy();
+      NPathProtectPolicy pathProtectPolicy = policy.getPathProtectPolicy();
       hasProt = true;
-      if (nPathProtectPolicy.getRetrieve() != null
-          && nPathProtectPolicy.getRetrieve().booleanValue() == false) {
-        revertiveMode = SRevertiveMode.NO_REVERTIVE;
+      if (pathProtectPolicy.getRetrieve() != null
+          && !pathProtectPolicy.getRetrieve()) {
+        revertiveMode = SSncSwitch.RevertiveModeEnum.NO_REVERTIVE;
       }
-      if (nPathProtectPolicy.getWtr() != null) {
-        wtr = nPathProtectPolicy.getWtr().intValue() / WTR_MULTIPLIER;
+      if (pathProtectPolicy.getWtr() != null) {
+        wtr = pathProtectPolicy.getWtr() / WTR_MULTIPLIER;
       }
     }
 
     // snc id, configured by controller since drive doesn't know UUID yet
     sncSwitch.setSncId(null);
-    sncSwitch.setLayerRate(SSncLayerRate.LSP.getValue());
-    sncSwitch
-        .setLinearProtectionType(Integer.getInteger(getLspProtType(hasProt, coRoute).toString()));
-    sncSwitch.setLinearProtectionProtocol(Integer.getInteger(
-        SLinearProtectionProtocol.APS.toString()));
-    sncSwitch.setSwitchMode(Integer.getInteger(
-        DEFAULT_SWITCH_MODE.toString()));
-    sncSwitch.setRevertiveMode(Integer.getInteger(revertiveMode.toString()));
-    sncSwitch.setWtr(Integer.valueOf(wtr));
-    sncSwitch.setHoldOffTime(Integer.valueOf(DEFAULT_HOLDOFF_TIME));
-    sncSwitch.setRerouteRevertiveMode(Integer.getInteger(SRevertiveMode.NO_REVERTIVE.toString()));
-    sncSwitch.setRerouteWtr(Integer.valueOf(DEFAULT_REROUTE_WTR));
+    sncSwitch.setLayerRate(SSncSwitch.LayerRateEnum.LSP);
+    sncSwitch.setLinearProtectionType(getLspProtType(hasProt, coRoute));
+    sncSwitch.setLinearProtectionProtocol(SSncSwitch.LinearProtectionProtocolEnum.APS);
+    sncSwitch.setSwitchMode(DEFAULT_SWITCH_MODE);
+    sncSwitch.setRevertiveMode(revertiveMode);
+    sncSwitch.setWtr(Integer.toString(wtr));
+    sncSwitch.setHoldOffTime(Integer.toString(DEFAULT_HOLDOFF_TIME));
+    //sncSwitch.setRerouteRevertiveMode(Integer.getInteger(SRevertiveMode.NO_REVERTIVE.toString()));
+    //sncSwitch.setRerouteWtr(DEFAULT_REROUTE_WTR);
 
     return sncSwitch;
   }
@@ -128,24 +118,21 @@ public class SSncSwitchInitiator {
    * @param needReroute Whether LSP need reroute when it is down.
    * @return LSP protection type.
    */
-  private static SLinearProtectionType getLspProtType(boolean hasProt, boolean needReroute) {
-    if (!hasProt && !needReroute) {
-      return SLinearProtectionType.UNPROTECTED;
+  private static SSncSwitch.LinearProtectionTypeEnum getLspProtType(boolean hasProt,
+                                                                    boolean needReroute) {
+    if (!hasProt) {
+      if (!needReroute) {
+        return SSncSwitch.LinearProtectionTypeEnum.UNPROTECTED;
+      } else {
+        return SSncSwitch.LinearProtectionTypeEnum.UNPROTECTED_WITH_RECOVERY;
+      }
+    } else {
+      if (!needReroute) {
+        return SSncSwitch.LinearProtectionTypeEnum.PATH_PROTECTION_1_TO_1;
+      } else {
+        return SSncSwitch.LinearProtectionTypeEnum.WITH_RECOVERY_1_TO_1;
+      }
     }
-
-    if (!hasProt && needReroute) {
-      return SLinearProtectionType.UNPROTECTED_WITH_RECOVERY;
-    }
-
-    if (hasProt && !needReroute) {
-      return SLinearProtectionType.PATH_PROTECTION_1_TO_1;
-    }
-
-    if (hasProt && needReroute) {
-      return SLinearProtectionType.WITH_RECOVERY_1_TO_1;
-    }
-
-    return SLinearProtectionType.PATH_PROTECTION_1_TO_1;
   }
 
 }

@@ -16,12 +16,10 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import org.openo.sdno.sptndriver.enums.south.oam.SDmMode;
-import org.openo.sdno.sptndriver.enums.south.oam.SLmMode;
-import org.openo.sdno.sptndriver.enums.south.qos.STrafficClass;
 import org.openo.sdno.sptndriver.models.south.SMep;
 import org.openo.sdno.sptndriver.models.south.SMeps;
 import org.openo.sdno.sptndriver.models.south.SOam;
+import org.openo.sdno.sptndriver.models.south.SOamMode;
 
 /**
  * The class to initiate OAM parameters.
@@ -42,10 +40,10 @@ public class SOamInitiator {
     oam.setMeps(initMeps());
     oam.setMeps(null);
     oam.setCcAllow(false);
-    oam.setCcExp(Integer.getInteger(STrafficClass.CS7.toString()));
+    oam.setCcExp(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
     oam.setCcInterval(SOam.CcIntervalEnum.NUMBER_3_DOT_3);
-    oam.setLmMode(Integer.getInteger(SLmMode.DISABLE.toString()));
-    oam.setDmMode(Integer.getInteger(SDmMode.DISABLE.toString()));
+    oam.setLmMode(SOamMode.DISABLE);
+    oam.setDmMode(SOamMode.DISABLE);
     return oam;
   }
 
@@ -56,9 +54,9 @@ public class SOamInitiator {
    */
   private static SMeps initMeps() {
     SMep mep1 = new SMep();
-    mep1.setId(1);
+    mep1.setId("1");
     SMep mep2 = new SMep();
-    mep2.setId(2);
+    mep2.setId("2");
     SMeps meps = new SMeps();
     meps.add(mep1);
     meps.add(mep2);
