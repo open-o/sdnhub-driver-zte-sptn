@@ -26,8 +26,6 @@ import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteEline;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
-import org.openo.sdno.sptndriver.models.south.SRouteCalResultObj;
-import org.openo.sdno.sptndriver.models.south.SRouteCalResultsOutput;
 import org.openo.sdno.sptndriver.services.SElineServices;
 import org.openo.sdno.sptndriver.services.STunnelServices;
 
@@ -86,11 +84,8 @@ public class L2Resource {
 
     try {
       // Calculate LSP route first.
-      SRouteCalResultsOutput routeCalResultsOutput = tunnelServices.calcRoutes(routeCalInput);
-      SRouteCalResultObj routeCalResultObj = new SRouteCalResultObj();
-      routeCalResultObj.setRouteCalResult(
-          routeCalResultsOutput.getOutput().getRouteCalResults().getRouteCalResult().get(0));
-      createElineAndTunnels.getInput().setRouteCalResults(routeCalResultObj);
+      createElineAndTunnels.getInput().setRouteCalResults(
+          tunnelServices.calcRoutes(routeCalInput).getOutput().getRouteCalResults());
       // Create Eline.
       SElineServices elineServices = new SElineServices(config.getControllerUrl());
       elineServices.createElineAndTunnels(createElineAndTunnels);

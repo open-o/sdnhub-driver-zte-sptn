@@ -143,7 +143,7 @@ definitions:
     snc-eline:
      $ref: '#/definitions/Eline'
     route-cal-results:
-     $ref: '#/definitions/RouteCalResultObj'
+     $ref: '#/definitions/RouteCalResult'
     snc-tunnel-create-policy:
      $ref: '#/definitions/SncTunnelCreatePolicy'
   ElineSncAndRoute:
@@ -304,11 +304,11 @@ definitions:
      format: string
     wtr:
      type: string
-     description: wait time in seconds, default value is 300 s, minimum value is 0 s
+     description: The wait time in seconds, default value is 300 s, minimum value is 0 s
      format: int32
     hold-off-time:
      type: string
-     description: hode off time in ms, range from 0 ms to 10000 ms, default value is 0 ms
+     description: The hode off time in ms, range from 0 ms to 10000 ms, default value is 0 ms
      format: int32
     #reroute-revertive-mode:
      #type: integer
@@ -697,11 +697,7 @@ definitions:
       type: array
       items:
         $ref: '#/definitions/RouteCalResultContainer'
-  RouteCalResultObj:
-   type: object
-   properties:
-    route-cal-result:
-     $ref: '#/definitions/RouteCalResultContainer'
+
   RouteCalResultContainer:
    type: object
    properties:
@@ -775,10 +771,23 @@ definitions:
      type: array
      items:
       $ref: '#/definitions/L3ac'
+    topo-mode:
+     type: string
+     format: string
+     description: The mode how to connection PEs with tunnel
+     enum: ["specified","any-to-any","hub-spoke"]
+    hub-spoke-policy:
+     $ref: '#/definitions/HubSpokePolicy'
     bind-relation-list:
      type: array
      items:
       $ref: '#/definitions/L3BindRelation'
+    tunnel-create-policy:
+     $ref: '#/definitions/SncTunnelCreatePolicy'
+    l3-frr-list:
+     type: array
+     items:
+      $ref: '#/definitions/L3Frr'
     static-route-list:
      type: array
      items:
@@ -804,9 +813,18 @@ definitions:
      type: string
      description: New private IP address of LTP after  added to L3vpn
      format: string
+    qos:
+      $ref: '#/definitions/Qos'
+    protocol-list:
+     type: array
+     items:
+      $ref: '#/definitions/L3acProtocol'
   L3BindRelation:
    type: object
    properties:
+    id:
+      type: string
+      format: string
     source-peer:
      type: string
      description: Peer IP address of souce end
@@ -823,15 +841,13 @@ definitions:
      type: string
      description: UUID of destination NE
      format: string
-    tunnel-policy:
+    snc-tunnel-create-policy:
      $ref: '#/definitions/SncTunnelCreatePolicy'
-    bound-obj:
-     type: string
-     description: UUID of binding tunnel
-     format: string
   StaticRoute:
    type: object
    properties:
+    id:
+     type: string
     dest-ip:
      type: string
      description: Destination IP address, like "10.1.1.1"
@@ -840,14 +856,11 @@ definitions:
      type: string
      description: destination IP mask, like "255.255.0.0"
      format: string
-    is-backup:
-     type: boolean
-     description: Whether the route is backup route
     route-type:
-     type: integer
-     description: Route type, including 0(directly connected route), 1(indirectly connected route), 2(net side route)
-     enum: [0,1,2]
-     format: int16
+     type: string
+     description: Static Route type, including direct-route(same ip prefix as out-inf), local-route(the route to reach some ce), nni-route(the route to reach some pe in this l3vpn)
+     enum: ["direct-route","local-route","nni-route"]
+     format: string
     next-hop-ip:
      type: string
      description: Next hop IP address, like "10.1.1.1"
@@ -863,10 +876,10 @@ definitions:
      maximum: 255
      format: int16
     routeStatus:
-     type: integer
+     type: string
      description: Route Status, including 1(down), 2(up), only used when querying a route
-     enum: [1,2]
-     format: int16
+     enum: ["down","up"]
+     format: string
   CommandResultOutput:
    type: object
    description: Output structure containing CommandResult
@@ -1058,4 +1071,76 @@ definitions:
        type: string
       resource-id:
        type: string
+  HubSpokePolicy:
+   type: object
+   description: Specify role of every PE and their relations
+   properties:
+     node-list:
+      $ref: '#/definitions/HubSpokeNodes'
+     hub-fullmeshed:
+      type: boolean
+     primary-backup-connected:
+      type: boolean
+  HubSpokeNodes:
+   type: array
+   items:
+     $ref: '#/definitions/HubSpokeNode'
+  HubSpokeNode:
+   type: object
+   properties:
+    ne-id:
+     type: string
+    node-role:
+     type: string
+     enum: ["hub","spoke"]
+    belonged-hubs:
+     type: array
+     items:
+      $ref: '#/definitions/NodeId'
+  NodeId:
+   type: object
+   properties:
+    node-id:
+     type: string
+  L3Frr:
+   type: object
+   properties:
+    id:
+      type: string
+    source-node-id:
+      type: string
+    primary-node-id:
+      type: string
+    primary-peer-ip:
+      type: string
+    backup-node-id:
+      type: string
+    backup-peer-ip:
+      type: string
+    revertive-mode:
+      type: string
+      enum: ["no-revertive", "revertive"]
+    wtr:
+      type: string
+      format: int32
+      description: The wait time in seconds, default value is 300 s, minimum value is 0 s
+    hold-off-time:
+      type: string
+      format: int32
+      description: The switch delay time in ms, default value is 0 ms, the step is 100 ms
+      minimum: 0
+      maximum: 100
+  L3acProtocol:
+   type: object
+   properties:
+    protocol-type:
+     type: string
+     description: The protocol type, default value is static
+     enum: ["static","OSPF","ISIS","BGP"]
+    static-routes:
+     type: array
+     items:
+      $ref: '#/definitions/StaticRoute'
+
+
 

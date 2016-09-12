@@ -38,6 +38,14 @@ public class SQosInitiator {
    * NBI pbs in bytes and SBI pbs in KBytes.
    */
   private static final int PBS_MULTIPLIER = 1000;
+  /**
+   *  Default CBS in KBytes.
+   */
+  private static final int DEFAULT_CBS = 100;
+  /**
+   *  Default PBS in KBytes.
+   */
+  private static final int DEFAULT_PBS = 100;
 
   /**
    * Init LSP Qos parameters according to MplsTePolicy.
@@ -60,6 +68,12 @@ public class SQosInitiator {
       qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
       qos.setA2zCir(policy.getBandwidth().toString());
       qos.setZ2aCir(policy.getBandwidth().toString());
+      qos.setA2zPir(policy.getBandwidth().toString());
+      qos.setZ2aPir(policy.getBandwidth().toString());
+      qos.setA2zCbs(Integer.toString(DEFAULT_CBS));
+      qos.setZ2aCbs(Integer.toString(DEFAULT_CBS));
+      qos.setA2zPbs(Integer.toString(DEFAULT_PBS));
+      qos.setZ2aPbs(Integer.toString(DEFAULT_PBS));
     } else {
       qos.setCacMode(SCacMode.CLOSE.toString());
       qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
