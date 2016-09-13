@@ -38,6 +38,7 @@ import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
 import org.openo.sdno.sptndriver.models.south.SSncPw;
 import org.openo.sdno.sptndriver.models.south.SSncPws;
 import org.openo.sdno.sptndriver.models.south.SSncType;
+import org.openo.sdno.sptndriver.utils.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +59,8 @@ public class L2Converter {
   public static SCreateElineAndTunnelsInput convertL2ToElineTunnerCreator(NL2Vpn l2vpn) {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
     createElineAndTunnels.setSncEline(l2ToEline(l2vpn, l2vpn.getId()));
-    createElineAndTunnels
-        .setSncTunnelCreatePolicy(SSncTunnelCreatePolicyInitiator.initTunnelPolicy(l2vpn));
+    createElineAndTunnels.setSncTunnelCreatePolicy(SSncTunnelCreatePolicyInitiator
+        .initTunnelPolicy(l2vpn.getTunnelService()));
     SCreateElineAndTunnelsInput createElineAndTunnelsInput = new SCreateElineAndTunnelsInput();
     createElineAndTunnelsInput.setInput(createElineAndTunnels);
     return createElineAndTunnelsInput;
@@ -68,7 +69,7 @@ public class L2Converter {
   /**
    * convert L2vpn to Eline.
    *
-   * @param nl2Vpn   NBI L2vpn.
+   * @param nl2Vpn       NBI L2vpn.
    * @param southElineId Eline uuid.
    * @return SBI Eline.
    */
@@ -154,17 +155,17 @@ public class L2Converter {
 
     NL2Access nl2Access = ac.getL2Access();
     if (nl2Access != null) {
-      ep.setAccessType(AccessTypeEnum.convertNbiToSbi(nl2Access.getAccessType()));
+      ep.setAccessType(AccessTypeEnum.convertNbiToSbi(nl2Access.getAccessType().toString()));
       ep.setDot1qVlanBitmap(nl2Access.getDot1qVlanBitmap().toString());
       ep.setQinqCvlanBitmap(nl2Access.getQinqCvlanBitmap().toString());
       ep.setQinqSvlanBitmap(nl2Access.getQinqSvlanBitmap().toString());
-      String accessAction = nl2Access.getAccessAction();
+      String accessAction = nl2Access.getAccessAction().toString();
       ep.setAccessAction(AccessActionEnum.convertNbiToSbi(accessAction));
       if (accessAction != null) {
         if (accessAction.equals(AccessActionEnum.PUSH.getNorth())) {
-          ep.setAccessVlanId(nl2Access.getPushVlanId().toString());
+          ep.setActionVlanId(nl2Access.getPushVlanId().toString());
         } else if (accessAction.equals(AccessActionEnum.SWAP.getNorth())) {
-          ep.setAccessVlanId(nl2Access.getSwapVlanId().toString());
+          ep.setActionVlanId(nl2Access.getSwapVlanId().toString());
         } else {
           LOGGER.debug(
               "No need to config access vlan id since access action is " + accessAction + ".");
@@ -172,7 +173,7 @@ public class L2Converter {
       }
 
       ep.setQos(SQosInitiator
-                    .initAcQos(ep.getId(), ac.getUpstreamBandwidth(), ac.getDownstreamBandwidth()));
+          .initAcQos(ep.getId(), ac.getUpstreamBandwidth(), ac.getDownstreamBandwidth()));
     }
 
     ep.setRole(SServiceEndPoint.RoleEnum.MASTER);
@@ -222,7 +223,7 @@ public class L2Converter {
       NPw pwZ = l2Vpn.getPws().getPws().get(1);
 
       SSncPw sncPw = new SSncPw();
-      sncPw.setId(l2Vpn.getPws().getUuid());
+      sncPw.setId(UuidUtil.getUuid());
       sncPw.setName(null);
       sncPw.setUserLabel(pwA.getName());
       sncPw.setRole(SSncPw.RoleEnum.MASTER);

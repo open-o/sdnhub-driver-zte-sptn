@@ -19,61 +19,72 @@ info:
   title: L3VpnService Sbi Adapter Interface
   description: Orchestrator SDN-O SBI Reference V1.0-L3VPN
 host: sdno.openo.org
-basePath: /rest
+basePath: /openoapi/sbi-l3vpn/v1
 schemes:
   - http
-consumes: 
+consumes:
   - application/json
-produces: 
+produces:
   - application/json
-  
-paths: 
 
-  /rest/{controller-name}/v1/controllers/{controlleruuid}/united-sbi-service-l3vpn:service/l3vpns:
+paths:
+ /l3vpns:
     post:
       summary: Create L3Vpn a connection
-      description: it will create a L3VPN connection through the controller specified . 
+      description: it will create a L3VPN connection through the controller specified .
       operationId: createL3VPN
       consumes:
-        - application/json
+        - application/json;charset=UTF-8
       produces:
-        - application/json
-      parameters: 
-        - name: controlleruuid 
-          in: path 
-          description: ID of the controller used to create L3VPN connection. 
-          required: true 
+        - application/json;charset=UTF-8
+      parameters:
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
+          required: true
           type: string
-          format: uuid
-        - name: l3vpnconnection
+        - name: l3vpn
           in: body
           description: L3Vpn conenction
           required: true
           schema:
             $ref: "#/definitions/L3Vpn"
-      responses: 
-        default: 
-          description: Response 
-          schema: 
-            $ref: "#/definitions/L3VpnResponse" 
-
-
-  /rest/{controller-name}/v1/controllers/{controlleruuid}/united-sbi-service-l3vpn:service/l3vpns/l3vpn/{vpnid}:    
+      responses:
+        201:
+          description: create L3Vpn connection.
+          schema:
+            $ref: '#/definitions/L3VpnResponse'
+        400:
+          description: create L3Vpn Instances failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: create L3Vpn Instances failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: create L3Vpn Instances failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
+ /l3vpns/{vpnid}:
     delete:
       summary: Delete the L3VPN whose Id is specified in the path
       description: delete a L3VPN if it exists
       operationId: deleteL3VPN
       consumes:
-        - application/json
+        - application/json;charset=UTF-8
       produces:
-        - application/json
-      parameters: 
-        - name: controlleruuid 
-          in: path 
-          description: ID of the controller used to delete a L3Vpn.
-          required: true 
+        - application/json;charset=UTF-8
+      parameters:
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
+          required: true
           type: string
-          format: uuid
         - name: vpnid
           in: path
           description: ID of the VPN to be deleted.
@@ -81,14 +92,115 @@ paths:
           type: string
           format: uuid
       responses:
-        default: 
-          description: Response 
-          schema: 
-            $ref: "#/definitions/L3VpnResponse" 
+        200:
+          description: Delete a L3Vpn connection
+          schema:
+            $ref: '#/definitions/L3VpnResponse'
+        400:
+          description: delete a L3Vpn Instance failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: delete a L3Vpn Instance failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: delete a L3Vpn Instance failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
 
+    get:
+      summary: query the L3VPN whose Id is specified in the path
+      description: query a L3VPN, need to pass in controller id and vpn id
+      consumes:
+        - application/json;charset=UTF-8
+      produces:
+        - application/json;charset=UTF-8
+      parameters:
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
+          required: true
+          type: string
+        - name: vpnid
+          in: path
+          description: ID of the VPN to be query.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Query a L3Vpn connection
+          schema:
+            $ref: '#/definitions/L3VpnResponse'
+        400:
+          description: Query a L3Vpn Instance failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Query a L3Vpn Instance failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Query a L3Vpn Instance failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
 
-    
-            
+    put:
+      summary: update the L3VPN whose Id is specified in the path
+      description: update a L3VPN, need to pass in controller id and vpn id
+      consumes:
+        - application/json;charset=UTF-8
+      produces:
+        - application/json;charset=UTF-8
+      parameters:
+        - name: X-Driver-Parameter
+          in: header
+          description: Controller ID, the format is X-Driver-Parameter:extSysID={ctrlUuid}.
+          required: true
+          type: string
+        - name: vpnid
+          in: path
+          description: ID of the VPN to be updated.
+          required: true
+          type: string
+          format: uuid
+        - name: l3vpn
+          in: body
+          description: L3Vpn conenction
+          required: true
+          schema:
+            $ref: "#/definitions/L3Vpn"
+      responses:
+        200:
+          description: update a L3Vpn connection
+          schema:
+            $ref: '#/definitions/L3VpnResponse'
+        400:
+          description: update a L3Vpn Instance failure as parameters invalid.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: update a L3Vpn Instance failure as can't reach server.
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: update a L3Vpn Instance failure as inner error.
+          schema:
+            $ref: '#/definitions/Error'
+
 definitions:
 
   AutoSelectTunnel:
@@ -97,10 +209,14 @@ definitions:
     properties:
       type:
         type: string
+        enum:
+          - ldp
+          - te
+          - gre
         description: Tunnel type of Auto select tunnel policy
       priority:
         type: integer
-        format: int64
+        format: int32
         description: Tunnel priority of Auto select tunnel policy
 
   AutoSelectTunnels:
@@ -108,7 +224,7 @@ definitions:
     type: object
     required:
       - autoSelectTunnel
-    properties: 
+    properties:
       autoSelectTunnel:
         type: array
         items:
@@ -129,31 +245,29 @@ definitions:
       autoSelectTunnels:
         $ref: "#/definitions/AutoSelectTunnels"
 
-
-
   PathConstraint:
     description: Constraints of Tunnel route
     type: object
     properties:
       setupPriority:
         type: integer
-        format: int64
+        format: int32
         minimum: 0
         maximum: 7
         description: Setup priority of tunnel route constraints
       holdupPriority:
         type: integer
-        format: int64
+        format: int32
         minimum: 0
         maximum: 7
         description: Holdup priority of tunnel route constraints
       latency:
         type: integer
-        format: int64
+        format: int32
         minimum: 0
         maximum: 60000000
         description: Latency priority of tunnel route constraints
-        
+
   PathProtectPolicy:
     description: Tunnel protection policy
     type: object
@@ -166,7 +280,7 @@ definitions:
       hotStandbyEnable:
         type: boolean
         description: Whether to enable hotstandby in tunnel protection (true, false)
-      retrieve:
+      revertive:
         type: boolean
         description: Whether to revertive in tunnel protection (true, false)
       bandwidthMode:
@@ -178,7 +292,7 @@ definitions:
         minimum: 0
         maximum: 60000000
         description: Wtr time of tunnel protection revertive in micro-second
-        
+
   MplsTePolicy:
     description: Tunnel policy of Mple-te
     type: object
@@ -188,9 +302,16 @@ definitions:
     properties:
       signalType:
         type: string
+        enum:
+          - rsvp-te
+          - sr-te
+          - static-lsp
         description: Tunnel type of Manual Select(rsvp-te, sr-te, static-lsp)
       manageProtocol:
         type: string
+        enum:
+          - netconf
+          - pcep
         description: Manage protocol(netconf, pcep)
       sharing:
         type: boolean
@@ -200,20 +321,18 @@ definitions:
         description: Whether is best effort (true, false)
       bandwidth:
         type: integer
-        format: int64
+        format: int32
         description: Tunnel bandwidth in kbps
       coRoute:
         type: boolean
         description: Whether to re Route (true, false)
       bfdEnable:
         type: boolean
-        description: Whether to enable BFD Protocol (true, false)        
+        description: Whether to enable BFD Protocol (true, false)
       pathConstraint:
         $ref: "#/definitions/PathConstraint"
       pathProtectPolicy:
         $ref: "#/definitions/PathProtectPolicy"
-
-
 
   ParticularConstraint:
     description: particular constraint
@@ -233,6 +352,9 @@ definitions:
         description: Egress node of tunnel
       type:
         type: string
+        enum:
+          - binding
+          - particular-mpls-te-tunnel
         description: Type of tunnel constraint (binding, particular-mpls-te-tunnel)
       bindingTunnel:
         description: List of binding tunnel
@@ -253,10 +375,7 @@ definitions:
         items:
           $ref: "#/definitions/ParticularConstraint"
 
-
-
-
-  TunnelService: 
+  TunnelService:
     type: object
     description: Policy configuration of Vpn business tunnel
     required:
@@ -264,6 +383,11 @@ definitions:
     properties:
       type:
         type: string
+        enum:
+          - auto-select
+          - mpls-te
+          - vxlan
+          - gre
         description: Type of tunnel policy - (auto-select, mpls-te, vxlan, gre)
       autoSelect:
         $ref: "#/definitions/AutoSelectPolicy"
@@ -271,9 +395,6 @@ definitions:
         $ref: "#/definitions/MplsTePolicy"
       particularConstraints:
         $ref: "#/definitions/ParticularConstraints"
-
-
-
 
   QosIfCar:
     description: bandwidth related QoS parameters
@@ -288,22 +409,21 @@ definitions:
         description: Whether to enable car configuration (true, false)
       cir:
         type: integer
-        format: int32
+        format: int64
         description: Committed speed in kbps
-      pir: 
+      pir:
         type: integer
-        format: int32
+        format: int64
         description: Peak speed in kbps
       cbs:
         type: integer
-        format: int32
+        format: int64
         description: Committed burst Size in bytes
       pbs:
         type: integer
-        format: int32
+        format: int64
         description: Peak burst Size in bytes
-  
-  
+
   L2Access:
     description: Layer2 Access Configuration
     type: object
@@ -312,10 +432,14 @@ definitions:
     properties:
       accessType:
         type: string
+        enum:
+          - port
+          - dot1q
+          - qing
         description: Access type(port, dot1q, qinq)
       dot1qVlanBitmap:
         type: integer
-        format: uint32
+        format: int32
         minimum: 1
         maximum: 4095
         description:  Vlan Bitmap in dot1q access type
@@ -345,9 +469,12 @@ definitions:
         description: Swap Vlan Id
       accessAction:
         type: string
-        description: Access action ("keep","push", "pop","swap"). Default - "keep". keep(0, "keep"), push(1, "push"), pop(2, "pop"), swap(3, "swap")
-
-
+        enum:
+          - keep
+          - push
+          - pop
+          - swap
+        description: Access action ("keep","push", "pop","swap"). Default - "keep".
 
   StaticRoute:
     description: Static Route
@@ -372,7 +499,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/StaticRoute"
-  
+
   BgpRoute:
     description: BGP Route
     type: object
@@ -418,7 +545,6 @@ definitions:
         items:
           $ref: "#/definitions/BgpRoute"
 
-  
   IsisRoute:
     description: Isis Route
     type: object
@@ -428,7 +554,6 @@ definitions:
       networkEntity:
         type: string
         description: Name of Isis network entity
-
 
   Network:
     description: Network
@@ -449,7 +574,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Network"
-  
+
   OspfRoute:
     description: OSPF Route
     type: object
@@ -479,7 +604,7 @@ definitions:
     required:
       - type
     properties:
-      type: 
+      type:
         type: string
         description: Route protocol type (static, bgp, ospf, isis)
       staticRoutes:
@@ -501,24 +626,21 @@ definitions:
         items:
           $ref: "#/definitions/Route"
 
-
-  
   L3Access:
-    description: Layer3 Access Configuration - ipv4Address and a list of PE-CE routes 
+    description: Layer3 Access Configuration - ipv4Address and a list of PE-CE routes
     type: object
     required:
       - ipv4Address
       - routes
-    properties:    
+    properties:
       ipv4Address:
         type: string
         description: ipAddress
       routes:
         $ref: "#/definitions/Routes"
 
-
   OverrideFlow:
-    description: Override Flow 
+    description: Override Flow
     type: object
     required:
       - externalFlowId
@@ -547,8 +669,6 @@ definitions:
         items:
           $ref: "#/definitions/OverrideFlow"
 
-    
-    
   L3Ac:
     description: L3Vpn Access point configuration
     type: object
@@ -616,6 +736,18 @@ definitions:
         description: Id of External Qos Policy
       overrideFlows:
         $ref: "#/definitions/OverrideFlows"
+      topologyRole:
+        type: string
+        enum:
+          - hub"
+          - spoke
+          - spokeBridge
+      acDirection:
+        type: string
+        enum:
+          - none
+          - in
+          - out
 
   L3Acs:
     description: List of L3Vpn Access point configuration
@@ -627,9 +759,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/L3Ac"
-
-
-
 
   L3LoopbackIf:
     description: L3 Loopback Interface
@@ -649,7 +778,7 @@ definitions:
         description: Network Element device id
       description:
         type: string
-        description: This is the description of the L3LoopbackIf instance.    
+        description: This is the description of the L3LoopbackIf instance.
       ipv4Address:
         type: string
         description: ipv4 address of loopback interface
@@ -663,12 +792,9 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/L3LoopbackIf"
-          
-
-
 
   HubGroup:
-    description: the definition of a hub group. 
+    description: the definition of a hub group.
     type: object
     required:
       - acId
@@ -697,15 +823,14 @@ definitions:
     description: Spoke Group
     type: object
     properties:
-      localBridge: 
+      localBridge:
         description: Is Local Bridge (true, false)
         type: boolean
-      spokeAc: 
+      spokeAc:
         type: array
         items:
           $ref: "#/definitions/SpokeAcs"
 
-    
   TopologyService:
     description: Topology Service. a SpokeGroup and a list of HubGroup
     type: object
@@ -718,10 +843,8 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/HubGroup"
-      spokeGroup: 
+      spokeGroup:
         $ref: "#/definitions/SpokeGroup"
-
-
 
   BfdParameter:
     description: Bidirectional Forwarding Detection parameter
@@ -729,17 +852,17 @@ definitions:
     properties:
       minTxInterval:
         type: integer
-        format: int64
+        format: int32
         minimum: 1
         maximum: 4094
         description: minTxInterval
       minRxInterval:
         type: integer
-        format: int64
+        format: int32
         minimum: 1
         maximum: 4094
         description: minRxInterval
-        
+
   Vrrp:
     description: Vrrp configuration
     type: object
@@ -752,7 +875,7 @@ definitions:
         description: Track Bidirectional Forwarding Detection (true, false)
       bfdParamter:
         $ref: "#/definitions/BfdParameter"
-    
+
   ProtectGroup:
     description: protection group
     type: object
@@ -765,57 +888,67 @@ definitions:
         type: string
         format: uuid
         description: The backup id of AC protect group
-      vrrp: 
+      vrrp:
         $ref: "#/definitions/Vrrp"
 
-
-  
   DiffServ:
     description: DiffServ configuration
     type: object
     properties:
       mode:
         type: string
+        enum:
+          - uniform
+          - outbound
+          - short-pipe
         description: Differential service mode (uniform, outbound, short-pipe)
       serviceClass:
         type: string
+        enum:
+          - BE
+          - AF1
+          - AF2
+          - AF3
+          - AF4
+          - EF
+          - CS6
+          - CS7
         description: Differential service class (BE, AF1, AF2, AF3, AF4, EF, CS6, CS7)
       color:
         type: string
+        enum:
+          - green
+          - yellow
+          - red
         description: Differential service color (green, yellow, red)
 
-
-
-
-
-  
   L3Vpn:
     type: object
-    description: the model of a L3VPN (all related information).  
+    description: the model of a L3VPN (all related information).
     required:
       - id
       - name
       - adminStatus
       - tunnelService
       - acs
-    properties: 
-      id: 
-        type: string 
+    properties:
+      id:
+        type: string
         format: uuid
-        description: This is a UUID of the vpn-instance, which is allocated by the orchestrator. 
-      name: 
+        description: This is a UUID of the vpn-instance, which is allocated by the orchestrator.
+      name:
         type: string
         description: This is the name of the vpn-instance, be created by the application, which is just used to identify the different vpn instances created by the application, and the name on forwarding device can be created differently by controller.
       tenantId:
         type: string
         format: uuid
-        description: Tenant ID. 
+        description: Tenant ID.
       description:
         type: string
         description: This is the description of the vpn-instance.
       topology:
         type: string
-        description: This identify the connection mode of vpns, including none, hub-spoke and full-mesh.      
+        description: This identify the connection mode of vpns, including none, hub-spoke and full-mesh.
       adminStatus:
         type: string
         description: L3VPN Connection management status(active, inactive). Active - activate the L3VPN Connection. Inactive - inactivate the L3VPN Connection. adminUp(0, "adminUp"), adminDown(1, "adminDown");
@@ -826,7 +959,7 @@ definitions:
         $ref: "#/definitions/TunnelService"
       mtu:
         type: integer
-        format: int16
+        format: int32
         minimum: 46
         maximum: 9600
         description: MTU
@@ -843,26 +976,21 @@ definitions:
         $ref: "#/definitions/ProtectGroup"
       diffServ:
         $ref: "#/definitions/DiffServ"
-        
-
-
-
-
 
   L3VpnResponse:
-    description: a general structure for response  
+    description: a general structure for response
     type: object
     required:
       - ret
       - format
-    properties: 
-      ret: 
+    properties:
+      ret:
         type: integer
         description: Http Status code of controller
       format:
         type: string
         description: Return data format,such as "json"
-      msg: 
+      msg:
         type: string
         description: Response msg returned from adapter
       success:
@@ -873,3 +1001,14 @@ definitions:
         type: object
         additionalProperties:
           type: string
+
+  Error:
+    type: object
+    required:
+      - code
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

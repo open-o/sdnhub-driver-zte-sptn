@@ -41,11 +41,11 @@ public class SQosInitiator {
   /**
    *  Default CBS in KBytes.
    */
-  private static final int DEFAULT_CBS = 100;
+  private static String DEFAULT_CBS = "100";
   /**
    *  Default PBS in KBytes.
    */
-  private static final int DEFAULT_PBS = 100;
+  private static String DEFAULT_PBS = "100";
 
   /**
    * Init LSP Qos parameters according to MplsTePolicy.
@@ -70,10 +70,10 @@ public class SQosInitiator {
       qos.setZ2aCir(policy.getBandwidth().toString());
       qos.setA2zPir(policy.getBandwidth().toString());
       qos.setZ2aPir(policy.getBandwidth().toString());
-      qos.setA2zCbs(Integer.toString(DEFAULT_CBS));
-      qos.setZ2aCbs(Integer.toString(DEFAULT_CBS));
-      qos.setA2zPbs(Integer.toString(DEFAULT_PBS));
-      qos.setZ2aPbs(Integer.toString(DEFAULT_PBS));
+      qos.setA2zCbs(DEFAULT_CBS);
+      qos.setZ2aCbs(DEFAULT_CBS);
+      qos.setA2zPbs(DEFAULT_PBS);
+      qos.setZ2aPbs(DEFAULT_PBS);
     } else {
       qos.setCacMode(SCacMode.CLOSE.toString());
       qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
@@ -108,20 +108,20 @@ public class SQosInitiator {
   /**
    * Init AC Qos.
    *
-   * @param AcId          AC UUID
+   * @param acId          AC UUID
    * @param upStreamQos   Upstream AC Qos.
    * @param downStreamQos Downstream AC Qos.
    * @return AC Qos.
    */
-  public static SQos initAcQos(String AcId, NQosIfCar upStreamQos, NQosIfCar downStreamQos) {
-    SQos qos = initCacClosedQos(AcId);
+  public static SQos initAcQos(String acId, NQosIfCar upStreamQos, NQosIfCar downStreamQos) {
+    SQos qos = initCacClosedQos(acId);
     if (upStreamQos != null && upStreamQos.getEnable()) {
       qos.setCacMode(SCacMode.OPEN.toString());
       qos.setA2zPolicing(SQosPolicing.OPEN.toString());
       qos.setA2zCir(upStreamQos.getCir().toString());
       qos.setA2zPir(upStreamQos.getPir().toString());
-      qos.setA2zCbs(Integer.toString(upStreamQos.getCbs() / CBS_MULTIPLIER));
-      qos.setA2zPbs(Integer.toString(upStreamQos.getPbs() / PBS_MULTIPLIER));
+      qos.setA2zCbs(getSouthCbs(upStreamQos.getCbs()));
+      qos.setA2zPbs(getSouthPbs(upStreamQos.getPbs()));
     }
 
     if (downStreamQos != null && downStreamQos.getEnable()) {
@@ -129,10 +129,32 @@ public class SQosInitiator {
       qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
       qos.setZ2aCir(downStreamQos.getCir().toString());
       qos.setZ2aPir(downStreamQos.getPir().toString());
-      qos.setZ2aCbs(Integer.toString(downStreamQos.getCbs() / CBS_MULTIPLIER));
-      qos.setZ2aPbs(Integer.toString(downStreamQos.getPbs() / PBS_MULTIPLIER));
+      qos.setZ2aCbs(getSouthCbs(downStreamQos.getCbs()));
+      qos.setZ2aPbs(getSouthPbs(downStreamQos.getPbs()));
     }
 
     return qos;
+  }
+
+  private static String getSouthCbs(Long northCbs) {
+    if (northCbs <= 0) {
+      return "0";
+    }
+    if (northCbs < CBS_MULTIPLIER) {
+      return "1";
+    }
+
+    return Long.toString(northCbs / CBS_MULTIPLIER);
+  }
+
+  private static String getSouthPbs(Long northPbs) {
+    if (northPbs <= 0) {
+      return "0";
+    }
+    if (northPbs < PBS_MULTIPLIER) {
+      return "1";
+    }
+
+    return Long.toString(northPbs / PBS_MULTIPLIER);
   }
 }

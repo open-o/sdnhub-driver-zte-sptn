@@ -252,9 +252,9 @@ definitions:
      description: The access action type
      enum: ["Keep","Push","Pop","Swap"]
      format: string
-    access-vlan-id:
+    action-vlan-id:
      type: string
-     description: The access vlan id, range from 1 to 4094
+     description: The action vlan id, range from 1 to 4094
      minimum: 1
      maximum: 4094
      format: int16

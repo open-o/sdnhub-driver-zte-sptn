@@ -43,18 +43,17 @@ public class SSncSwitchInitiator {
    * @return PW snc switch.
    */
   public static SSncSwitch initPwSncSwitch(String sncId, boolean hasSncSwitch) {
+    if (!hasSncSwitch) {
+      return null;
+    }
     SSncSwitch pwSncSwitch = new SSncSwitch();
 
     pwSncSwitch.setSncId(sncId);
     pwSncSwitch.setLayerRate(SSncSwitch.LayerRateEnum.PW);
 
-    // todo return null or the protection type is UNPROTECTED, need test
-    if (hasSncSwitch) {
-      pwSncSwitch.setLinearProtectionType(
-          SSncSwitch.LinearProtectionTypeEnum.PATH_PROTECTION_1_TO_1);
-    } else {
-      pwSncSwitch.setLinearProtectionType(SSncSwitch.LinearProtectionTypeEnum.UNPROTECTED);
-    }
+    pwSncSwitch.setLinearProtectionType(
+        SSncSwitch.LinearProtectionTypeEnum.PATH_PROTECTION_1_TO_1);
+
 
     pwSncSwitch.setLinearProtectionProtocol(SSncSwitch.LinearProtectionProtocolEnum.APS);
     pwSncSwitch.setSwitchMode(DEFAULT_SWITCH_MODE);
@@ -87,8 +86,8 @@ public class SSncSwitchInitiator {
     if (policy != null && policy.getPathProtectPolicy() != null) {
       NPathProtectPolicy pathProtectPolicy = policy.getPathProtectPolicy();
       hasProt = true;
-      if (pathProtectPolicy.getRetrieve() != null
-          && !pathProtectPolicy.getRetrieve()) {
+      if (pathProtectPolicy.getRevertive() != null
+          && !pathProtectPolicy.getRevertive()) {
         revertiveMode = SSncSwitch.RevertiveModeEnum.NO_REVERTIVE;
       }
       if (pathProtectPolicy.getWtr() != null) {

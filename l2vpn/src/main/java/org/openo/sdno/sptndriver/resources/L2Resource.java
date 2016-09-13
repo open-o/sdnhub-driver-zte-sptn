@@ -99,7 +99,7 @@ public class L2Resource {
     } catch (CommandErrorException ex) {
       return ex.getResponse();
     }
-    return Response.created(new URI(String.valueOf(l2vpn))).build();
+    return Response.ok(l2vpn).build();
   }
 
   /**

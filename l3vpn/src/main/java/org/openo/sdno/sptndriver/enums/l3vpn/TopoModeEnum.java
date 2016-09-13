@@ -14,32 +14,34 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.enums;
+package org.openo.sdno.sptndriver.enums.l3vpn;
 
-import org.openo.sdno.sptndriver.models.south.SAdminStatus;
+
+import org.openo.sdno.sptndriver.models.south.SL3vpn;
 
 /**
- * Enum of admin status.
+ * Enum of topo mode.
  */
-public enum AdminStatusEnum {
-  UP("adminUp", SAdminStatus.UP),
-  DOWN("adminDown", SAdminStatus.DOWN);
+public enum TopoModeEnum {
+  SPECIFIED("none", SL3vpn.TopoModeEnum.SPECIFIED),
+  ANY_TO_ANY("full-mesh", SL3vpn.TopoModeEnum.ANY_TO_ANY),
+  HUB_SPKOE("hub-spoke",SL3vpn.TopoModeEnum.HUB_SPOKE);
   private String north;
-  private SAdminStatus south;
+  private SL3vpn.TopoModeEnum south;
 
-  AdminStatusEnum(String north, SAdminStatus south) {
+  TopoModeEnum(String north, SL3vpn.TopoModeEnum south) {
     this.north = north;
     this.south = south;
   }
 
   /**
-   * Convert SBI admin status to NBI admin status.
+   * Convert SBI topo mode to NBI topo mode.
    *
-   * @param southValue SBI admin status
-   * @return NBI admin status
+   * @param southValue SBI topo mode
+   * @return NBI topo mode
    */
-  public static String convertSbiToNbi(SAdminStatus southValue) {
-    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+  public static String convertSbiToNbi(SL3vpn.TopoModeEnum southValue) {
+    for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
       if (adminStatusEnum.getSouthValue().equals(southValue)) {
         return adminStatusEnum.north;
       }
@@ -48,13 +50,13 @@ public enum AdminStatusEnum {
   }
 
   /**
-   * Convert NBI admin status to SBI admin status.
+   * Convert NBI topo mode to SBI topo mode.
    *
-   * @param north NBI admin status
-   * @return SBI admin status
+   * @param north NBI topo mode
+   * @return SBI topo mode
    */
-  public static SAdminStatus convertNbiToSbi(String north) {
-    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+  public static SL3vpn.TopoModeEnum convertNbiToSbi(String north) {
+    for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
       if (adminStatusEnum.getNorthValue().equals(north)) {
         return adminStatusEnum.south;
       }
@@ -63,16 +65,16 @@ public enum AdminStatusEnum {
   }
 
   /**
-   * Get NBI admin status.
+   * Get NBI topo mode.
    */
   public String getNorthValue() {
     return north;
   }
 
   /**
-   * Get SBI admin status.
+   * Get SBI topo mode.
    */
-  public SAdminStatus getSouthValue() {
+  public SL3vpn.TopoModeEnum getSouthValue() {
     return south;
   }
 }

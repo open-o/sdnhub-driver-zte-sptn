@@ -65,6 +65,6 @@ public class App extends Application<Config> {
 
     // Add the resource to the environment
     environment.jersey().register(new L2Resource(environment.getValidator(), config));
-    environment.jersey().register(new L3Resource(environment.getValidator()));
+    environment.jersey().register(new L3Resource(environment.getValidator(), config));
   }
 }

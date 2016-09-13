@@ -16,8 +16,7 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import org.openo.sdno.sptndriver.enums.south.SDirection;
-import org.openo.sdno.sptndriver.models.north.NL2Vpn;
+import org.openo.sdno.sptndriver.models.north.NTunnelService;
 import org.openo.sdno.sptndriver.models.south.SAdminStatus;
 import org.openo.sdno.sptndriver.models.south.SSncTunnelCreatePolicy;
 import org.slf4j.Logger;
@@ -32,13 +31,13 @@ public class SSncTunnelCreatePolicyInitiator {
       LoggerFactory.getLogger(SSncTunnelCreatePolicyInitiator.class);
 
   /**
-   *  Init tunnel create policy of Eline.
-   * @param nl2Vpn L2vpn.
-   * @return Tunnel create policy.
+   *  Init tunnel create policy.
+   * @param tunnelService NBI tunnel service.
+   * @return SBI Tunnel create policy.
    */
-  public static SSncTunnelCreatePolicy initTunnelPolicy(NL2Vpn nl2Vpn) {
-    if (nl2Vpn == null || nl2Vpn.getTunnelService() == null) {
-      LOGGER.error("l2vpn or tunnelService is null.");
+  public static SSncTunnelCreatePolicy initTunnelPolicy(NTunnelService tunnelService) {
+    if (tunnelService == null) {
+      LOGGER.error("TunnelService is null.");
       return null;
     }
     SSncTunnelCreatePolicy tunnelCreatePolicy = new SSncTunnelCreatePolicy();
@@ -51,11 +50,11 @@ public class SSncTunnelCreatePolicyInitiator {
     tunnelCreatePolicy.setDirection(SSncTunnelCreatePolicy.DirectionEnum.BIDIRECTION);
     tunnelCreatePolicy.setType(SncType.line_mpls.toString());
     // todo tunnelCreatePolicy.setIsShared(false);
-    tunnelCreatePolicy.setQos(SQosInitiator.initQos(nl2Vpn.getTunnelService().getMplsTe()));
+    tunnelCreatePolicy.setQos(SQosInitiator.initQos(tunnelService.getMplsTe()));
     tunnelCreatePolicy.setAdminStatus(SAdminStatus.UP);
     tunnelCreatePolicy.setLspOam(SOamInitiator.initOam(null));
     tunnelCreatePolicy.setSncSwitch(
-        SSncSwitchInitiator.initLspSncSwitch(nl2Vpn.getTunnelService().getMplsTe()));
+        SSncSwitchInitiator.initLspSncSwitch(tunnelService.getMplsTe()));
     return tunnelCreatePolicy;
   }
 
