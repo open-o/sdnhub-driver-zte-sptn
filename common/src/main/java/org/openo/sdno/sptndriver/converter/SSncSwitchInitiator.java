@@ -19,6 +19,7 @@ package org.openo.sdno.sptndriver.converter;
 import org.openo.sdno.sptndriver.models.north.NMplsTePolicy;
 import org.openo.sdno.sptndriver.models.north.NPathProtectPolicy;
 import org.openo.sdno.sptndriver.models.south.SSncSwitch;
+import org.openo.sdno.sptndriver.utils.MathUtil;
 
 /**
  * The class to initiate snc switch.
@@ -91,7 +92,7 @@ public class SSncSwitchInitiator {
         revertiveMode = SSncSwitch.RevertiveModeEnum.NO_REVERTIVE;
       }
       if (pathProtectPolicy.getWtr() != null) {
-        wtr = pathProtectPolicy.getWtr() / WTR_MULTIPLIER;
+        wtr = (int)getSouthWtr(pathProtectPolicy.getWtr());
       }
     }
 
@@ -132,6 +133,10 @@ public class SSncSwitchInitiator {
         return SSncSwitch.LinearProtectionTypeEnum.WITH_RECOVERY_1_TO_1;
       }
     }
+  }
+
+  private static long getSouthWtr(int northWtr) {
+    return MathUtil.ceil(northWtr, WTR_MULTIPLIER);
   }
 
 }

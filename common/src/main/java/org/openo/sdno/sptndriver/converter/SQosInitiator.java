@@ -24,6 +24,7 @@ import org.openo.sdno.sptndriver.enums.south.qos.STrafficAdjustMode;
 import org.openo.sdno.sptndriver.models.north.NMplsTePolicy;
 import org.openo.sdno.sptndriver.models.north.NQosIfCar;
 import org.openo.sdno.sptndriver.models.south.SQos;
+import org.openo.sdno.sptndriver.utils.MathUtil;
 
 /**
  * The class to initiate Qos parameters.
@@ -137,24 +138,10 @@ public class SQosInitiator {
   }
 
   private static String getSouthCbs(Long northCbs) {
-    if (northCbs <= 0) {
-      return "0";
-    }
-    if (northCbs < CBS_MULTIPLIER) {
-      return "1";
-    }
-
-    return Long.toString(northCbs / CBS_MULTIPLIER);
+    return Long.toString(MathUtil.ceil((float)northCbs, (float) CBS_MULTIPLIER));
   }
 
   private static String getSouthPbs(Long northPbs) {
-    if (northPbs <= 0) {
-      return "0";
-    }
-    if (northPbs < PBS_MULTIPLIER) {
-      return "1";
-    }
-
-    return Long.toString(northPbs / PBS_MULTIPLIER);
+    return Long.toString(MathUtil.ceil((float)northPbs, (float) PBS_MULTIPLIER));
   }
 }
