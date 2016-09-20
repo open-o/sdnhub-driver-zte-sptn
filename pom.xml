@@ -36,5 +36,6 @@
         <module>l2vpn</module>
         <module>l3vpn</module>
         <module>application</module>
+        <module>distribution</module>
     </modules>
 </project>
