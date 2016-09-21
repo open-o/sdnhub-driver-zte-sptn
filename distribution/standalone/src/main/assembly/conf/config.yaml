@@ -20,3 +20,29 @@ server:
   connector:
     type: http
     port: 8640
+# Logging settings.
+logging:
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: ALL
+  # Logger-specific levels.
+  loggers:
+    # Sets the level for 'com.example.app' to DEBUG.
+    org.openo.sdno.sptndriver.App: INFO
+  appenders:
+    - type: console
+      threshold: INFO
+      timeZone: UTC
+      logFormat: "%d{yyyy-MM-dd HH:mm:ss SSS} %-5p [%c][%t] - %m%n"
+    - type: file
+      threshold: INFO
+      logFormat: "%d{yyyy-MM-dd HH:mm:ss SSS} %-5p [%c][%t] - %m%n"
+      # The file to which current statements will be logged.
+      currentLogFilename: ./logs/zte_sptn_drive.log
+      # When the log file rotates, the archived log will be renamed to this and gzipped. The
+      # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
+      # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
+      archivedLogFilenamePattern: ./logs/zte_sptn_driver-%d{yyyy-MM-dd}.log.gz
+      # The number of archived files to keep.
+      archivedFileCount: 7
+      # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
+      timeZone: UTC
