@@ -18,11 +18,14 @@ package org.openo.sdno.sptndriver.resources;
 
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L3Converter;
+import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
+import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.services.L3Service;
+import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +33,7 @@ import java.net.URISyntaxException;
 
 import javax.validation.Validator;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -45,12 +49,13 @@ import javax.ws.rs.core.Response;
 public class L3Resource {
 
   private final Validator validator;
-
+  private final UuidMapDao uuidMapDao;
   private Config config;
 
-  public L3Resource(Validator validator, Config config) {
+  public L3Resource(Validator validator, Config config, DBI jdbi) {
     this.validator = validator;
     this.config = config;
+    this.uuidMapDao = jdbi.onDemand(UuidMapDao.class);
   }
 
   /**
@@ -61,7 +66,9 @@ public class L3Resource {
    */
   @POST
   @Path("/l3vpns")
-  public javax.ws.rs.core.Response createL3vpn(NL3Vpn l3vpn) throws URISyntaxException {
+  public javax.ws.rs.core.Response createL3vpn(NL3Vpn l3vpn,
+                                               @HeaderParam("X-Driver-Parameter") String controllerId)
+      throws URISyntaxException {
     SL3vpn southL3vpn = L3Converter.convertNbiToSbi(l3vpn);
     if (southL3vpn == null || southL3vpn.getAcList() == null) {
       return Response
@@ -83,6 +90,8 @@ public class L3Resource {
     } catch (CommandErrorException ex) {
       return ex.getResponse();
     }
+    String externalId = l3vpn.getId();
+    uuidMapDao.insert(l3vpn.getId(), externalId, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
     return Response.created(new URI(String.valueOf(l3vpn))).build();
 
   }
@@ -95,8 +104,10 @@ public class L3Resource {
    */
   @DELETE
   @Path("/l3vpns/{vpnid}")
-  public Response deleteL3vpn(@PathParam("vpnid") String vpnid) throws URISyntaxException {
-    String southL3vpnId = L3Converter.getSouthL3vpnId(vpnid);
+  public Response deleteL3vpn(@PathParam("vpnid") String vpnid,
+                              @HeaderParam("X-Driver-Parameter") String controllerId)
+      throws URISyntaxException {
+    String southL3vpnId = getSouthL3vpnId(vpnid, controllerId);
     if (southL3vpnId == null || vpnid == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
@@ -117,7 +128,13 @@ public class L3Resource {
           .entity("IO Exception when creating Eline.")
           .build();
     }
+    uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
     // TODO: 2016/9/13
     return Response.noContent().build();
+  }
+
+  private String getSouthL3vpnId(String uuid, String controllerId) {
+    return uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.L3VPN.name(),
+        controllerId).getExternalId();
   }
 }

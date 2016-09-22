@@ -45,17 +45,6 @@ public class L3Converter {
   private static final Logger LOGGER = LoggerFactory.getLogger(L3Converter.class);
 
   /**
-   * Get SBI L3vpn UUID from NBI L3vpn UUID.Currently controller L3vpn id is equal to L3vpn id in
-   * SDN-O, may get id from map in the future.
-   *
-   * @param northL3vpnId NBI L3vpn UUID.
-   * @return SBI L3vpn UUID.
-   */
-  public static String getSouthL3vpnId(String northL3vpnId) {
-    return northL3vpnId;
-  }
-
-  /**
    * Convert NBI L3vpn to SBI L3vpn.
    *
    * @param nl3Vpn NBI L3vpn.

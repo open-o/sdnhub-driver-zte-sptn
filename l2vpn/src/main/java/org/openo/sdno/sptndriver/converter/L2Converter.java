@@ -105,17 +105,6 @@ public class L2Converter {
   }
 
   /**
-   * Get SBI Eline UUID from NBI L2vpn UUID.Currently controller Eline id is equal to Eline id in
-   * SDN-O, may get id from map in the future.
-   *
-   * @param northElineId NBI L2vpn UUID.
-   * @return SBI Eline UUID.
-   */
-  public static String getSouthElineId(String northElineId) {
-    return northElineId;
-  }
-
-  /**
    * Convert ingress or egress ac list, only support 2 ACs.
    *
    * @param acList    NBI AC list.

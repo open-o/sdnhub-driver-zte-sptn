@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 
 /**
  * Configuration class of SDN-O SPTN driver.
@@ -41,6 +42,13 @@ public class Config extends Configuration {
    */
   public String getControllerUrl() {
     return controllerUrl;
+  }
+
+  @JsonProperty
+  private DataSourceFactory database = new DataSourceFactory();
+
+  public DataSourceFactory getDataSourceFactory() {
+    return database;
   }
 
 }

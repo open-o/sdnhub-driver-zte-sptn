@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-controllerUrl: http://10.8.10.210:21180/
+controllerUrl: http://10.8.10.150:21180/
 server:
   type: simple
   applicationContextPath: /
@@ -46,3 +46,8 @@ logging:
       archivedFileCount: 7
       # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
       timeZone: UTC
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: inventory
+  password: inventory
+  url: jdbc:mysql://localhost/inventory

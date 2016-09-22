@@ -19,6 +19,8 @@ package org.openo.sdno.sptndriver.resources;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
+import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
+import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
@@ -28,6 +30,7 @@ import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
 import org.openo.sdno.sptndriver.services.SElineServices;
 import org.openo.sdno.sptndriver.services.STunnelServices;
+import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,6 +38,7 @@ import java.net.URISyntaxException;
 
 import javax.validation.Validator;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -50,6 +54,7 @@ import javax.ws.rs.core.Response;
 public class L2Resource {
 
   private final Validator validator;
+  private final UuidMapDao uuidMapDao;
   private Config config;
 
   /**
@@ -58,9 +63,10 @@ public class L2Resource {
    * @param validator validation parameter.
    * @param config    Configurations read from configuration file.
    */
-  public L2Resource(Validator validator, Config config) {
+  public L2Resource(Validator validator, Config config, DBI jdbi) {
     this.validator = validator;
     this.config = config;
+    this.uuidMapDao = jdbi.onDemand(UuidMapDao.class);
   }
 
   /**
@@ -70,7 +76,9 @@ public class L2Resource {
    * @return 200 if success
    */
   @POST
-  public Response createEline(NL2Vpn l2vpn) throws URISyntaxException {
+  public Response createEline(NL2Vpn l2vpn,
+                              @HeaderParam("X-Driver-Parameter") String controllerId)
+      throws URISyntaxException {
     SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
     STunnelServices tunnelServices = new STunnelServices(config.getControllerUrl());
     SCreateElineAndTunnelsInput createElineAndTunnels
@@ -99,6 +107,8 @@ public class L2Resource {
     } catch (CommandErrorException ex) {
       return ex.getResponse();
     }
+    String externalId = l2vpn.getId();
+    uuidMapDao.insert(l2vpn.getId(), externalId, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
     return Response.ok(l2vpn).build();
   }
 
@@ -110,8 +120,10 @@ public class L2Resource {
    */
   @DELETE
   @Path("{vpnid}")
-  public Response deleteEline(@PathParam("vpnid") String vpnid) throws URISyntaxException {
-    String southElineId = L2Converter.getSouthElineId(vpnid);
+  public Response deleteEline(@PathParam("vpnid") String vpnid,
+                              @HeaderParam("X-Driver-Parameter") String controllerId)
+      throws URISyntaxException {
+    String southElineId = getSouthElineId(vpnid, controllerId);
     if (southElineId == null || vpnid == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
@@ -136,7 +148,13 @@ public class L2Resource {
           .entity("IO Exception when creating Eline.")
           .build();
     }
+    uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
     // todo: API required to return whole Eline Info
     return Response.noContent().build();
+  }
+
+  private String getSouthElineId(String uuid, String controllerId) {
+    return uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.ELINE.name(),
+        controllerId).getExternalId();
   }
 }

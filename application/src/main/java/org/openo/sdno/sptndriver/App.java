@@ -19,10 +19,12 @@ package org.openo.sdno.sptndriver;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.resources.L2Resource;
 import org.openo.sdno.sptndriver.resources.L3Resource;
+import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.dropwizard.Application;
+import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -62,9 +64,11 @@ public class App extends Application<Config> {
   @Override
   public void run(Config config, Environment environment) {
     LOGGER.info("Method App#run() called");
-
+    // Create a DBI factory and build a JDBI instance
+    final DBIFactory factory = new DBIFactory();
+    final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "mysql");
     // Add the resource to the environment
-    environment.jersey().register(new L2Resource(environment.getValidator(), config));
-    environment.jersey().register(new L3Resource(environment.getValidator(), config));
+    environment.jersey().register(new L2Resource(environment.getValidator(), config, jdbi));
+    environment.jersey().register(new L3Resource(environment.getValidator(), config, jdbi));
   }
 }
