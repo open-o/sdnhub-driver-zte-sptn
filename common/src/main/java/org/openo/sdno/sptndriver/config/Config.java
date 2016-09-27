@@ -31,21 +31,16 @@ public class Config extends Configuration {
 
   public static final String CONTROLLER_ICT_AUTH =
       "ICTAuthentication:21232F297A57A5A743894A0E4A801FC3";
+
   @JsonProperty
   @NotEmpty
-  private String controllerUrl;
-
-  /**
-   * Get controller url from configuration file.
-   *
-   * @return controller base url
-   */
-  public String getControllerUrl() {
-    return controllerUrl;
-  }
-
+  private String msbUrl;
   @JsonProperty
   private DataSourceFactory database = new DataSourceFactory();
+
+  public String getMsbUrl() {
+    return msbUrl;
+  }
 
   public DataSourceFactory getDataSourceFactory() {
     return database;

@@ -25,6 +25,7 @@ import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.services.L3Service;
+import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
@@ -78,7 +79,8 @@ public class L3Resource {
     }
 
     try {
-      L3Service l3Service = new L3Service(config.getControllerUrl());
+      L3Service l3Service = new L3Service(
+          EsrUtil.getSdnoControllerUrl(controllerId, config));
       l3Service.createL3vpn(southL3vpn);
     } catch (HttpErrorException ex) {
       return ex.getResponse();
@@ -115,8 +117,9 @@ public class L3Resource {
           .build();
     }
 
-    L3Service l3Service = new L3Service(config.getControllerUrl());
     try {
+      L3Service l3Service = new L3Service(
+          EsrUtil.getSdnoControllerUrl(controllerId, config));
       l3Service.deleteL3vpn(southL3vpnId);
     } catch (HttpErrorException ex) {
       return ex.getResponse();

@@ -30,10 +30,10 @@ import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
 import org.openo.sdno.sptndriver.services.SElineServices;
 import org.openo.sdno.sptndriver.services.STunnelServices;
+import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
@@ -80,22 +80,24 @@ public class L2Resource {
                               @HeaderParam("X-Driver-Parameter") String controllerId)
       throws URISyntaxException {
     SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
-    STunnelServices tunnelServices = new STunnelServices(config.getControllerUrl());
-    SCreateElineAndTunnelsInput createElineAndTunnels
-        = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
-    if (createElineAndTunnels == null || routeCalInput == null) {
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .entity("Input L2 can not be converted to Eline.")
-          .build();
-    }
 
     try {
+      STunnelServices tunnelServices = new STunnelServices(
+          (EsrUtil.getSdnoControllerUrl(controllerId, config)));
+      SCreateElineAndTunnelsInput createElineAndTunnels
+          = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+      if (createElineAndTunnels == null || routeCalInput == null) {
+        return Response
+            .status(Response.Status.BAD_REQUEST)
+            .entity("Input L2 can not be converted to Eline.")
+            .build();
+      }
       // Calculate LSP route first.
       createElineAndTunnels.getInput().setRouteCalResults(
           tunnelServices.calcRoutes(routeCalInput).getOutput().getRouteCalResults());
       // Create Eline.
-      SElineServices elineServices = new SElineServices(config.getControllerUrl());
+      SElineServices elineServices = new SElineServices(
+          EsrUtil.getSdnoControllerUrl(controllerId, config));
       elineServices.createElineAndTunnels(createElineAndTunnels);
     } catch (HttpErrorException ex) {
       return ex.getResponse();
@@ -135,8 +137,10 @@ public class L2Resource {
     deleteEline.setElineId(vpnid);
     elineDeleteInput.setInput(deleteEline);
 
-    SElineServices elineServices = new SElineServices(config.getControllerUrl());
+
     try {
+      SElineServices elineServices = new SElineServices(
+          EsrUtil.getSdnoControllerUrl(controllerId, config));
       elineServices.deleteEline(elineDeleteInput);
     } catch (HttpErrorException ex) {
       return ex.getResponse();
@@ -157,4 +161,5 @@ public class L2Resource {
     return uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.ELINE.name(),
         controllerId).getExternalId();
   }
+
 }

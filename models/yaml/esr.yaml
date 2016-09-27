@@ -1,0 +1,63 @@
+#
+# Copyright 2016 ZTE Corporation.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+swagger: '2.0'
+info:
+  title: SDN-O Controller ESR API
+  description: External system register for SND-O controller
+  version: "1.0.0"
+# the domain of the service
+host: msb.openo.org
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /openoapi/extsys/v1
+produces:
+  - application/json
+paths:
+  /sdncontrollers/{sdnControllerId}:
+     get:
+      summary: Get a SDN Controller by id
+      description: Get a SDN Controller by id
+      parameters:
+        - name: sdnControllerId
+          in: path
+          description: SDN-O Controller id
+          required: true
+          type: string
+      responses:
+        '200':
+         description: SDN-O Controller information
+         schema:
+            $ref: '#/definitions/SdnController'
+definitions:
+ SdnController:
+  type: object
+  description: SDN-O controller information
+  properties:
+   sdnControllerId:
+    type: string
+   name:
+    type: string
+   url:
+    type: string
+   userName:
+    type: string
+   password:
+    type: string
+
+
+

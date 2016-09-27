@@ -153,6 +153,27 @@
                             </environmentVariables>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>SDN-O Controller ESR</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/yaml/esr.yaml</inputSpec>
+                            <language>java</language>
+                            <configOptions>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                            </configOptions>
+                            <output>${project.build.directory}/generated-sources/esr</output>
+                            <modelPackage>org.openo.sdno.sptndriver.models.esr</modelPackage>
+                            <environmentVariables>
+                                <!-- generate all models -->
+                                <models/>
+                                <!-- generate just the supporting files that are Java source code (not project build files) -->
+                                <supportingFiles>1.java</supportingFiles>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
