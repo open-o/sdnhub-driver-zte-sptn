@@ -47,6 +47,8 @@
         <maven.compile.plugin.version>3.3</maven.compile.plugin.version>
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
         <maven-shade-plugin.version>2.2</maven-shade-plugin.version>
+        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+        <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
 
         <dropwizard.version>0.8.0</dropwizard.version>
         <swagger.version>1.5.3</swagger.version>

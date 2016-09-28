@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2016 ZTE Corporation.
   ~
@@ -20,36 +20,68 @@
         <artifactId>distribution</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>standalone</artifactId>
-    <name>openo/sdno/drivers/zte-sptn/deployment/standalone</name>
+    <name>openo/sdno/drivers/zte-sptn/distribution/standalone</name>
     <packaging>pom</packaging>
 
     <properties>
         <packagename>sdno-driver-zte-sptn</packagename>
+        <linux64id>linux64</linux64id>
+        <win64id>win64</win64id>
+        <linux64assembly>target/assembly/${linux64id}</linux64assembly>
+        <win64assembly>target/assembly/${win64id}</win64assembly>
+        <version.output>target/version</version.output>
     </properties>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-resources-${linux64id}</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/assembly/</outputDirectory>
+                            <outputDirectory>${linux64assembly}</outputDirectory>
                             <resources>
-                               <resource>
+                                <resource>
                                     <directory>src/main/assembly/</directory>
                                     <filtering>false</filtering>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>
+                                    <excludes>
+                                        <exclude>**/*.bat</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                            <overwrite>true</overwrite>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources-${win64id}</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${win64assembly}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/assembly/</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>**/*.sh</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                             <overwrite>true</overwrite>
@@ -62,7 +94,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-jar</id>
+                        <id>copy-jar-${linux64id}</id>
                         <goals>
                             <goal>copy</goal>
                         </goals>
@@ -74,8 +106,27 @@
                                     <artifactId>application</artifactId>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>target/assembly/</outputDirectory>
-                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
+                                    <outputDirectory>${linux64assembly}</outputDirectory>
+                                    <destFileName>sdnodriver-zte-sptn.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-jar-${win64id}</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.openo.sdno.driver-zte-sptn</groupId>
+                                    <artifactId>application</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${win64assembly}</outputDirectory>
+                                    <destFileName>sdnodriver-zte-sptn.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -85,40 +136,25 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>zip</id>
+                        <id>distribution</id>
                         <phase>package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks name="${project.artifactId}">
-                                <zip destfile="target/${packagename}-${project.version}.zip" update="true">
-                                    <zipfileset dir="target/assembly" includes="**"/>
+                            <target name="distribution">
+                                <tar destfile="${version.output}/${packagename}-${project.version}-linux64.tar.gz" longfile="posix" compression="gzip">
+                                    <tarfileset dir="${linux64assembly}" includes="**"/>
+                                </tar>
+                                <attachartifact file="${version.output}/${packagename}-${project.version}-linux64.tar.gz" classifier="linux64" type="tar.gz"/>
+                                <zip destfile="${version.output}/${packagename}-${project.version}-win64.zip" update="true">
+                                    <zipfileset dir="${win64assembly}" includes="**"/>
                                 </zip>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>target/${packagename}-${project.version}.zip</file>
-                                    <type>zip</type>
-                                </artifact>
-                            </artifacts>
+                                <attachartifact file="${version.output}/${packagename}-${project.version}-win64.zip" classifier="win64" type="zip"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -130,7 +166,7 @@
         <dependency>
             <groupId>org.openo.sdno.driver-zte-sptn</groupId>
             <artifactId>application</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
-    </dependencies>  
+    </dependencies>
 </project>
