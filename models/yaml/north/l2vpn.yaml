@@ -264,7 +264,7 @@ definitions:
           - mpls-te
           - vxlan
           - gre
-        description: Type of tunnel policy, including auto-select、mpls-te、vxlan、gre
+        description: Type of tunnel policy, including auto-select, mpls-te, vxlan, gre
       autoSelect:
         $ref: '#/definitions/AutoSelectPolicy'
       mplsTe:
@@ -354,26 +354,26 @@ definitions:
           - rsvp-te
           - sr-te
           - static-lsp
-        description: Tunnel type of Manual Select, including rsvp-te、sr-te、static-lsp
+        description: Tunnel type of Manual Select, including rsvp-te, sr-te, static-lsp
       manageProtocol:
         type: string
-        description: Manage protocol, including netconf、pcep
+        description: Manage protocol, including netconf, pcep
       sharing:
         type: boolean
-        description: Whether is shared, including true、false
+        description: Whether is shared, including true, false
       besteffort:
         type: boolean
-        description: Whether is best effort, including true、false
+        description: Whether is best effort, including true, false
       bandwidth:
         type: integer
         description: Tunnel bandwidth in kbps
         format: int32
       coRoute:
         type: boolean
-        description: Whether to re Route, including true、false
+        description: Whether to re Route, including true, false
       bfdEnable:
         type: boolean
-        description: Whether to enable BFD Protocol, including true、false
+        description: Whether to enable BFD Protocol, including true, false
       pathConstraint:
         $ref: '#/definitions/PathConstraint'
       pathProtectPolicy:
@@ -405,13 +405,13 @@ definitions:
         description: Type of tunnel protection policy
       hotStandbyEnable:
         type: boolean
-        description: Whether to enable hotstandby in tunnel protection, including true、false
+        description: Whether to enable hotstandby in tunnel protection, including true, false
       revertive:
         type: boolean
-        description: Whether to revertive in tunnel protection including true、false
+        description: Whether to revertive in tunnel protection including true, false
       bandwidthMode:
         type: string
-        description: Bandwidth mode of tunnel protection including original-bandwidth、dynamic-bandwidth
+        description: Bandwidth mode of tunnel protection including original-bandwidth, dynamic-bandwidth
       wtr:
         type: integer
         description: Wtr time of tunnel protection revertive  in us, range from 0 to 60000000
@@ -518,7 +518,7 @@ definitions:
     properties:
       enable:
         type: boolean
-        description: Whether to enable car configuration, including true、false
+        description: Whether to enable car configuration, including true, false
       cir:
         type: integer
         description: Committed speed in kbps
