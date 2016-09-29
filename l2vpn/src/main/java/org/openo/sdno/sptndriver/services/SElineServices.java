@@ -16,6 +16,7 @@
 
 package org.openo.sdno.sptndriver.services;
 
+import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
@@ -58,7 +59,7 @@ public class SElineServices {
    *
    * @param createElineAndTunnels Eline and tunnels information
    */
-  public void createElineAndTunnels(SCreateElineAndTunnelsInput createElineAndTunnels)
+  public String createElineAndTunnels(SCreateElineAndTunnelsInput createElineAndTunnels)
       throws HttpErrorException, IOException, CommandErrorException {
     String printText = "Create eline and tunnels "
         + createElineAndTunnels.getInput().getSncEline().getId();
@@ -73,6 +74,7 @@ public class SElineServices {
     Response<SCmdResultAndNcdResRelationsOutput> response = repos.execute();
     ServiceUtil.parseCmdResultAndNcdResRelOutput(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
+    return L2Converter.getReturnId(response.body());
   }
 
   /**

@@ -34,6 +34,7 @@ import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
@@ -80,7 +81,7 @@ public class L2Resource {
                               @HeaderParam("X-Driver-Parameter") String controllerId)
       throws URISyntaxException {
     SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
-
+    String externalId;
     try {
       STunnelServices tunnelServices = new STunnelServices(
           (EsrUtil.getSdnoControllerUrl(controllerId, config)));
@@ -98,7 +99,7 @@ public class L2Resource {
       // Create Eline.
       SElineServices elineServices = new SElineServices(
           EsrUtil.getSdnoControllerUrl(controllerId, config));
-      elineServices.createElineAndTunnels(createElineAndTunnels);
+      externalId = elineServices.createElineAndTunnels(createElineAndTunnels);
     } catch (HttpErrorException ex) {
       return ex.getResponse();
     } catch (IOException ex) {
@@ -109,9 +110,10 @@ public class L2Resource {
     } catch (CommandErrorException ex) {
       return ex.getResponse();
     }
-    String externalId = l2vpn.getId();
+
     uuidMapDao.insert(l2vpn.getId(), externalId, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
-    return Response.ok(l2vpn).build();
+    return Response.status(Response.Status.CREATED)
+        .entity(l2vpn).build();
   }
 
   /**
@@ -134,7 +136,7 @@ public class L2Resource {
     }
     SDeleteElineInput elineDeleteInput = new SDeleteElineInput();
     SDeleteEline deleteEline = new SDeleteEline();
-    deleteEline.setElineId(vpnid);
+    deleteEline.setElineId(southElineId);
     elineDeleteInput.setInput(deleteEline);
 
 
@@ -154,7 +156,7 @@ public class L2Resource {
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
     // todo: API required to return whole Eline Info
-    return Response.noContent().build();
+    return Response.ok().build();
   }
 
   private String getSouthElineId(String uuid, String controllerId) {

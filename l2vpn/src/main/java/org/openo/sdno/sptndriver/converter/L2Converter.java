@@ -29,11 +29,13 @@ import org.openo.sdno.sptndriver.models.north.NL2Acs;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.north.NPw;
 import org.openo.sdno.sptndriver.models.north.NPws;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SEgressEps;
 import org.openo.sdno.sptndriver.models.south.SEline;
 import org.openo.sdno.sptndriver.models.south.SIngressEps;
+import org.openo.sdno.sptndriver.models.south.SNcdResourceRelation;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
 import org.openo.sdno.sptndriver.models.south.SSncPw;
 import org.openo.sdno.sptndriver.models.south.SSncPws;
@@ -41,6 +43,8 @@ import org.openo.sdno.sptndriver.models.south.SSncType;
 import org.openo.sdno.sptndriver.utils.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * The class to convert from L2vpn to Eline.
@@ -58,7 +62,7 @@ public class L2Converter {
    */
   public static SCreateElineAndTunnelsInput convertL2ToElineTunnerCreator(NL2Vpn l2vpn) {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
-    createElineAndTunnels.setSncEline(l2ToEline(l2vpn, l2vpn.getId()));
+    createElineAndTunnels.setSncEline(l2ToEline(l2vpn, null));
     createElineAndTunnels.setSncTunnelCreatePolicy(SSncTunnelCreatePolicyInitiator
         .initTunnelPolicy(l2vpn.getTunnelService()));
     SCreateElineAndTunnelsInput createElineAndTunnelsInput = new SCreateElineAndTunnelsInput();
@@ -235,6 +239,25 @@ public class L2Converter {
     }
 
     return pwList;
+  }
+
+  /**
+   *  Parse resource id from response.
+   * @param cmdOutput Response from controller.
+   * @return Resource id.
+   */
+  public static String getReturnId(SCmdResultAndNcdResRelationsOutput cmdOutput) {
+    if (cmdOutput != null
+        && cmdOutput.getOutput() != null
+        && cmdOutput.getOutput().getNcdResourceRelations() != null
+        && cmdOutput.getOutput().getNcdResourceRelations().getNcdResourceRelation() != null) {
+      List ncdResourceRelation
+          = cmdOutput.getOutput().getNcdResourceRelations().getNcdResourceRelation();
+      if (!ncdResourceRelation.isEmpty()) {
+        return ((SNcdResourceRelation)ncdResourceRelation.get(0)).getResourceId();
+      }
+    }
+    return null;
   }
 
 }

@@ -29,7 +29,6 @@ import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
@@ -94,7 +93,8 @@ public class L3Resource {
     }
     String externalId = l3vpn.getId();
     uuidMapDao.insert(l3vpn.getId(), externalId, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
-    return Response.created(new URI(String.valueOf(l3vpn))).build();
+    return Response.status(Response.Status.CREATED)
+        .entity(l3vpn).build();
 
   }
 
@@ -132,8 +132,8 @@ public class L3Resource {
           .build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
-    // TODO: 2016/9/13
-    return Response.noContent().build();
+    // TODO: 2016/9/13 return value should be L3VpnResponse.
+    return Response.ok().build();
   }
 
   private String getSouthL3vpnId(String uuid, String controllerId) {
