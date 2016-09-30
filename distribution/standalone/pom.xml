@@ -107,7 +107,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${linux64assembly}</outputDirectory>
-                                    <destFileName>sdnodriver-zte-sptn.jar</destFileName>
+                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -126,7 +126,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${win64assembly}</outputDirectory>
-                                    <destFileName>sdnodriver-zte-sptn.jar</destFileName>
+                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
