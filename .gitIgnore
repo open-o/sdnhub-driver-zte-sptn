@@ -10,7 +10,6 @@
 ###############
 .gitignore
 *.exe
-*.txt
 *.vcproj
 *.sln
 *.lib

@@ -18,6 +18,7 @@ package org.openo.sdno.sptndriver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import org.openo.sdno.sptndriver.common.DriverManagerRegister;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.healthCheck.CustomHealthCheck;
 import org.openo.sdno.sptndriver.resources.L2Resource;
@@ -84,6 +85,8 @@ public class App extends Application<Config> {
     environment.jersey().register(new L3Resource(environment.getValidator(), config, jdbi));
 
     initSwaggerConfig(environment, config);
+
+    registerToDriverMgr(config);
   }
 
 
@@ -108,6 +111,9 @@ public class App extends Application<Config> {
     config.setScan(true);
   }
 
-
-
+  private void registerToDriverMgr(Config config) {
+    Thread driverManagerRegister = new Thread(new DriverManagerRegister(config));
+    driverManagerRegister.setName("register sdn-o sptn driver to Driver Manager");
+    driverManagerRegister.start();
+  }
 }
