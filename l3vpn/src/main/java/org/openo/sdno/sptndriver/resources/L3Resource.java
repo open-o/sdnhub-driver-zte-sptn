@@ -26,6 +26,7 @@ import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.services.L3Service;
 import org.openo.sdno.sptndriver.utils.EsrUtil;
+import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
@@ -67,8 +68,9 @@ public class L3Resource {
   @POST
   @Path("/l3vpns")
   public javax.ws.rs.core.Response createL3vpn(NL3Vpn l3vpn,
-                                               @HeaderParam("X-Driver-Parameter") String controllerId)
+                                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     SL3vpn southL3vpn = L3Converter.convertNbiToSbi(l3vpn);
     if (southL3vpn == null || southL3vpn.getAcList() == null) {
       return Response
@@ -107,8 +109,9 @@ public class L3Resource {
   @DELETE
   @Path("/l3vpns/{vpnid}")
   public Response deleteL3vpn(@PathParam("vpnid") String vpnid,
-                              @HeaderParam("X-Driver-Parameter") String controllerId)
+                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     String southL3vpnId = getSouthL3vpnId(vpnid, controllerId);
     if (southL3vpnId == null || vpnid == null) {
       return Response

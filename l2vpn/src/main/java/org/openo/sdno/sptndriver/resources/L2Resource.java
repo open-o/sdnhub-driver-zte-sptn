@@ -31,6 +31,7 @@ import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
 import org.openo.sdno.sptndriver.services.SElineServices;
 import org.openo.sdno.sptndriver.services.STunnelServices;
 import org.openo.sdno.sptndriver.utils.EsrUtil;
+import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
@@ -78,8 +79,9 @@ public class L2Resource {
    */
   @POST
   public Response createEline(NL2Vpn l2vpn,
-                              @HeaderParam("X-Driver-Parameter") String controllerId)
+                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
     String externalId;
     try {
@@ -125,8 +127,9 @@ public class L2Resource {
   @DELETE
   @Path("{vpnid}")
   public Response deleteEline(@PathParam("vpnid") String vpnid,
-                              @HeaderParam("X-Driver-Parameter") String controllerId)
+                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     String southElineId = getSouthElineId(vpnid, controllerId);
     if (southElineId == null || vpnid == null) {
       return Response

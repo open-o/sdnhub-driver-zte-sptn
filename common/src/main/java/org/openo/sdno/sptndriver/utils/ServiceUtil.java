@@ -23,6 +23,7 @@ import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput
 import org.openo.sdno.sptndriver.models.south.SCommandResult;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import retrofit2.Response;
 
@@ -30,6 +31,9 @@ import retrofit2.Response;
  * Util class for REST commands processing services.
  */
 public class ServiceUtil {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(ServiceUtil.class);
 
   /**
    * Parse the result of REST commands that the return type is SCommandResultOutput.
@@ -142,6 +146,20 @@ public class ServiceUtil {
       }
     }
     return;
+  }
+
+  /**
+   *  Parse controller id.
+   * @param controllerIdPara Controller id param,“extSysID={ctrlUuid}”
+   * @return Controller id, "{ctrlUuid}", if failed, return null.
+   */
+  public static String getControllerId(String controllerIdPara) {
+    String[] strArray = controllerIdPara.split("=");
+    if (strArray.length == 2) {
+      return strArray[1];
+    }
+    LOGGER.error("getControllerId() must have one '='.");
+    return null;
   }
 
 }
