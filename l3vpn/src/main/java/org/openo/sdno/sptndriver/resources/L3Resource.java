@@ -26,9 +26,9 @@ import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
-import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
+import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 import org.openo.sdno.sptndriver.services.L3Service;
 import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
@@ -103,25 +103,29 @@ public class L3Resource {
   @Timed
   public Response createL3vpn(@ApiParam(value = "L2vpn information", required = true)
                                                      NL3Vpn l3vpn,
-                                               @ApiParam(value = "Controller uuid, "
-                                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
+                                               @ApiParam(value = "Controller uuid, the format is"
+                                                   + " X-Driver-Parameter:extSysID={ctrlUuid}",
                                                    required = true)
-                                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
+                                               @HeaderParam("X-Driver-Parameter")
+                                                   String controllerIdPara)
       throws URISyntaxException {
     String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     SL3vpn southL3vpn = L3Converter.convertNbiToSbi(l3vpn);
-    if (southL3vpn == null || southL3vpn.getAcList() == null) {
+    if (southL3vpn == null
+        || southL3vpn.getAcs() == null
+        || southL3vpn.getAcs().getL3Acs().isEmpty()) {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .type(MediaType.TEXT_PLAIN_TYPE)
           .entity("Input L3vpn can not be converted to south L3vpn.")
           .build();
     }
-
+    SL3vpnCreateInput sl3vpnCreateInput = new SL3vpnCreateInput();
+    sl3vpnCreateInput.setSncL3vpn(southL3vpn);
     try {
       L3Service l3Service = new L3Service(
           EsrUtil.getSdnoControllerUrl(controllerId, config));
-      l3Service.createL3vpn(southL3vpn);
+      l3Service.createL3vpn(sl3vpnCreateInput);
     } catch (HttpErrorException ex) {
       return ex.getResponse();
     } catch (IOException ex) {

@@ -28,14 +28,16 @@ import org.openo.sdno.sptndriver.models.north.NRoutes;
 import org.openo.sdno.sptndriver.models.north.NStaticRoute;
 import org.openo.sdno.sptndriver.models.south.SL3ac;
 import org.openo.sdno.sptndriver.models.south.SL3acProtocol;
+import org.openo.sdno.sptndriver.models.south.SL3acProtocols;
+import org.openo.sdno.sptndriver.models.south.SL3acs;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.models.south.SStaticRoute;
+import org.openo.sdno.sptndriver.models.south.SStaticRoutes;
 import org.openo.sdno.sptndriver.utils.Ipv4Util;
 import org.openo.sdno.sptndriver.utils.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,7 +64,7 @@ public class L3Converter {
     sl3vpn.setParentNcdId(null);
     sl3vpn.setAdminStatus(AdminStatusEnum.convertNbiToSbi(nl3Vpn.getAdminStatus()));
     sl3vpn.setOperateStatus(OperateStatusEnum.convertNbiToSbi(nl3Vpn.getOperStatus()));
-    sl3vpn.setAcList(convertNbiToSbi(nl3Vpn.getAcs()));
+    sl3vpn.setAcs(convertNbiToSbi(nl3Vpn.getAcs()));
     sl3vpn.setTopoMode(TopoModeEnum.convertNbiToSbi(nl3Vpn.getTopology()));
     sl3vpn.setHubSpokePolicy(HubSpokePolicyInitiator.initHubSpokePolicy(nl3Vpn.getTopologyService(),
         nl3Vpn.getAcs(), sl3vpn.getTopoMode()));
@@ -71,7 +73,7 @@ public class L3Converter {
         SSncTunnelCreatePolicyInitiator.initTunnelPolicy(nl3Vpn.getTunnelService()));
     // Maybe use protection group in NBI and topology type in the future to determine the frr list.
     sl3vpn.setL3FrrList(null);
-    sl3vpn.setStaticRouteList(null);
+    sl3vpn.setStaticRoutes(null);
     if (nl3Vpn.getDiffServ() != null) {
       sl3vpn.setTrafficClass(
           TrafficClassConverter.getEnum(nl3Vpn.getDiffServ().getServiceClass().toString()));
@@ -80,10 +82,11 @@ public class L3Converter {
     return sl3vpn;
   }
 
-  private static List<SL3ac> convertNbiToSbi(NL3Acs nl3Acs) {
-    List<SL3ac> sl3acs = new ArrayList<>();
+  private static SL3acs convertNbiToSbi(NL3Acs nl3Acs) {
+    SL3acs sl3acs = new SL3acs();
+    List<SL3ac> acList = sl3acs.getL3Acs();
     for (NL3Ac nl3Ac : nl3Acs.getAc()) {
-      sl3acs.add(convertAc(nl3Ac));
+      acList.add(convertAc(nl3Ac));
     }
     return sl3acs;
   }
@@ -108,16 +111,15 @@ public class L3Converter {
     return sl3ac;
   }
 
-  private static List<SL3acProtocol> convertProtocol(NRoutes routes, String ltpId) {
+  private static SL3acProtocols convertProtocol(NRoutes routes, String ltpId) {
     if (routes == null) {
       LOGGER.error("North routes is null.");
       return null;
     }
-
-    List<SL3acProtocol> sl3acProtocols = new ArrayList<>();
+    SL3acProtocols sl3acProtocols = new SL3acProtocols();
+    List<SL3acProtocol> sl3acProtocolList = sl3acProtocols.getProtocols();
     for (NRoute route : routes.getRoute()) {
-      SL3acProtocol sl3acProtocol = convertProtocol(route, ltpId);
-      sl3acProtocols.add(sl3acProtocol);
+      sl3acProtocolList.add(convertProtocol(route, ltpId));
     }
 
     return sl3acProtocols;
@@ -134,10 +136,11 @@ public class L3Converter {
         .equals(RouteProtocolEnum.STATIC.getSouthValue())
         && route.getStaticRoutes() != null
         && route.getStaticRoutes().getStaticRoute() != null) {
-      List<SStaticRoute> southStaticRoutes = new ArrayList<>();
+      SStaticRoutes southStaticRoutes = new SStaticRoutes();
+      List<SStaticRoute> staticRouteList = southStaticRoutes.getStaticRouteList();
       List<NStaticRoute> northStaticRoutes = route.getStaticRoutes().getStaticRoute();
       for (NStaticRoute northStaticRoute : northStaticRoutes) {
-        southStaticRoutes.add(convertStaticRoute(northStaticRoute, ltpId));
+        staticRouteList.add(convertStaticRoute(northStaticRoute, ltpId));
       }
       sl3acProtocol.setStaticRoutes(southStaticRoutes);
     }

@@ -22,6 +22,7 @@ import org.openo.sdno.sptndriver.models.north.NL3Acs;
 import org.openo.sdno.sptndriver.models.north.NSpokeAcs;
 import org.openo.sdno.sptndriver.models.north.NSpokeGroup;
 import org.openo.sdno.sptndriver.models.north.NTopologyService;
+import org.openo.sdno.sptndriver.models.south.SBelongedHubs;
 import org.openo.sdno.sptndriver.models.south.SHubSpokeNode;
 import org.openo.sdno.sptndriver.models.south.SHubSpokeNodes;
 import org.openo.sdno.sptndriver.models.south.SHubSpokePolicy;
@@ -77,8 +78,10 @@ public class HubSpokePolicyInitiator {
 
     List<SNodeId> nodeList = getNodeList(topologyService.getHubGroups(),
         acIdToNeIdMap);
-    hubSpokeNodes.addAll(convertSpokeNode(topologyService, acIdToNeIdMap, nodeList));
-    hubSpokeNodes.addAll(convertHubNode(topologyService, acIdToNeIdMap));
+    hubSpokeNodes.getHubSpokeNodes()
+        .addAll(convertSpokeNode(topologyService, acIdToNeIdMap, nodeList));
+    hubSpokeNodes.getHubSpokeNodes()
+        .addAll(convertHubNode(topologyService, acIdToNeIdMap));
 
     return hubSpokeNodes;
   }
@@ -107,23 +110,23 @@ public class HubSpokePolicyInitiator {
     return nodeList;
   }
 
-  private static SHubSpokeNodes convertHubNode(NTopologyService topologyService,
+  private static List<SHubSpokeNode> convertHubNode(NTopologyService topologyService,
                                                Map<String, String> acIdToNeIdMap) {
-    SHubSpokeNodes hubSpokeNodes = new SHubSpokeNodes();
+    List<SHubSpokeNode> hubSpokeNodeList = new ArrayList<>();
     List<NHubGroup> hubGroups = topologyService.getHubGroups();
     for (NHubGroup hubGroup : hubGroups) {
       SHubSpokeNode hubNode = new SHubSpokeNode();
       hubNode.setNeId(acIdToNeIdMap.get(hubGroup.getAcId()));
       hubNode.setNodeRole(SHubSpokeNode.NodeRoleEnum.HUB);
-      hubSpokeNodes.add(hubNode);
+      hubSpokeNodeList.add(hubNode);
     }
-    return hubSpokeNodes;
+    return hubSpokeNodeList;
   }
 
-  private static SHubSpokeNodes convertSpokeNode(NTopologyService topologyService,
+  private static List<SHubSpokeNode> convertSpokeNode(NTopologyService topologyService,
                                                  Map<String, String> acIdToNeIdMap,
                                                  List<SNodeId> nodeList) {
-    SHubSpokeNodes hubSpokeNodes = new SHubSpokeNodes();
+    List<SHubSpokeNode> hubSpokeNodes = new ArrayList<>();
     NSpokeGroup spokeGroup = topologyService.getSpokeGroup();
     if (spokeGroup != null) {
       List<NSpokeAcs> spokeAcList = spokeGroup.getSpokeAc();
@@ -131,7 +134,10 @@ public class HubSpokePolicyInitiator {
         SHubSpokeNode spokeNode = new SHubSpokeNode();
         spokeNode.setNeId(acIdToNeIdMap.get(spokeAcs.getAcId()));
         spokeNode.setNodeRole(SHubSpokeNode.NodeRoleEnum.SPOKE);
-        spokeNode.setBelongedHubs(nodeList);
+        SBelongedHubs sBelongedHubs = new SBelongedHubs();
+        sBelongedHubs.setBelongedHubList(nodeList);
+        spokeNode.setBelongedHubs(sBelongedHubs);
+        hubSpokeNodes.add(spokeNode);
       }
     }
     return hubSpokeNodes;
