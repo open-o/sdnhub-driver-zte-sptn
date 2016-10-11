@@ -19,7 +19,7 @@ info:
   title: SDN-O SPTN Controller Driver SBI Interface
   description: SDN-O SPTN Controller Driver SBI Interface
 host: sdno.openo.org
-basePath: /rest
+basePath: /restconf
 schemes:
   - http
 consumes:
@@ -27,23 +27,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /sptndriver/v1/sbi-elines:service/eline:
-    post:
-      summary: Create Eline Connection
-      description: Creates a Eline Connection instance
-      produces:
-        - application/json
-      parameters:
-        - name: eline
-          in: body
-          description: Eline Connection
-          required: true
-          schema:
-            $ref: '#/definitions/ElineSncAndRoute'
-      responses:
-        '200':
-          description: Create a Eline connection
-  /restconf/operations/sptn-service-eline:create-snc-eline-tunnels:
+  /operations/sptn-service-eline:create-snc-eline-tunnels:
     post:
       summary: Create Eline and Tunnels
       description: Creates a Eline Connection instance and Corresponding Tunnels
@@ -61,7 +45,7 @@ paths:
           description: NCD ID to Eline ID map
           schema:
             $ref: '#/definitions/CmdResultAndNcdResRelationsOutput'
-  /restconf/operations/sptn-service-eline:delete-snc-eline:
+  /operations/sptn-service-eline:delete-snc-eline:
       post:
         summary: Delete a Eline Connection
         description: Delete a Eline Connection, need to pass in Eline id
@@ -77,7 +61,7 @@ paths:
         responses:
           '204':
             description: Delete a Eline connection
-  /restconf/data/sptn-service-eline:service/snc-elines/snc-eline={id}:
+  /data/sptn-service-eline:service/snc-elines/snc-eline={id}:
       get:
         summary: Query a Eline Connection
         description: Query a Eline Connection, need to pass in Eline id
@@ -94,7 +78,7 @@ paths:
             description: Query a Eline connection
             schema:
               $ref: '#/definitions/Eline'
-  /sptndriver/v1/sbi-l3vpns:service/l3vpn:
+  /data/sptn-service-l3vpn:service/snc-l3vpns:
     post:
       summary: Create L3vpn Connection
       description: Creates a L3vpn Connection instance and relating tunnels
@@ -106,11 +90,26 @@ paths:
           description: L3vpn Connection
           required: true
           schema:
-            $ref: '#/definitions/L3vpn'
+            $ref: '#/definitions/L3vpnCreateInput'
       responses:
         '200':
           description: Create a L3vpn connection
-  /restconf/operations/sptn-service-route:request-routes:
+  /data/sptn-service-l3vpn:service/snc-l3vpns/snc-l3vpn={id}:
+    post:
+      summary: Delete L3vpn Connection
+      description: Delete a L3vpn Connection instance.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: L3vpn Connection
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Create a L3vpn connection
+  /operations/sptn-service-route:request-routes:
     post:
       summary: Calculate route of tunnel
       description: Calculate route of tunnel
@@ -146,13 +145,6 @@ definitions:
      $ref: '#/definitions/RouteCalResult'
     snc-tunnel-create-policy:
      $ref: '#/definitions/SncTunnelCreatePolicy'
-  ElineSncAndRoute:
-   type: object
-   properties:
-    snc-eline:
-     $ref: '#/definitions/Eline'
-    routes:
-     $ref: '#/definitions/SncRoute'
   Eline:
    type: object
    required:
@@ -557,32 +549,6 @@ definitions:
      type: string
      description: Eline UUID
      format: string
-  SncRoute:
-   type: object
-   description: The route of service
-   required:
-    - id
-    - snc-id
-   properties:
-    id:
-     type: string
-     description: UUID of route
-     format: string
-    name:
-     type: string
-     description: Only used within domain, for driver, it is empty
-     format: string
-    layer-rate:
-     type: string
-     description: Layer rate, 0(LSP) or 1(PW)
-     enum: ["LSP","PW"]
-     format: string
-    snc-id:
-     type: string
-     description: UUID of service related to the route, LSP ID or PW ID
-     format: string
-    xcs:
-      $ref: '#/definitions/Xcs'
   Xcs:
    type: object
    properties:
@@ -744,6 +710,11 @@ definitions:
      minimum: 0
      maximum: 4000000000
      format: int64
+  L3vpnCreateInput:
+   type: object
+   properties:
+    snc-l3vpn:
+      $ref: '#/definitions/L3vpn'
   L3vpn:
    type: object
    properties:
@@ -767,10 +738,8 @@ definitions:
       $ref: '#/definitions/AdminStatus'
     operate-status:
       $ref: '#/definitions/OperateStatus'
-    ac-list:
-     type: array
-     items:
-      $ref: '#/definitions/L3ac'
+    acs:
+      $ref: '#/definitions/L3acs'
     topo-mode:
      type: string
      format: string
@@ -788,12 +757,17 @@ definitions:
      type: array
      items:
       $ref: '#/definitions/L3Frr'
-    static-route-list:
-     type: array
-     items:
-      $ref: '#/definitions/StaticRoute'
+    static-routes:
+      $ref: '#/definitions/StaticRoutes'
     traffic-class:
       $ref: '#/definitions/TrafficClass'
+  L3acs:
+   type: object
+   properties:
+    l3-acs:
+     type: array
+     items:
+      $ref: '#/definitions/L3ac'
   L3ac:
    type: object
    properties:
@@ -816,9 +790,7 @@ definitions:
     qos:
       $ref: '#/definitions/Qos'
     protocol-list:
-     type: array
-     items:
-      $ref: '#/definitions/L3acProtocol'
+      $ref: '#/definitions/L3acProtocols'
   L3BindRelation:
    type: object
    properties:
@@ -843,6 +815,13 @@ definitions:
      format: string
     snc-tunnel-create-policy:
      $ref: '#/definitions/SncTunnelCreatePolicy'
+  StaticRoutes:
+     type: object
+     properties:
+        static-route-list:
+         type: array
+         items:
+           $ref: '#/definitions/StaticRoute'
   StaticRoute:
    type: object
    properties:
@@ -875,7 +854,7 @@ definitions:
      minimum: 0
      maximum: 255
      format: int16
-    routeStatus:
+    route-status:
      type: string
      description: Route Status, including 1(down), 2(up), only used when querying a route
      enum: ["down","up"]
@@ -1082,9 +1061,12 @@ definitions:
      primary-backup-connected:
       type: boolean
   HubSpokeNodes:
-   type: array
-   items:
-     $ref: '#/definitions/HubSpokeNode'
+   type: object
+   properties:
+     hub-spoke-nodes:
+       type: array
+       items:
+         $ref: '#/definitions/HubSpokeNode'
   HubSpokeNode:
    type: object
    properties:
@@ -1094,9 +1076,14 @@ definitions:
      type: string
      enum: ["hub","spoke"]
     belonged-hubs:
-     type: array
-     items:
-      $ref: '#/definitions/NodeId'
+      $ref: '#/definitions/BelongedHubs'
+  BelongedHubs:
+   type: object
+   properties:
+     belonged-hub-list:
+      type: array
+      items:
+        $ref: '#/definitions/NodeId'
   NodeId:
    type: object
    properties:
@@ -1130,6 +1117,13 @@ definitions:
       description: The switch delay time in ms, default value is 0 ms, the step is 100 ms
       minimum: 0
       maximum: 100
+  L3acProtocols:
+   type: object
+   properties:
+    protocols:
+      type: array
+      items:
+        $ref: '#/definitions/L3acProtocol'
   L3acProtocol:
    type: object
    properties:
@@ -1138,9 +1132,7 @@ definitions:
      description: The protocol type, default value is static
      enum: ["static","OSPF","ISIS","BGP"]
     static-routes:
-     type: array
-     items:
-      $ref: '#/definitions/StaticRoute'
+      $ref: '#/definitions/StaticRoutes'
 
 
 

@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.services;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
-import org.openo.sdno.sptndriver.models.south.SL3vpn;
+import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +49,9 @@ public class L3Service {
    *
    * @param l3vpn L3vpn information
    */
-  public void createL3vpn(SL3vpn l3vpn)
+  public void createL3vpn(SL3vpnCreateInput l3vpn)
       throws HttpErrorException, IOException, CommandErrorException {
-    String printText = "Create l3vpn " + l3vpn.getId();
+    String printText = "Create l3vpn " + l3vpn.getSncL3vpn().getId();
     LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(baseUrl)

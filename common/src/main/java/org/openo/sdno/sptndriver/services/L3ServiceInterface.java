@@ -18,7 +18,7 @@ package org.openo.sdno.sptndriver.services;
 
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
-import org.openo.sdno.sptndriver.models.south.SL3vpn;
+import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -38,7 +38,7 @@ public interface L3ServiceInterface {
    */
   @Headers(Config.CONTROLLER_ICT_AUTH)
   @POST("restconf/data/sptn-service-l3vpn:service/snc-l3vpns")
-  Call<SCommandResultOutput> createL3vpn(@Body SL3vpn l3vpn);
+  Call<SCommandResultOutput> createL3vpn(@Body SL3vpnCreateInput l3vpn);
 
   /**
    * Delete L3vpn.
