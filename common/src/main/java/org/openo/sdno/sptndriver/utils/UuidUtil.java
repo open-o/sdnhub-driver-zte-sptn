@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.utils;
 import java.util.UUID;
 
 /**
- * The class of UUID util.
+ * The class of UUID utility.
  */
 public class UuidUtil {
   /**

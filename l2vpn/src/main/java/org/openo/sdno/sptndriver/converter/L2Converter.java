@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * The class to convert from L2vpn to Eline.
+ * The class to convert from L2vpn to E-Line.
  */
 public class L2Converter {
 
@@ -55,10 +55,10 @@ public class L2Converter {
       LoggerFactory.getLogger(L2Converter.class);
 
   /**
-   * Convert create L2vpn to Eline.
+   * Convert create L2vpn to E-Line.
    *
    * @param l2vpn L2vpn creating parameters in NBI.
-   * @return Eline and tunnel creating parameters in SBI.
+   * @return E-Line and tunnel creating parameters in SBI.
    */
   public static SCreateElineAndTunnelsInput convertL2ToElineTunnerCreator(NL2Vpn l2vpn) {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
@@ -71,11 +71,11 @@ public class L2Converter {
   }
 
   /**
-   * convert L2vpn to Eline.
+   * convert L2vpn to E-Line.
    *
    * @param nl2Vpn       NBI L2vpn.
-   * @param southElineId Eline uuid.
-   * @return SBI Eline.
+   * @param southElineId E-Line UUID.
+   * @return SBI E-Line.
    */
   private static SEline l2ToEline(NL2Vpn nl2Vpn, String southElineId) {
     if (nl2Vpn == null) {
@@ -109,7 +109,7 @@ public class L2Converter {
   }
 
   /**
-   * Convert ingress or egress ac list, only support 2 ACs.
+   * Convert ingress or egress AC list, only support 2 ACs.
    *
    * @param acList    NBI AC list.
    * @param isIngress Whether is ingress or egress AC.
@@ -175,7 +175,7 @@ public class L2Converter {
   }
 
   /**
-   * Whether has backup PW.
+   * Whether has backup PW(Pseudo Wire).
    *
    * @param pwList PW list.
    * @return true when one of the PW is backup PW, return false when PW list is null or empty.
@@ -194,8 +194,8 @@ public class L2Converter {
   }
 
   /**
-   * Init PW from NBI L2vpn, PW protection is not supported now,so there is only 2 NEs, NE_A and
-   * NE_Z and pw role is always MASTER.
+   * Initialize PW(Pseudo Wire) from NBI L2vpn, PW protection is not supported now,so there is only 2 NEs, NE_A and
+   * NE_Z and PW role is always MASTER.
    *
    * @param l2Vpn NBI L2vpn.
    * @return SBI PW list.

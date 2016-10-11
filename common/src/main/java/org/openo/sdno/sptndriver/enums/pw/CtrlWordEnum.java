@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.pw;
 
 /**
- * Enum of PW control word.
+ * Enumerator of PW control word.
  */
 public enum CtrlWordEnum {
   DISABLE("disable", 0),

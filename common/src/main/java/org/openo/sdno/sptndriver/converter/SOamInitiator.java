@@ -27,7 +27,7 @@ import org.openo.sdno.sptndriver.models.south.SOamMode;
 public class SOamInitiator {
 
   /**
-   * Init OAM.
+   * Initialization of OAM.
    *
    * @param sncId OAM related connection ID.
    * @return OAM
@@ -48,7 +48,7 @@ public class SOamInitiator {
   }
 
   /**
-   * Init Mep list of Oam.
+   * Initialize Mep list of OAM.
    *
    * @return Mep list
    */

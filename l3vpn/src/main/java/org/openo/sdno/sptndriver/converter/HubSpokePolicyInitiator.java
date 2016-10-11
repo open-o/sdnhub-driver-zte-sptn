@@ -44,7 +44,7 @@ public class HubSpokePolicyInitiator {
   /**
    *  The method to initiate hub spoke policy.
    * @param topologyService NBI topology service.
-   * @param topoModeEnum SBI topology enum.
+   * @param topoModeEnum SBI topology enumerator.
    * @param l3acs NBI L3acs.
    * @return SBI hub spoke policy.
    */

@@ -20,7 +20,7 @@ package org.openo.sdno.sptndriver.enums.l3vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 
 /**
- * Enum of topo mode.
+ * Enumerator of topology mode.
  */
 public enum TopoModeEnum {
   SPECIFIED("none", SL3vpn.TopoModeEnum.SPECIFIED),
@@ -35,10 +35,10 @@ public enum TopoModeEnum {
   }
 
   /**
-   * Convert SBI topo mode to NBI topo mode.
+   * Convert SBI topology mode to NBI topology mode.
    *
-   * @param southValue SBI topo mode
-   * @return NBI topo mode
+   * @param southValue SBI topology mode
+   * @return NBI topology mode
    */
   public static String convertSbiToNbi(SL3vpn.TopoModeEnum southValue) {
     for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
@@ -50,10 +50,10 @@ public enum TopoModeEnum {
   }
 
   /**
-   * Convert NBI topo mode to SBI topo mode.
+   * Convert NBI topology mode to SBI topology mode.
    *
-   * @param north NBI topo mode
-   * @return SBI topo mode
+   * @param north NBI topology mode
+   * @return SBI topology mode
    */
   public static SL3vpn.TopoModeEnum convertNbiToSbi(String north) {
     for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
@@ -65,14 +65,14 @@ public enum TopoModeEnum {
   }
 
   /**
-   * Get NBI topo mode.
+   * Get NBI topology mode.
    */
   public String getNorthValue() {
     return north;
   }
 
   /**
-   * Get SBI topo mode.
+   * Get SBI topology mode.
    */
   public SL3vpn.TopoModeEnum getSouthValue() {
     return south;

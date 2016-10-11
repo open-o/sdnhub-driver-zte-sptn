@@ -40,7 +40,7 @@ public class App extends Application<Config> {
   /**
    * Main function.
    *
-   * @param args args input by users
+   * @param args arguments, input by users
    */
   public static void main(String[] args) throws Exception {
     new App().run(args);

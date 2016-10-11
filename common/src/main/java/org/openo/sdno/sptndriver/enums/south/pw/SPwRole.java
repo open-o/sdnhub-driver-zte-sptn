@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.pw;
 
 /**
- *  Enum of PW role.
+ *  Enumerator of PW role.
  */
 public enum SPwRole {
   MASTER(0),

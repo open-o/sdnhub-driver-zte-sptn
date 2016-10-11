@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.enums;
 import org.openo.sdno.sptndriver.models.south.SAdminStatus;
 
 /**
- * Enum of admin status.
+ * Enumerator of administrative status.
  */
 public enum AdminStatusEnum {
   UP("adminUp", SAdminStatus.UP),
@@ -33,10 +33,10 @@ public enum AdminStatusEnum {
   }
 
   /**
-   * Convert SBI admin status to NBI admin status.
+   * Convert SBI administrative status to NBI administrative status.
    *
-   * @param southValue SBI admin status
-   * @return NBI admin status
+   * @param southValue SBI administrative status
+   * @return NBI administrative status
    */
   public static String convertSbiToNbi(SAdminStatus southValue) {
     for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
@@ -48,10 +48,10 @@ public enum AdminStatusEnum {
   }
 
   /**
-   * Convert NBI admin status to SBI admin status.
+   * Convert NBI administrative status to SBI administrative status.
    *
-   * @param north NBI admin status
-   * @return SBI admin status
+   * @param north NBI administrative status
+   * @return SBI administrative status
    */
   public static SAdminStatus convertNbiToSbi(String north) {
     for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
@@ -63,14 +63,14 @@ public enum AdminStatusEnum {
   }
 
   /**
-   * Get NBI admin status.
+   * Get NBI administrative status.
    */
   public String getNorthValue() {
     return north;
   }
 
   /**
-   * Get SBI admin status.
+   * Get SBI administrative status.
    */
   public SAdminStatus getSouthValue() {
     return south;

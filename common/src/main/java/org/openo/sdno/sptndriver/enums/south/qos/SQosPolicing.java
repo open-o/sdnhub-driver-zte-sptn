@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- *  Enum of Qos policing.
+ *  Enumerator of QoS policing.
  */
 public enum SQosPolicing {
   CLOSE(0),

@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.utils;
 import org.apache.commons.net.util.SubnetUtils;
 
 /**
- * The Util class to convert IPV4.
+ * The Utility class to convert IPV4.
  */
 public class Ipv4Util {
 
@@ -65,9 +65,9 @@ public class Ipv4Util {
   }
 
   /**
-   * Transform int mask to string dot mask.
+   * Transform integer mask to string dot mask.
    *
-   * @param intMask Int value of mask, like 24
+   * @param intMask Integer value of mask, like 24
    * @return Mask in form of "255.255.255.0"
    */
   private static String ipInt2DotStr(int intMask) {

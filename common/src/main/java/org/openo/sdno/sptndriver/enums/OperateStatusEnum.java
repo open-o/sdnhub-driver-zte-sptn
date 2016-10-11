@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.enums;
 import org.openo.sdno.sptndriver.models.south.SOperateStatus;
 
 /**
- * Enum of operate status.
+ * Enumerator of operate status.
  */
 public enum OperateStatusEnum {
   UP("operateUp", SOperateStatus.UP),

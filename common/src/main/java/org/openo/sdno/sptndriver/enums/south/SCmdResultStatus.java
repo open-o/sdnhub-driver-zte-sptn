@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enum of command result status.
+ *  Enumerator of command result status.
  */
 public enum SCmdResultStatus {
   SUCCESS(1),

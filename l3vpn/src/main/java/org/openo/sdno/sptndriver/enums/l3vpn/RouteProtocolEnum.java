@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.enums.l3vpn;
 import org.openo.sdno.sptndriver.models.south.SL3acProtocol;
 
 /**
- * Enum of route protocol.
+ * Enumerator of route protocol.
  */
 public enum RouteProtocolEnum {
   STATIC("static", SL3acProtocol.ProtocolTypeEnum.STATIC),

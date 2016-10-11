@@ -29,13 +29,13 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 /**
- *  Interface of SBI Eline service provided by SPTN controller.
+ *  Interface of SBI E-Line service provided by SPTN controller.
  */
 public interface ISElineService {
 
   /**
-   *  Create Eline and tunnels.
-   * @param createElineAndTunnels  Input parameter of create Eline and tunnels.
+   *  Create E-Line and tunnels.
+   * @param createElineAndTunnels  Input parameter of create E-Line and tunnels.
    * @return Command result, including success, fail and partially fail.
    */
   @Headers(Config.CONTROLLER_ICT_AUTH)
@@ -44,8 +44,8 @@ public interface ISElineService {
       @Body SCreateElineAndTunnelsInput createElineAndTunnels);
 
   /**
-   *  Delete Eline.
-   * @param elineId UUID of Eline to be delete.
+   *  Delete E-Line.
+   * @param elineId UUID of E-Line to be delete.
    * @return Command result, including success, fail and partially fail.
    */
   @Headers(Config.CONTROLLER_ICT_AUTH)

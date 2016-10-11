@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enum of Eline snc type.
+ *  Enumerator of E-Line SNC type.
  */
 public enum SElineSncType {
   SIMPLE(1);

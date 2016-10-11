@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import retrofit2.Response;
 
 /**
- * Util class for REST commands processing services.
+ * Utility class for REST commands processing services.
  */
 public class ServiceUtil {
 
@@ -40,7 +40,7 @@ public class ServiceUtil {
    *
    * @param response Response of execution.
    * @throws CommandErrorException When command result is not successful.
-   * @throws HttpErrorException    When receives http error.
+   * @throws HttpErrorException    When receives HTTP error.
    */
   public static void parseCommandResultOutput(Response<SCommandResultOutput> response,
                                               Logger logger,
@@ -64,7 +64,7 @@ public class ServiceUtil {
    *
    * @param response Response of execution.
    * @throws CommandErrorException When command result is not successful.
-   * @throws HttpErrorException    When receives http error.
+   * @throws HttpErrorException    When receives HTTP error.
    */
   public static void parseCmdResultAndNcdResRelOutput(
       Response<SCmdResultAndNcdResRelationsOutput> response,
@@ -111,7 +111,7 @@ public class ServiceUtil {
   /**
    * Parse response.
    *
-   * @param response  http response.
+   * @param response  HTTP response.
    * @param logger    Log information.
    * @param printText Text print in the log.
    * @param <T>       Body of response.

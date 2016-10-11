@@ -72,7 +72,7 @@ public class L2Resource {
   }
 
   /**
-   * The post method to create Eline.
+   * The post method to create E-Line.
    *
    * @param l2vpn Parameter of create L2vpn.
    * @return 200 if success
@@ -119,9 +119,9 @@ public class L2Resource {
   }
 
   /**
-   * The delete method to delete Eline.
+   * The delete method to delete E-Line.
    *
-   * @param vpnid Global UUID of Eline(UUID in SDN-O).
+   * @param vpnid Global UUID of E-Line(UUID in SDN-O).
    * @return 200 if success
    */
   @DELETE

@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- *  Enum of Qos CAC mode.
+ *  Enumerator of QoS CAC mode.
  */
 public enum SCacMode {
   CLOSE(0),

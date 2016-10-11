@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.utils;
 
 /**
- * The Math util class.
+ * The Math utility class.
  */
 public class MathUtil {
   /**
