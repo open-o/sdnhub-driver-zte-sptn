@@ -16,12 +16,17 @@
 
 package org.openo.sdno.sptndriver.resources;
 
+import com.codahale.metrics.annotation.Timed;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.jetty.http.HttpStatus;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L3Converter;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.services.L3Service;
@@ -42,7 +47,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @Path("/openoapi/sbi-l3vpn/v1")
+@Api(tags = {"L3vpn API"})
 @Produces(MediaType.APPLICATION_JSON)
 /**
  *  The class of L3vpn resource.
@@ -63,11 +75,37 @@ public class L3Resource {
    * Create L3vpn.
    *
    * @param l3vpn L3vpn parameters.
-   * @return 200 if success.
+   * @return 201 if success.
    */
   @POST
   @Path("/l3vpns")
-  public javax.ws.rs.core.Response createL3vpn(NL3Vpn l3vpn,
+  @ApiOperation(value = "Create a L3vpn connection",
+      code = HttpStatus.CREATED_201,
+      response = NL3Vpn.class)
+  @ApiResponses(value = {
+      @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
+          message = "Create a L3Vpn connection failure as parameters invalid.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNAUTHORIZED_401,
+          message = "Unauthorized",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.NOT_FOUND_404,
+          message = "Create a L3Vpn connection failure as can't reach server.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE_415,
+          message = "Unprocessable L3vpn Entity.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.INTERNAL_SERVER_ERROR_500,
+          message = "Create a L3Vpn connection failure as inner error.",
+          response = String.class)
+      })
+  @Produces(MediaType.APPLICATION_JSON)
+  @Timed
+  public Response createL3vpn(@ApiParam(value = "L2vpn information", required = true)
+                                                     NL3Vpn l3vpn,
+                                               @ApiParam(value = "Controller uuid, "
+                                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
+                                                   required = true)
                                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
     String controllerId = ServiceUtil.getControllerId(controllerIdPara);
@@ -75,6 +113,7 @@ public class L3Resource {
     if (southL3vpn == null || southL3vpn.getAcList() == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
           .entity("Input L3vpn can not be converted to south L3vpn.")
           .build();
     }
@@ -87,8 +126,9 @@ public class L3Resource {
       return ex.getResponse();
     } catch (IOException ex) {
       return Response
-          .status(Response.Status.BAD_GATEWAY)
-          .entity("IO Exception when creating L3vpn.")
+          .status(Response.Status.INTERNAL_SERVER_ERROR)
+          .entity(ExceptionUtils.getStackTrace(ex))
+          .type(MediaType.TEXT_PLAIN_TYPE)
           .build();
     } catch (CommandErrorException ex) {
       return ex.getResponse();
@@ -108,7 +148,32 @@ public class L3Resource {
    */
   @DELETE
   @Path("/l3vpns/{vpnid}")
-  public Response deleteL3vpn(@PathParam("vpnid") String vpnid,
+  @ApiOperation(value = "Delete a L3vpn connection",
+      code = HttpStatus.OK_200)
+  @ApiResponses(value = {
+      @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
+          message = "Delete a L3Vpn connection failure as parameters invalid.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNAUTHORIZED_401,
+          message = "Unauthorized",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.NOT_FOUND_404,
+          message = "Delete a L3Vpn connection failure as can't reach server.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE_415,
+          message = "Unprocessable L3vpn Entity.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.INTERNAL_SERVER_ERROR_500,
+          message = "Delete a L3Vpn connection failure as inner error.",
+          response = String.class)
+      })
+  @Produces(MediaType.APPLICATION_JSON)
+  @Timed
+  public Response deleteL3vpn(@ApiParam(value = "L2vpn uuid", required = true)
+                                @PathParam("vpnid") String vpnid,
+                              @ApiParam(value = "Controller uuid, "
+                                  + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
+                                  required = true)
                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
     String controllerId = ServiceUtil.getControllerId(controllerIdPara);
@@ -117,6 +182,7 @@ public class L3Resource {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .entity("Can not find L3vpn.")
+          .type(MediaType.TEXT_PLAIN_TYPE)
           .build();
     }
 
@@ -130,8 +196,9 @@ public class L3Resource {
       return ex.getResponse();
     } catch (IOException ex) {
       return Response
-          .status(Response.Status.BAD_GATEWAY)
-          .entity("IO Exception when creating Eline.")
+          .status(Response.Status.INTERNAL_SERVER_ERROR)
+          .entity(ExceptionUtils.getStackTrace(ex))
+          .type(MediaType.TEXT_PLAIN_TYPE)
           .build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);

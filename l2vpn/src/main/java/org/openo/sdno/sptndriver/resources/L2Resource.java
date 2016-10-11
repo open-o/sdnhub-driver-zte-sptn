@@ -16,6 +16,10 @@
 
 package org.openo.sdno.sptndriver.resources;
 
+import com.codahale.metrics.annotation.Timed;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.jetty.http.HttpStatus;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
@@ -35,7 +39,6 @@ import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
@@ -48,11 +51,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * The class to provide L2vpn resource.
  */
 @Path("/openoapi/sbi-l2vpn-vpws/v1/")
 @Produces(MediaType.APPLICATION_JSON)
+@Api(tags = {"L2vpn API"})
 public class L2Resource {
 
   private final Validator validator;
@@ -75,11 +85,38 @@ public class L2Resource {
    * The post method to create Eline.
    *
    * @param l2vpn Parameter of create L2vpn.
-   * @return 200 if success
+   * @return 201 if success
    */
   @POST
-  public Response createEline(NL2Vpn l2vpn,
-                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
+  @Path("/l2vpn_vpwss")
+  @ApiOperation(value = "Create a L2vpn ",
+      code = HttpStatus.CREATED_201,
+      response = NL2Vpn.class)
+  @ApiResponses(value = {
+      @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
+          message = "Create L2Vpn Instances failure as parameters invalid.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNAUTHORIZED_401,
+          message = "Unauthorized",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.NOT_FOUND_404,
+          message = "Create L2Vpn Instances failure as can't reach server.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE_415,
+          message = "Unprocessable L2vpn Entity.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.INTERNAL_SERVER_ERROR_500,
+          message = "Create L2Vpn Instances failure as inner error.",
+          response = String.class)
+      })
+  @Produces(MediaType.APPLICATION_JSON)
+  @Timed
+  public Response createEline( @ApiParam(value = "L2vpn information",
+                                   required = true) NL2Vpn l2vpn,
+                               @ApiParam(value = "Controller uuid, "
+                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
+                                   required = true)
+                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
     String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
@@ -92,6 +129,7 @@ public class L2Resource {
       if (createElineAndTunnels == null || routeCalInput == null) {
         return Response
             .status(Response.Status.BAD_REQUEST)
+            .type(MediaType.TEXT_PLAIN_TYPE)
             .entity("Input L2 can not be converted to Eline.")
             .build();
       }
@@ -106,8 +144,9 @@ public class L2Resource {
       return ex.getResponse();
     } catch (IOException ex) {
       return Response
-          .status(Response.Status.BAD_GATEWAY)
-          .entity("IO Exception when creating Eline.")
+          .status(Response.Status.INTERNAL_SERVER_ERROR)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ExceptionUtils.getStackTrace(ex))
           .build();
     } catch (CommandErrorException ex) {
       return ex.getResponse();
@@ -125,15 +164,41 @@ public class L2Resource {
    * @return 200 if success
    */
   @DELETE
-  @Path("{vpnid}")
-  public Response deleteEline(@PathParam("vpnid") String vpnid,
-                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
+  @Path("/l2vpn_vpwss/{vpnid}")
+  @ApiOperation(value = "Delete a L2Vpn Connection ",
+      code = HttpStatus.OK_200)
+  @ApiResponses(value = {
+      @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
+          message = "Delete a L2Vpn Instance failure as parameters invalid.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNAUTHORIZED_401,
+          message = "Unauthorized",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.NOT_FOUND_404,
+          message = "Delete a L2Vpn Instances failure as can't reach server.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE_415,
+          message = "Unprocessable L2vpn Entity.",
+          response = String.class),
+      @ApiResponse(code = HttpStatus.INTERNAL_SERVER_ERROR_500,
+          message = "Delete a L2Vpn Instances failure as inner error.",
+          response = String.class)
+      })
+  @Produces(MediaType.APPLICATION_JSON)
+  @Timed
+  public Response deleteEline(@ApiParam(value = "L2vpn uuid", required = true)
+                                @PathParam("vpnid") String vpnid,
+                              @ApiParam(value = "Controller uuid, "
+                                  + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
+                                  required = true)
+                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
     String controllerId = ServiceUtil.getControllerId(controllerIdPara);
     String southElineId = getSouthElineId(vpnid, controllerId);
     if (southElineId == null || vpnid == null) {
       return Response
           .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
           .entity("Can not find Eline.")
           .build();
     }
@@ -153,8 +218,9 @@ public class L2Resource {
       return ex.getResponse();
     } catch (IOException ex) {
       return Response
-          .status(Response.Status.BAD_GATEWAY)
-          .entity("IO Exception when creating Eline.")
+          .status(Response.Status.INTERNAL_SERVER_ERROR)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ExceptionUtils.getStackTrace(ex))
           .build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
