@@ -16,6 +16,8 @@
 
 package org.openo.sdno.sptndriver;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.resources.L2Resource;
 import org.openo.sdno.sptndriver.resources.L3Resource;
@@ -24,9 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.server.SimpleServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.jaxrs.listing.ApiListingResource;
 
 
 /**
@@ -53,6 +59,7 @@ public class App extends Application<Config> {
    */
   @Override
   public void initialize(Bootstrap<Config> bootstrap) {
+    bootstrap.addBundle(new AssetsBundle("/api-doc", "/api-doc", "index.html", "api-doc"));
   }
 
   /**
@@ -70,5 +77,32 @@ public class App extends Application<Config> {
     // Add the resource to the environment
     environment.jersey().register(new L2Resource(environment.getValidator(), config, jdbi));
     environment.jersey().register(new L3Resource(environment.getValidator(), config, jdbi));
+
+    initSwaggerConfig(environment, config);
   }
+
+
+  private void initSwaggerConfig(Environment environment, Config configuration) {
+    environment.jersey().register(new ApiListingResource());
+    environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+    BeanConfig config = new BeanConfig();
+    config.setTitle("Open-o SDN-O ZTE SPTN Drvier API");
+    config.setVersion("1.0.0");
+    config.setResourcePackage("org.openo.sdno.sptndriver.resources");
+    // set rest api basepath in swagger
+    SimpleServerFactory simpleServerFactory =
+        (SimpleServerFactory) configuration.getServerFactory();
+    String basePath = simpleServerFactory.getApplicationContextPath();
+    String rootPath = simpleServerFactory.getJerseyRootPath();
+    rootPath = rootPath.substring(0, rootPath.indexOf("/*"));
+    basePath =
+        basePath.equals("/") ? rootPath : (new StringBuilder()).append(basePath).append(rootPath)
+            .toString();
+    config.setBasePath(basePath);
+    config.setScan(true);
+  }
+
+
+
 }
