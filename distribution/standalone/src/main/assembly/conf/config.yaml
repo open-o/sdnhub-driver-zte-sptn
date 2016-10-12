@@ -17,11 +17,13 @@
 # Url of Micro Service Bus(MSB)
 msbUrl: http://msb.openo.org:80/
 server:
-  type: simple
   applicationContextPath: /
-  connector:
-    type: http
-    port: 8640
+  applicationConnectors:
+      - type: http
+        port: 8640
+  adminConnectors:
+      - type: http
+        port: 8641
 # Logging settings.
 logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.

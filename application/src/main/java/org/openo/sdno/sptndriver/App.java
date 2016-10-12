@@ -17,6 +17,7 @@
 package org.openo.sdno.sptndriver;
 
 import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.healthCheck.CustomHealthCheck;
 import org.openo.sdno.sptndriver.resources.L2Resource;
 import org.openo.sdno.sptndriver.resources.L3Resource;
 import org.skife.jdbi.v2.DBI;
@@ -67,6 +68,10 @@ public class App extends Application<Config> {
     // Create a DBI factory and build a JDBI instance
     final DBIFactory factory = new DBIFactory();
     final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "mysql");
+
+    CustomHealthCheck healthCheck = new CustomHealthCheck();
+    environment.healthChecks().register("healthcheck", healthCheck);
+
     // Add the resource to the environment
     environment.jersey().register(new L2Resource(environment.getValidator(), config, jdbi));
     environment.jersey().register(new L3Resource(environment.getValidator(), config, jdbi));
