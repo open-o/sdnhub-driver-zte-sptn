@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
-import io.dropwizard.server.SimpleServerFactory;
+import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.swagger.jaxrs.config.BeanConfig;
@@ -96,10 +96,10 @@ public class App extends Application<Config> {
     config.setVersion("1.0.0");
     config.setResourcePackage("org.openo.sdno.sptndriver.resources");
     // set rest api basepath in swagger
-    SimpleServerFactory simpleServerFactory =
-        (SimpleServerFactory) configuration.getServerFactory();
-    String basePath = simpleServerFactory.getApplicationContextPath();
-    String rootPath = simpleServerFactory.getJerseyRootPath();
+    DefaultServerFactory serverFactory =
+        (DefaultServerFactory) configuration.getServerFactory();
+    String basePath = serverFactory.getApplicationContextPath();
+    String rootPath = serverFactory.getJerseyRootPath();
     rootPath = rootPath.substring(0, rootPath.indexOf("/*"));
     basePath =
         basePath.equals("/") ? rootPath : (new StringBuilder()).append(basePath).append(rootPath)
