@@ -21,7 +21,7 @@ import java.io.IOException;
 import retrofit2.Response;
 
 /**
- *  The exception happened when the controller returns http error.
+ *  The exception happened when the controller returns HTTP error.
  */
 public class HttpErrorException extends Exception {
 
@@ -32,7 +32,7 @@ public class HttpErrorException extends Exception {
   }
 
   /**
-   *  Get the response constructed from the http error.
+   *  Get the response constructed from the HTTP error.
    * @return  Response which is returned to LCM.
    */
   public javax.ws.rs.core.Response getResponse(){

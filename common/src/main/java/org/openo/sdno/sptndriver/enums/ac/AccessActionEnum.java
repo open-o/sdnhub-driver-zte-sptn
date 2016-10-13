@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.enums.ac;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
 
 /**
- * Enum of access action.
+ * Enumerator of access action.
  */
 public enum AccessActionEnum {
   KEEP("keep", SServiceEndPoint.AccessActionEnum.KEEP),

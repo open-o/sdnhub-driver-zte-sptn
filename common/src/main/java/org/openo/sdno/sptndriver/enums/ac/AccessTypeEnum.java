@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.enums.ac;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
 
 /**
- * Enum of access type.
+ * Enumerator of access type.
  */
 public enum AccessTypeEnum {
   PORT("port", SServiceEndPoint.AccessTypeEnum.PORT),

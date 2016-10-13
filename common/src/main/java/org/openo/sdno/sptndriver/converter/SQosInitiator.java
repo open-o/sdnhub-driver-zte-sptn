@@ -27,16 +27,16 @@ import org.openo.sdno.sptndriver.models.south.SQos;
 import org.openo.sdno.sptndriver.utils.MathUtil;
 
 /**
- * The class to initiate Qos parameters.
+ * The class to initiate QoS parameters.
  */
 public class SQosInitiator {
 
   /**
-   * NBI cbs in bytes and SBI cbs in KBytes.
+   * NBI CBS in bytes and SBI CBS in KBytes.
    */
   private static final int CBS_MULTIPLIER = 1000;
   /**
-   * NBI pbs in bytes and SBI pbs in KBytes.
+   * NBI PBS in bytes and SBI PBS in KBytes.
    */
   private static final int PBS_MULTIPLIER = 1000;
   /**
@@ -49,10 +49,10 @@ public class SQosInitiator {
   private static String DEFAULT_PBS = "100";
 
   /**
-   * Init LSP Qos parameters according to MplsTePolicy.
+   * Initialize LSP QoS parameters according to MplsTePolicy.
    *
    * @param policy MplsTePolicy in NBI.
-   * @return LSP Qos in SBI.
+   * @return LSP QoS in SBI.
    */
   public static SQos initQos(NMplsTePolicy policy) {
     SQos qos = new SQos();
@@ -87,10 +87,10 @@ public class SQosInitiator {
   }
 
   /**
-   * Init Qos in which cac mode and policing is closed.
+   * Initialize QoS in which CAC mode and policing is closed.
    *
-   * @param belongedId The UUID of object(PW or AC) which the Qos is belonged to.
-   * @return Qos.
+   * @param belongedId The UUID of object(PW or AC) which the QoS is belonged to.
+   * @return QoS.
    */
   public static SQos initCacClosedQos(String belongedId) {
     SQos qos = new SQos();
@@ -107,12 +107,12 @@ public class SQosInitiator {
   }
 
   /**
-   * Init AC Qos.
+   * Initialize AC QoS.
    *
    * @param acId          AC UUID
-   * @param upStreamQos   Upstream AC Qos.
-   * @param downStreamQos Downstream AC Qos.
-   * @return AC Qos.
+   * @param upStreamQos   Upstream AC QoS.
+   * @param downStreamQos Downstream AC QoS.
+   * @return AC QoS.
    */
   public static SQos initAcQos(String acId, NQosIfCar upStreamQos, NQosIfCar downStreamQos) {
     SQos qos = initCacClosedQos(acId);

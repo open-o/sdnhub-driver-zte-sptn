@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- *  Enum of Qos converge mode.
+ *  Enumerator of QoS converge mode.
  */
 public enum SConvergeMode {
   NOT_CONVERGE(0),

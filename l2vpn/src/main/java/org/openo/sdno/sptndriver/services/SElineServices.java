@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
- * Eline service CRUD.
+ * E-Line service CRUD.
  */
 public class SElineServices {
 
@@ -48,16 +48,16 @@ public class SElineServices {
   /**
    * The constructor
    *
-   * @param baseUrl Url of SPTN controller.
+   * @param baseUrl URL of SPTN controller.
    */
   public SElineServices(String baseUrl) {
     this.baseUrl = baseUrl;
   }
 
   /**
-   * Send REST to controller to create Eline and tunnels.
+   * Send REST to controller to create E-Line and tunnels.
    *
-   * @param createElineAndTunnels Eline and tunnels information
+   * @param createElineAndTunnels E-Line and tunnels information
    */
   public String createElineAndTunnels(SCreateElineAndTunnelsInput createElineAndTunnels)
       throws HttpErrorException, IOException, CommandErrorException {
@@ -78,9 +78,9 @@ public class SElineServices {
   }
 
   /**
-   * Send REST to controller to delete Eline..
+   * Send REST to controller to delete E-Line.
    *
-   * @param elineId Eline UUID
+   * @param elineId E-Line UUID
    */
   public void deleteEline(SDeleteElineInput elineId)
       throws IOException, HttpErrorException, CommandErrorException {

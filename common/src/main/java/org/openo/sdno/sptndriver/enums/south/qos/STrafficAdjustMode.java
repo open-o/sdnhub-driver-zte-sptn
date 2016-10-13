@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- * Enum of Qos traffic adjust mode, whether the tunnel bandwidth is changed automatically with the
+ * Enumerator of QoS traffic adjust mode, whether the tunnel bandwidth is changed automatically with the
  * change of client service.
  */
 public enum STrafficAdjustMode {

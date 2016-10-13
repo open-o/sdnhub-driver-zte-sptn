@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The class to init route calculate request.
+ * The class to initialize route calculate request.
  */
 public class SRouteCalReqsInitiator {
 
@@ -42,7 +42,7 @@ public class SRouteCalReqsInitiator {
   private static final String PROTECTION_SEQUENCE_NO = "2";
 
   /**
-   * Init LSP route calculate request of L2.
+   * Initialize LSP route calculate request of L2.
    *
    * @param l2vpn L2vpn create parameters.
    * @return LSP route calculate request.
@@ -75,7 +75,7 @@ public class SRouteCalReqsInitiator {
         && tunnelService.getMplsTe() != null) {
       mplsTePolicy = tunnelService.getMplsTe();
     }
-    // if init ingress NE or egress NE failed, try to get the information from ACs.
+    // if initialization of ingress NE or egress NE failed, try to get the information from ACs.
     if (ingressNe == null || egressNe == null) {
       if (l2vpn.getAcs() != null
           && l2vpn.getAcs().getAc() != null
@@ -84,7 +84,7 @@ public class SRouteCalReqsInitiator {
         egressNe = l2vpn.getAcs().getAc().get(1).getNeId();
       }
     }
-    // if init ingress NE or egress NE failed, try to get the information from PWs.
+    // if initialization of ingress NE or egress NE failed, try to get the information from PWs.
     if (ingressNe == null || egressNe == null) {
       if (l2vpn.getPws() != null
           && l2vpn.getPws().getPws() != null

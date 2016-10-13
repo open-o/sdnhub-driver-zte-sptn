@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- * Enum of Qos color mode.
+ * Enumerator of QoS color mode.
  */
 public enum SColorMode {
   UNWARE(0),

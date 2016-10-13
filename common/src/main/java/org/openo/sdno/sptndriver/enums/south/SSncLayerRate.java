@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- * Enum of snc switch layer rate.
+ * Enumerator of SNC switch layer rate.
  */
 public enum SSncLayerRate {
   LSP(0),

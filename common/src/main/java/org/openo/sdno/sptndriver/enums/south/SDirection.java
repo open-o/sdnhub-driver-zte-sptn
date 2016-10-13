@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enum of service direction.
+ *  Enumerator of service direction.
  */
 public enum SDirection {
   UNI_DIRECTION(0),

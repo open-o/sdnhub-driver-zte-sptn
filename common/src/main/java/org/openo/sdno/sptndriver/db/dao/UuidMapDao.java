@@ -25,7 +25,7 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 
 /**
- *  The Dao class of Uuid Map.
+ *  The DAO class of UUID Map.
  */
 public interface UuidMapDao {
 

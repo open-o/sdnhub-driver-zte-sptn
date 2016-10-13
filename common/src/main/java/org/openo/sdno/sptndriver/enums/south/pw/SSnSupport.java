@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.pw;
 
 /**
- *  Enum of PW sn support.
+ *  Enumerator of PW SN support.
  */
 public enum SSnSupport {
   NOT_SUPPORT(0),

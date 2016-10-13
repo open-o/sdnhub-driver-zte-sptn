@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.db.model;
 
 /**
- *  The class to store the relationship between uuid and external id.
+ *  The class to store the relationship between UUID and external id.
  */
 public class UuidMap {
 

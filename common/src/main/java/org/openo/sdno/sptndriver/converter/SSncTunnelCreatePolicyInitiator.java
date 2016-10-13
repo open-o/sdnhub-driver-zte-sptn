@@ -31,7 +31,7 @@ public class SSncTunnelCreatePolicyInitiator {
       LoggerFactory.getLogger(SSncTunnelCreatePolicyInitiator.class);
 
   /**
-   *  Init tunnel create policy.
+   *  Initialize tunnel create policy.
    * @param tunnelService NBI tunnel service.
    * @return SBI Tunnel create policy.
    */

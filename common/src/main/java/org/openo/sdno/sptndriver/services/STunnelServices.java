@@ -43,7 +43,7 @@ public class STunnelServices {
   /**
    * The Constructor.
    *
-   * @param baseUrl url of SPTN controller.
+   * @param baseUrl URL of SPTN controller.
    */
   public STunnelServices(String baseUrl) {
     this.baseUrl = baseUrl;

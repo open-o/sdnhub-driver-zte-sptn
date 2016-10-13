@@ -22,7 +22,7 @@ import org.openo.sdno.sptndriver.models.south.SSncSwitch;
 import org.openo.sdno.sptndriver.utils.MathUtil;
 
 /**
- * The class to initiate snc switch.
+ * The class to initiate SNC switch.
  */
 public class SSncSwitchInitiator {
 
@@ -37,11 +37,11 @@ public class SSncSwitchInitiator {
   private static final int WTR_MULTIPLIER = 1000000;
 
   /**
-   * Init PW snc switch.
+   * Initialize PW SNC switch.
    *
-   * @param sncId        Service(Eline) UUID, not PW UUID.
-   * @param hasSncSwitch Whether the service has PW snc switch.
-   * @return PW snc switch.
+   * @param sncId        Service(E-Line) UUID, not PW UUID.
+   * @param hasSncSwitch Whether the service has PW SNC switch.
+   * @return PW SNC switch.
    */
   public static SSncSwitch initPwSncSwitch(String sncId, boolean hasSncSwitch) {
     if (!hasSncSwitch) {
@@ -69,10 +69,10 @@ public class SSncSwitchInitiator {
   }
 
   /**
-   * Init LSP snc switch.
+   * Initialize LSP SNC switch.
    *
    * @param policy NBI MPLS TE policy.
-   * @return LSP snc switch.
+   * @return LSP SNC switch.
    */
   public static SSncSwitch initLspSncSwitch(NMplsTePolicy policy) {
     SSncSwitch sncSwitch = new SSncSwitch();
@@ -96,7 +96,7 @@ public class SSncSwitchInitiator {
       }
     }
 
-    // snc id, configured by controller since drive doesn't know UUID yet
+    // SNC id, configured by controller since drive doesn't know UUID yet
     sncSwitch.setSncId(null);
     sncSwitch.setLayerRate(SSncSwitch.LayerRateEnum.LSP);
     sncSwitch.setLinearProtectionType(getLspProtType(hasProt, coRoute));
@@ -112,7 +112,7 @@ public class SSncSwitchInitiator {
   }
 
   /**
-   * Init protection type.
+   * Initialize protection type.
    *
    * @param hasProt     Whether LSP has protection.
    * @param needReroute Whether LSP need reroute when it is down.

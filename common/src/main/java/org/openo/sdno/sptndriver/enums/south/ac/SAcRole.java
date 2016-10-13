@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.enums.south.ac;
 
 /**
- *  Enum of AC role.
+ *  Enumerator of AC role.
  */
 public enum SAcRole {
   MASTER(0),

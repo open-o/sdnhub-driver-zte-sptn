@@ -19,7 +19,7 @@ package org.openo.sdno.sptndriver.enums.pw;
 import org.openo.sdno.sptndriver.models.south.SEncapsulateType;
 
 /**
- * Enum of encapsulate type.
+ * Enumerator of encapsulate type.
  */
 public enum EncapsulateTypeEnum {
   VLAN("vlan", SEncapsulateType.ETHERNET_VLAN),

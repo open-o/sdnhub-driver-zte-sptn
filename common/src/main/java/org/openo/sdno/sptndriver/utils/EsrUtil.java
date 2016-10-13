@@ -25,15 +25,15 @@ import org.openo.sdno.sptndriver.services.EsrService;
 import java.io.IOException;
 
 /**
- *  The Util class of External Service Register(ESR).
+ *  The Utility class of External Service Register(ESR).
  */
 public class EsrUtil {
 
   /**
-   * Get SDN-O controller url by controller id.
+   * Get SDN-O controller URL by controller id.
    * @param controllerId SDN-O controller id.
    * @param config Configuration.
-   * @return SDN-O controller url.
+   * @return SDN-O controller URL.
    */
   public static String getSdnoControllerUrl(String controllerId,
                                         Config config)

@@ -37,7 +37,7 @@ public class SNEService {
   /**
    * The constructor.
    *
-   * @param baseUrl Base url of controller.
+   * @param baseUrl Base URL of controller.
    */
   public SNEService(String baseUrl) {
     this.baseUrl = baseUrl;

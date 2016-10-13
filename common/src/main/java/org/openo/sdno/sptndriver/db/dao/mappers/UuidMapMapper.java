@@ -24,7 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *  The mapper class of uuid map.
+ *  The mapper class of UUID map.
  */
 public class UuidMapMapper implements ResultSetMapper<UuidMap> {
   @Override

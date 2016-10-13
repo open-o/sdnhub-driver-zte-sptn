@@ -19,15 +19,15 @@ package org.openo.sdno.sptndriver.converter;
 import org.openo.sdno.sptndriver.models.south.STrafficClass;
 
 /**
- * The class to convert traffic class enum.
+ * The class to convert traffic class enumerator.
  */
 public class TrafficClassConverter {
 
   /**
-   * Convert string to SBI traffic class enum.
+   * Convert string to SBI traffic class enumerator.
    *
    * @param trafficClass String traffic class.
-   * @return Enum traffic class, return null if input is illegal.
+   * @return Enumerator traffic class, return null if input is illegal.
    */
   public static STrafficClass getEnum(String trafficClass) {
     if (trafficClass == null) {
