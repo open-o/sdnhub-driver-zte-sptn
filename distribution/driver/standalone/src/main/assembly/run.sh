@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/usr/bin/env bash
 #
 # Copyright 2016 ZTE Corporation.
 #
@@ -16,18 +16,19 @@
 #
 
 DIRNAME=`dirname $0`
-HOME=`cd $DIRNAME/; pwd`
-user=$1
-password=$2
-port=3306
-host=127.0.0.1
-echo "start init sdno_driver_zte_sptn db"
-mysql -u$user -p$password -P$port -h$host <$HOME/dbscripts/mysql/openo-sdno-zte-sptn-driver-createobj.sql
-sql_result=$?
-if [ $sql_result != 0 ] ; then
-   echo "failed to init sdno_driver_zte_sptn database!"
-   exit 1
-fi
-echo "init sdno_driver_zte_sptn database success!"
-exit 0
+RUNHOME=`cd $DIRNAME/; pwd`
+echo @RUNHOME@ $RUNHOME
+
+echo @JAVA_HOME@ $JAVA_HOME
+JAVA="$JAVA_HOME/bin/java"
+echo @JAVA@ $JAVA
+
+JAVA_OPTS="-Xms50m -Xmx128m"
+#JAVA_OPTS="$JAVA_OPTS -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=$port,server=y,suspend=n"
+echo @JAVA_OPTS@ $JAVA_OPTS
+
+class_path="$RUNHOME/:$RUNHOME/sdno-driver-zte-sptn.jar"
+echo @class_path@ $class_path
+
+"$JAVA" $JAVA_OPTS -classpath "$class_path" org.openo.sdno.sptndriver.App server "$RUNHOME/conf/config.yaml"
 

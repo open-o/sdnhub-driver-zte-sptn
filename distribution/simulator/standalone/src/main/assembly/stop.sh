@@ -1,6 +1,6 @@
-﻿#
+﻿#!/usr/bin/env bash
 #
-# Copyright 2016 [ZTE] and others.
+# Copyright 2016 ZTE Corporation.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 DIRNAME=`dirname $0`
 HOME=`cd $DIRNAME/; pwd`
-Main_Class="org.openo.sdno.sptndriver.App"
+Main_Class="org.openo.sdno.sptndriver.simulator.App"
 
-echo ================== sdno-driver-zte-sptn info =============================================
+echo ================== zte-sptn-controller-simulator info =============================================
 echo HOME=$HOME
 echo Main_Class=$Main_Class
 echo ===============================================================================

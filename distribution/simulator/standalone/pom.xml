@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Copyright 2016 ZTE Corporation.
   ~
@@ -17,17 +18,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.openo.sdno.driver-zte-sptn</groupId>
-        <artifactId>distribution</artifactId>
+        <artifactId>simulator-distribution</artifactId>
         <version>1.1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>standalone</artifactId>
-    <name>openo/sdno/drivers/zte-sptn/distribution/standalone</name>
+    <artifactId>simulator-standalone</artifactId>
+    <name>openo/sdno/drivers/zte-sptn/distribution/simulator/standalone</name>
     <packaging>pom</packaging>
 
     <properties>
-        <packagename>sdno-driver-zte-sptn</packagename>
+        <packagename>zte-sptn-controller-driver</packagename>
         <linux64id>linux64</linux64id>
         <win64id>win64</win64id>
         <linux64assembly>target/assembly/${linux64id}</linux64assembly>
@@ -103,11 +104,11 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.openo.sdno.driver-zte-sptn</groupId>
-                                    <artifactId>application</artifactId>
+                                    <artifactId>simulator</artifactId>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${linux64assembly}</outputDirectory>
-                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
+                                    <destFileName>zte-sptn-controller-simulator.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -122,11 +123,11 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.openo.sdno.driver-zte-sptn</groupId>
-                                    <artifactId>application</artifactId>
+                                    <artifactId>simulator</artifactId>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${win64assembly}</outputDirectory>
-                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
+                                    <destFileName>zte-sptn-controller-simulator.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -165,7 +166,7 @@
     <dependencies>
         <dependency>
             <groupId>org.openo.sdno.driver-zte-sptn</groupId>
-            <artifactId>application</artifactId>
+            <artifactId>simulator</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

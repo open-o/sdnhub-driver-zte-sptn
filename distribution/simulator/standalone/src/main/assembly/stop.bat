@@ -1,6 +1,5 @@
 @REM
-@REM
-@REM Copyright 2016 [ZTE] and others.
+@REM Copyright 2016 ZTE Corporation.
 @REM
 @REM Licensed under the Apache License, Version 2.0 (the "License");
 @REM you may not use this file except in compliance with the License.
@@ -16,17 +15,17 @@
 @REM
 
 @echo off
-title stopping sdno-driver-zte-sptn
+title stopping zte-sptn-controller-simulator
 
 set HOME=%~dp0
-set Main_Class="org.openo.sdno.sptndriver.App"
+set Main_Class="org.openo.sdno.sptndriver.simulator.App"
 
-echo ================== sdno-driver-zte-sptn info =============================================
+echo ================== zte-sptn-controller-simulator info =============================================
 echo HOME=$HOME
 echo Main_Class=%Main_Class%
 echo ===============================================================================
 
-echo ### Stopping sdno-driver-zte-sptn
+echo ### Stopping zte-sptn-controller-simulator
 cd /d %HOME%
 
 for /f "delims=" %%i in ('"%JAVA_HOME%\bin\jcmd"') do (
