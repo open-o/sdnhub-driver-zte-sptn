@@ -16,6 +16,8 @@
 
 package org.openo.sdno.sptndriver.utils;
 
+import com.google.gson.Gson;
+
 import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
@@ -83,6 +85,8 @@ public class ServiceUtil {
         return;
       }
       SCommandResult commandResult = commandResultOutput.getOutput().getCommandResult();
+      Gson gson = new Gson();
+      LOGGER.debug("Response from controller is: " + gson.toJson(response.body()));
       checkSuccess(response, commandResult, logger, printText);
     } else {
       logger.error(printText + " failed, response unsuccessful.");
@@ -121,11 +125,14 @@ public class ServiceUtil {
                                     String printText)
       throws CommandErrorException, HttpErrorException {
     if (response.isSuccessful()) {
+      Gson gson = new Gson();
+      LOGGER.debug("Response from controller is: " + gson.toJson(response.body()));
       return response.body();
     } else {
       logger.error(printText + " failed, response unsuccessful.");
       throw new HttpErrorException(response);
     }
+
   }
 
   private static <T> void checkSuccess(Response<T> response,
