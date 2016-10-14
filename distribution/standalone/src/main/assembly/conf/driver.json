@@ -1,0 +1,29 @@
+{
+  "driverInfo": {
+    "driverName": "sdno-zte-sptn-driver-1",
+    "instanceID": "sdno-zte-sptn-driver-1",
+    "ip": "127.0.0.1",
+    "port": "8640",
+    "protocol": "http",
+    "services": [
+      {
+        "service_url": "/openoapi/sbi-l2vpn-vpws/v1",
+        "support_sys": [
+          {
+            "type": "ODL",
+            "version": "B03"
+          }
+        ]
+      },
+      {
+        "service_url": "/openoapi/sbi-l3vpn/v1",
+        "support_sys": [
+          {
+            "type": "ODL",
+            "version": "B03"
+          }
+        ]
+      }
+    ]
+  }
+}
