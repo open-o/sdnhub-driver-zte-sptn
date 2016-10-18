@@ -30,7 +30,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 public interface UuidMapDao {
 
   @Mapper(UuidMapMapper.class)
-  @SqlQuery("select * from SDNO_ZTE_SPTN_DRIVER_IDMAP where "
+  @SqlQuery("select * from IDMAP where "
       + "UUID = :uuid "
       + "and OBJTYPE = :type "
       + "and CONTROLLERID = :controllerId")
@@ -39,14 +39,14 @@ public interface UuidMapDao {
               @Bind("controllerId") String controllerId);
 
   @GetGeneratedKeys
-  @SqlUpdate("insert into SDNO_ZTE_SPTN_DRIVER_IDMAP (ID,UUID,EXTERNALID,OBJTYPE,CONTROLLERID)"
+  @SqlUpdate("insert into IDMAP (ID,UUID,EXTERNALID,OBJTYPE,CONTROLLERID)"
       + " values (NULL, :uuid, :externalId, :type, :controllerId)")
   int insert(@Bind("uuid") String uuid,
                     @Bind("externalId") String externalId,
                     @Bind("type") String type,
                     @Bind("controllerId") String controllerId);
 
-  @SqlUpdate("delete from SDNO_ZTE_SPTN_DRIVER_IDMAP where "
+  @SqlUpdate("delete from IDMAP where "
       + "UUID = :uuid "
       + "and OBJTYPE = :type "
       + "and CONTROLLERID = :controllerId")

@@ -52,6 +52,7 @@ logging:
       timeZone: UTC
 database:
   driverClass: com.mysql.jdbc.Driver
-  user: inventory
-  password: inventory
-  url: jdbc:mysql://localhost/inventory
+  user: sdno_driver_zte_sptn
+  password: Test_12345
+  url: jdbc:mysql://localhost/sdno_driver_zte_sptn
+  
