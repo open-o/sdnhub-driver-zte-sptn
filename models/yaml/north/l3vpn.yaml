@@ -51,9 +51,9 @@ paths:
             $ref: "#/definitions/CreateL3vpnReq"
       responses:
         201:
-          description: create L3Vpn connection.
+          description: create L3VPN connection.
           schema:
-            $ref: '#/definitions/L3VpnResponse'
+            $ref: '#/definitions/L3vpnResponse'
         400:
           description: create L3Vpn Instances failure as parameters invalid.
         401:
@@ -88,7 +88,7 @@ paths:
         200:
           description: Delete a L3Vpn connection
           schema:
-            $ref: '#/definitions/L3VpnResponse'
+            $ref: '#/definitions/L3vpnResponse'
         400:
           description: delete a L3Vpn Instance failure as parameters invalid.
         401:
@@ -121,7 +121,7 @@ paths:
         200:
           description: Query a L3Vpn connection
           schema:
-            $ref: '#/definitions/L3VpnResponse'
+            $ref: '#/definitions/L3vpnResponse'
         400:
           description: Query a L3Vpn Instance failure as parameters invalid.
         401:
@@ -160,7 +160,7 @@ paths:
         200:
           description: update a L3Vpn connection
           schema:
-            $ref: '#/definitions/L3VpnResponse'
+            $ref: '#/definitions/L3vpnResponse'
         400:
           description: update a L3Vpn Instance failure as parameters invalid.
         401:
@@ -657,7 +657,7 @@ definitions:
           $ref: "#/definitions/OverrideFlow"
 
   L3Ac:
-    description: L3Vpn Access point configuration
+    description: L3VPN Access point configuration
     type: object
     required:
       - id
@@ -964,7 +964,7 @@ definitions:
       diffServ:
         $ref: "#/definitions/DiffServ"
 
-  L3VpnResponse:
+  L3vpnResponse:
     description: a general structure for response
     type: object
     required:

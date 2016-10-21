@@ -30,6 +30,7 @@ import org.openo.sdno.sptndriver.exception.ControllerNotFoundException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.exception.ResourceNotFoundException;
+import org.openo.sdno.sptndriver.models.north.NCreateL2vpnReq;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteEline;
@@ -91,14 +92,14 @@ public class L2Resource {
   /**
    * The post method to create Eline.
    *
-   * @param l2vpn Parameter of create L2vpn.
+   * @param createL2vpnReq Parameter of create L2vpn.
    * @return 201 if success
    */
   @POST
   @Path("/l2vpn_vpwss")
   @ApiOperation(value = "Create a L2vpn ",
       code = HttpStatus.CREATED_201,
-      response = NL2Vpn.class)
+      response = NCreateL2vpnReq.class)
   @ApiResponses(value = {
       @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
           message = "Create L2Vpn Instances failure as parameters invalid.",
@@ -119,12 +120,13 @@ public class L2Resource {
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public Response createEline( @ApiParam(value = "L2vpn information",
-                                   required = true) NL2Vpn l2vpn,
+                                   required = true) NCreateL2vpnReq createL2vpnReq,
                                @ApiParam(value = "Controller uuid, "
                                    + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
                                    required = true)
                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    NL2Vpn l2vpn = createL2vpnReq.getL2vpnVpws();
     if (l2vpn.getId() == null || l2vpn.getId().isEmpty()) {
       return Response
           .status(Response.Status.BAD_REQUEST)
