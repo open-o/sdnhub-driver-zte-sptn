@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -55,8 +56,8 @@ public class DriverManagerService {
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
-    Call<String> cmdCall = service.registerDriver(driverInfo);
-    Response<String> response;
+    Call<ResponseBody> cmdCall = service.registerDriver(driverInfo);
+    Response<ResponseBody> response;
     try {
       response = cmdCall.execute();
     } catch (IOException ex) {
@@ -74,7 +75,9 @@ public class DriverManagerService {
         LOGGER.warn("Invalid parameter or register twice.");
         return true;
       } else {
-        LOGGER.error(printText + "failed: Internal server error.");
+        LOGGER.error(String.format(printText
+            + "failed: Internal server error, error code is: "
+            + ex.getResponse().getStatus() ));
         return false;
       }
     }
