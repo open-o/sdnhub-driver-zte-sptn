@@ -58,11 +58,9 @@ public class SQosInitiator {
     SQos qos = new SQos();
     qos.setBelongedId(null);
     qos.setTunnelMode(SQos.TunnelModeEnum.PIPELINE);
-
     qos.setConvgMode(SConvergeMode.NOT_CONVERGE.toString());
-    // todo Whether support auto_adjust, equals to bandwidthMode in mplsTePolicy?
-    qos.setTrafficAdjMode(STrafficAdjustMode.NOT_ADJUST.toString());
-    // todo not sure how to config pir, cbs and pbs, need test
+    qos.setTrafficAdjMode(STrafficAdjustMode.AUTO_ADJUST.toString());
+
     if (policy != null && policy.getBandwidth() != null) {
       qos.setCacMode(SCacMode.OPEN.toString());
       qos.setA2zPolicing(SQosPolicing.OPEN.toString());
@@ -144,4 +142,5 @@ public class SQosInitiator {
   private static String getSouthPbs(Long northPbs) {
     return Long.toString(MathUtil.ceil((float)northPbs, (float) PBS_MULTIPLIER));
   }
+
 }

@@ -19,7 +19,6 @@ package org.openo.sdno.sptndriver.services;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
-import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnels;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 
@@ -31,7 +30,7 @@ import retrofit2.http.POST;
 /**
  *  Interface of SBI Eline service provided by SPTN controller.
  */
-public interface ISElineService {
+public interface ElineServiceInterface {
 
   /**
    *  Create Eline and tunnels.

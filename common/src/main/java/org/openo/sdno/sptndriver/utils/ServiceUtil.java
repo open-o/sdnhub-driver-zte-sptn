@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResult;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
@@ -54,7 +55,7 @@ public class ServiceUtil {
         return;
       }
       SCommandResult commandResult = response.body().getOutput();
-      checkSuccess(response, commandResult, logger,printText);
+      checkSuccess(commandResult, logger,printText);
     } else {
       logger.error(printText + " failed, response unsuccessful.");
       throw new HttpErrorException(response);
@@ -87,7 +88,7 @@ public class ServiceUtil {
       SCommandResult commandResult = commandResultOutput.getOutput().getCommandResult();
       Gson gson = new Gson();
       LOGGER.debug("Response from controller is: " + gson.toJson(response.body()));
-      checkSuccess(response, commandResult, logger, printText);
+      checkSuccess(commandResult, logger, printText);
     } else {
       logger.error(printText + " failed, response unsuccessful.");
       throw new HttpErrorException(response);
@@ -135,8 +136,7 @@ public class ServiceUtil {
 
   }
 
-  private static <T> void checkSuccess(Response<T> response,
-                                       SCommandResult commandResult,
+  private static <T> void checkSuccess(SCommandResult commandResult,
                                        Logger logger,
                                        String printText)
       throws CommandErrorException, HttpErrorException {
@@ -152,21 +152,22 @@ public class ServiceUtil {
         throw new CommandErrorException(commandResult);
       }
     }
-    return;
   }
 
   /**
    *  Parse controller id.
    * @param controllerIdPara Controller id param,“extSysID={ctrlUuid}”
-   * @return Controller id, "{ctrlUuid}", if failed, return null.
+   * @return Controller id, "{ctrlUuid}", if failed, throw ParamErrorException.
    */
-  public static String getControllerId(String controllerIdPara) {
-    String[] strArray = controllerIdPara.split("=");
-    if (strArray.length == 2) {
-      return strArray[1];
+  public static String getControllerId(String controllerIdPara) throws ParamErrorException {
+    if (controllerIdPara != null) {
+      String[] strArray = controllerIdPara.split("=");
+      if (strArray.length == 2) {
+        return strArray[1];
+      }
     }
-    LOGGER.error("getControllerId() must have one '='.");
-    return null;
+
+    throw new ParamErrorException("Controller id must like extSysID={ctrlUuid}.");
   }
 
 }

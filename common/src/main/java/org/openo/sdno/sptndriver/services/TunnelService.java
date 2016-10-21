@@ -34,10 +34,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * SBI Tunnel Services.
  */
-public class STunnelServices {
+public class TunnelService {
 
   private static final Logger LOGGER =
-      LoggerFactory.getLogger(STunnelServices.class);
+      LoggerFactory.getLogger(TunnelService.class);
   private String baseUrl;
 
   /**
@@ -45,7 +45,7 @@ public class STunnelServices {
    *
    * @param baseUrl url of SPTN controller.
    */
-  public STunnelServices(String baseUrl) {
+  public TunnelService(String baseUrl) {
     this.baseUrl = baseUrl;
   }
 
@@ -63,7 +63,7 @@ public class STunnelServices {
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
-    ISTunnelService service = retrofit.create(ISTunnelService.class);
+    TunnelServiceInterface service = retrofit.create(TunnelServiceInterface.class);
     Call<SRouteCalResultsOutput> repos = service.calcRoutes(routeCalcReqsInput);
     Response<SRouteCalResultsOutput> response = repos.execute();
     SRouteCalResultsOutput output = ServiceUtil.parseResponse(response, LOGGER, printText);

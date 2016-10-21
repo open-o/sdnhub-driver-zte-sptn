@@ -28,7 +28,7 @@ import retrofit2.http.POST;
 /**
  * SBI Tunnel service interface.
  */
-public interface ISTunnelService {
+public interface TunnelServiceInterface {
 
   /**
    * Calculate tunnel routes.

@@ -26,22 +26,27 @@ import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
+import org.openo.sdno.sptndriver.exception.ControllerNotFoundException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
+import org.openo.sdno.sptndriver.exception.ResourceNotFoundException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SDeleteEline;
 import org.openo.sdno.sptndriver.models.south.SDeleteElineInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
-import org.openo.sdno.sptndriver.services.SElineServices;
-import org.openo.sdno.sptndriver.services.STunnelServices;
+import org.openo.sdno.sptndriver.services.ElineService;
+import org.openo.sdno.sptndriver.services.TunnelService;
 import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -65,6 +70,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = {"L2vpn API"})
 public class L2Resource {
 
+  private static final org.slf4j.Logger LOGGER =
+      LoggerFactory.getLogger(L2Resource.class);
   private final Validator validator;
   private final UuidMapDao uuidMapDao;
   private Config config;
@@ -118,39 +125,58 @@ public class L2Resource {
                                    required = true)
                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
-    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
-    SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
+    if (l2vpn.getId() == null || l2vpn.getId().isEmpty()) {
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity("L2vpn id is null or empty.")
+          .build();
+    }
     String externalId;
+    String controllerId;
     try {
-      STunnelServices tunnelServices = new STunnelServices(
-          (EsrUtil.getSdnoControllerUrl(controllerId, config)));
-      SCreateElineAndTunnelsInput createElineAndTunnels
-          = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
-      if (createElineAndTunnels == null || routeCalInput == null) {
-        return Response
-            .status(Response.Status.BAD_REQUEST)
-            .type(MediaType.TEXT_PLAIN_TYPE)
-            .entity("Input L2 can not be converted to Eline.")
-            .build();
-      }
+      controllerId = ServiceUtil.getControllerId(controllerIdPara);
+      SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
+      String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId, config);
+      TunnelService tunnelServices = new TunnelService(controllerUrl);
+      SCreateElineAndTunnelsInput createElineAndTunnels =
+          L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+
       // Calculate LSP route first.
       createElineAndTunnels.getInput().setRouteCalResults(
           tunnelServices.calcRoutes(routeCalInput).getOutput().getRouteCalResults());
       // Create Eline.
-      SElineServices elineServices = new SElineServices(
-          EsrUtil.getSdnoControllerUrl(controllerId, config));
+      ElineService elineServices = new ElineService(controllerUrl);
       externalId = elineServices.createElineAndTunnels(createElineAndTunnels);
     } catch (HttpErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
     } catch (IOException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return Response
           .status(Response.Status.INTERNAL_SERVER_ERROR)
           .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ExceptionUtils.getStackTrace(ex))
+          .entity("Controller returns error: " + ex.toString())
           .build();
     } catch (CommandErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
+    } catch (ParamErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity("Input L2 parameter error: " + ex.getErrorInfo())
+          .build();
+    } catch (ControllerNotFoundException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ex.toString())
+          .build();
     }
+
 
     uuidMapDao.insert(l2vpn.getId(), externalId, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
     return Response.status(Response.Status.CREATED)
@@ -187,50 +213,70 @@ public class L2Resource {
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public Response deleteEline(@ApiParam(value = "L2vpn uuid", required = true)
-                                @PathParam("vpnid") String vpnid,
+                                @PathParam("vpnid") @NotNull String vpnid,
                               @ApiParam(value = "Controller uuid, "
                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
                                   required = true)
                                 @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
-    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
-    String southElineId = getSouthElineId(vpnid, controllerId);
-    if (southElineId == null || vpnid == null) {
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Can not find Eline.")
-          .build();
-    }
-    SDeleteElineInput elineDeleteInput = new SDeleteElineInput();
-    SDeleteEline deleteEline = new SDeleteEline();
-    deleteEline.setElineId(southElineId);
-    elineDeleteInput.setInput(deleteEline);
-
+    String controllerId;
+    String southElineId;
 
     try {
-      SElineServices elineServices = new SElineServices(
+      controllerId = ServiceUtil.getControllerId(controllerIdPara);
+      southElineId = getSouthElineId(vpnid, controllerId);
+
+      SDeleteElineInput elineDeleteInput = new SDeleteElineInput();
+      SDeleteEline deleteEline = new SDeleteEline();
+      deleteEline.setElineId(southElineId);
+      elineDeleteInput.setInput(deleteEline);
+      ElineService elineServices = new ElineService(
           EsrUtil.getSdnoControllerUrl(controllerId, config));
       elineServices.deleteEline(elineDeleteInput);
     } catch (HttpErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
     } catch (CommandErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
     } catch (IOException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return Response
           .status(Response.Status.INTERNAL_SERVER_ERROR)
           .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ExceptionUtils.getStackTrace(ex))
+          .entity("Controller returns error: " + ex.toString())
           .build();
+    } catch (ParamErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity("Input L2 parameter error: " + ex.getErrorInfo())
+          .build();
+    } catch (ControllerNotFoundException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ex.toString())
+          .build();
+    } catch (ResourceNotFoundException ex) {
+      LOGGER.warn(ExceptionUtils.getStackTrace(ex));
+      return Response.ok().build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
-    // todo: API required to return whole Eline Info
     return Response.ok().build();
   }
 
-  private String getSouthElineId(String uuid, String controllerId) {
-    return uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.ELINE.name(),
-        controllerId).getExternalId();
+
+  private String getSouthElineId(String uuid, String controllerId)
+      throws ResourceNotFoundException {
+    UuidMap uuidMap = uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.ELINE.name(),
+        controllerId);
+    if (uuidMap == null) {
+      throw new ResourceNotFoundException("L3vpn " + uuid);
+    }
+    return uuidMap.getExternalId();
   }
 
 }

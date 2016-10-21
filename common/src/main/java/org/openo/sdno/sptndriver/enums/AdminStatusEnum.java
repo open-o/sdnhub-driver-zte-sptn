@@ -16,7 +16,11 @@
 
 package org.openo.sdno.sptndriver.enums;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.south.SAdminStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Enum of admin status.
@@ -38,13 +42,18 @@ public enum AdminStatusEnum {
    * @param southValue SBI admin status
    * @return NBI admin status
    */
-  public static String convertSbiToNbi(SAdminStatus southValue) {
+  public static String convertSbiToNbi(SAdminStatus southValue)
+      throws ParamErrorException {
     for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
       if (adminStatusEnum.getSouthValue().equals(southValue)) {
         return adminStatusEnum.north;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+      validValues.add(adminStatusEnum.getSouthValue().toString());
+    }
+    throw new ParamErrorException(validValues.toArray(), southValue.toString());
   }
 
   /**
@@ -53,13 +62,18 @@ public enum AdminStatusEnum {
    * @param north NBI admin status
    * @return SBI admin status
    */
-  public static SAdminStatus convertNbiToSbi(String north) {
+  public static SAdminStatus convertNbiToSbi(String north) throws ParamErrorException {
+
     for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
       if (adminStatusEnum.getNorthValue().equals(north)) {
         return adminStatusEnum.south;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+      validValues.add(adminStatusEnum.getNorthValue());
+    }
+    throw new ParamErrorException(validValues.toArray(), north);
   }
 
   /**

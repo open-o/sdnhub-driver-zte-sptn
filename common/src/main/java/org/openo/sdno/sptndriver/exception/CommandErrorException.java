@@ -18,6 +18,7 @@ package org.openo.sdno.sptndriver.exception;
 
 import org.openo.sdno.sptndriver.models.south.SCommandResult;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -44,6 +45,7 @@ public class CommandErrorException extends Exception {
     }
     return Response
         .status(Response.Status.NOT_IMPLEMENTED)
+        .type(MediaType.TEXT_PLAIN_TYPE)
         .entity(errorMsg)
         .build();
   }

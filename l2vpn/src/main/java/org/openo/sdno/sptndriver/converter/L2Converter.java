@@ -23,6 +23,7 @@ import org.openo.sdno.sptndriver.enums.ac.AccessTypeEnum;
 import org.openo.sdno.sptndriver.enums.pw.CtrlWordEnum;
 import org.openo.sdno.sptndriver.enums.pw.EncapsulateTypeEnum;
 import org.openo.sdno.sptndriver.enums.south.pw.SSnSupport;
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Ac;
 import org.openo.sdno.sptndriver.models.north.NL2Access;
 import org.openo.sdno.sptndriver.models.north.NL2Acs;
@@ -60,7 +61,8 @@ public class L2Converter {
    * @param l2vpn L2vpn creating parameters in NBI.
    * @return Eline and tunnel creating parameters in SBI.
    */
-  public static SCreateElineAndTunnelsInput convertL2ToElineTunnerCreator(NL2Vpn l2vpn) {
+  public static SCreateElineAndTunnelsInput convertL2ToElineTunnerCreator(NL2Vpn l2vpn)
+      throws ParamErrorException {
     SCreateElineAndTunnels createElineAndTunnels = new SCreateElineAndTunnels();
     createElineAndTunnels.setSncEline(l2ToEline(l2vpn, null));
     createElineAndTunnels.setSncTunnelCreatePolicy(SSncTunnelCreatePolicyInitiator
@@ -77,10 +79,10 @@ public class L2Converter {
    * @param southElineId Eline uuid.
    * @return SBI Eline.
    */
-  private static SEline l2ToEline(NL2Vpn nl2Vpn, String southElineId) {
+  private static SEline l2ToEline(NL2Vpn nl2Vpn, String southElineId)
+      throws ParamErrorException {
     if (nl2Vpn == null) {
-      LOGGER.error("input l2vpn is null.");
-      return null;
+      throw new ParamErrorException("Input l2vpn is null.");
     }
 
     SEline eline = new SEline();
@@ -115,12 +117,12 @@ public class L2Converter {
    * @param isIngress Whether is ingress or egress AC.
    * @return SBI AC list, if input NBI AC list size is not 2, return null.
    */
-  private static SServiceEndPoint northToSouth(NL2Acs acList, boolean isIngress) {
+  private static SServiceEndPoint northToSouth(NL2Acs acList, boolean isIngress)
+      throws ParamErrorException {
     if (acList == null
         || acList.getAc() == null
         || acList.getAc().size() != 2) {
-      LOGGER.error("input acList size is not 2.");
-      return null;
+      throw new ParamErrorException("Input acList size must be 2.");
     }
 
     if (isIngress) {
@@ -194,13 +196,13 @@ public class L2Converter {
   }
 
   /**
-   * Init PW from NBI L2vpn, PW protection is not supported now,so there is only 2 NEs, NE_A and
-   * NE_Z and pw role is always MASTER.
+   * Initialize PW(Pseudo Wire) from NBI L2vpn, PW protection is not supported now,
+   * so there is only 2 NEs, NE_A and NE_Z and PW role is always MASTER.
    *
    * @param l2Vpn NBI L2vpn.
    * @return SBI PW list.
    */
-  private static SSncPws initPws(NL2Vpn l2Vpn) {
+  private static SSncPws initPws(NL2Vpn l2Vpn) throws ParamErrorException {
     if (l2Vpn == null || l2Vpn.getPws() == null) {
       LOGGER.error("l2vpn or pwList is null.");
       return null;
