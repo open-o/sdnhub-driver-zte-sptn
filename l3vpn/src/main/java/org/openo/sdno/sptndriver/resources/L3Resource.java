@@ -88,7 +88,7 @@ public class L3Resource {
   @Path("/l3vpns")
   @ApiOperation(value = "Create a L3vpn connection",
       code = HttpStatus.CREATED_201,
-      response = NL3Vpn.class)
+      response = NCreateL3vpnReq.class)
   @ApiResponses(value = {
       @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
           message = "Create a L3Vpn connection failure as parameters invalid.",

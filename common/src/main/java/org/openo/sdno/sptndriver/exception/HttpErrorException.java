@@ -16,6 +16,8 @@
 
 package org.openo.sdno.sptndriver.exception;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
@@ -39,11 +41,11 @@ public class HttpErrorException extends Exception {
    */
   public javax.ws.rs.core.Response getResponse() {
 
-    String errorStr = "unknown error";
+    String errorStr;
     try {
       errorStr = response.errorBody().string();
     } catch (IOException ex) {
-      ex.printStackTrace();
+      errorStr = ExceptionUtils.getStackTrace(ex);
     }
     return javax.ws.rs.core.Response
         .status(response.code())
