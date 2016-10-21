@@ -16,6 +16,7 @@
 
 package org.openo.sdno.sptndriver.converter;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.north.NMplsTePolicy;
 import org.openo.sdno.sptndriver.models.north.NParticularConstraint;
@@ -47,10 +48,10 @@ public class SRouteCalReqsInitiator {
    * @param l2vpn L2vpn create parameters.
    * @return LSP route calculate request.
    */
-  public static SRouteCalReqsInput initElineLspCalRoute(NL2Vpn l2vpn) {
+  public static SRouteCalReqsInput initElineLspCalRoute(NL2Vpn l2vpn)
+      throws ParamErrorException {
     if (l2vpn == null) {
-      LOGGER.error("Input l2vpn is null.");
-      return null;
+      throw new ParamErrorException("Input l2vpn is null.");
     }
 
     NMplsTePolicy mplsTePolicy = null;
@@ -99,10 +100,10 @@ public class SRouteCalReqsInitiator {
 
   private static SRouteCalReqsInput initElineLspCalRoute(NMplsTePolicy mplsTePolicy,
                                                          String ingressNe,
-                                                         String egressNe) {
+                                                         String egressNe)
+      throws ParamErrorException {
     if (ingressNe == null || egressNe == null) {
-      LOGGER.error("Ingress NE or egress NE is null.");
-      return null;
+      throw new ParamErrorException("Ingress ne or egress ne is null.");
     }
 
     SRouteCalReqs routeCalReqs = new SRouteCalReqs();

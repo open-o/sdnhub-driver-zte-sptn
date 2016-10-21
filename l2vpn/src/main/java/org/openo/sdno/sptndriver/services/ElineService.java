@@ -39,10 +39,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * E-Line service CRUD.
  */
-public class SElineServices {
+public class ElineService {
 
   private static final Logger LOGGER =
-      LoggerFactory.getLogger(SElineServices.class);
+      LoggerFactory.getLogger(ElineService.class);
   private String baseUrl;
 
   /**
@@ -50,7 +50,7 @@ public class SElineServices {
    *
    * @param baseUrl URL of SPTN controller.
    */
-  public SElineServices(String baseUrl) {
+  public ElineService(String baseUrl) {
     this.baseUrl = baseUrl;
   }
 
@@ -68,7 +68,7 @@ public class SElineServices {
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
-    ISElineService service = retrofit.create(ISElineService.class);
+    ElineServiceInterface service = retrofit.create(ElineServiceInterface.class);
     Call<SCmdResultAndNcdResRelationsOutput> repos
         = service.createElineAndTunnels(createElineAndTunnels);
     Response<SCmdResultAndNcdResRelationsOutput> response = repos.execute();
@@ -90,7 +90,7 @@ public class SElineServices {
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
-    ISElineService service = retrofit.create(ISElineService.class);
+    ElineServiceInterface service = retrofit.create(ElineServiceInterface.class);
     Call<SCommandResultOutput> repos = service.deleteEline(elineId);
     Response<SCommandResultOutput> response = repos.execute();
     ServiceUtil.parseRpcResult(response, LOGGER, printText);

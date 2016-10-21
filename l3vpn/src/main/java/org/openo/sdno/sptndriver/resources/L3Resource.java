@@ -25,7 +25,11 @@ import org.openo.sdno.sptndriver.converter.L3Converter;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
+import org.openo.sdno.sptndriver.exception.ControllerNotFoundException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
+import org.openo.sdno.sptndriver.exception.ResourceNotFoundException;
+import org.openo.sdno.sptndriver.models.north.NCreateL3vpnReq;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
@@ -33,11 +37,13 @@ import org.openo.sdno.sptndriver.services.L3Service;
 import org.openo.sdno.sptndriver.utils.EsrUtil;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -61,6 +67,7 @@ import io.swagger.annotations.ApiResponses;
  */
 public class L3Resource {
 
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(L3Resource.class);
   private final Validator validator;
   private final UuidMapDao uuidMapDao;
   private Config config;
@@ -74,7 +81,7 @@ public class L3Resource {
   /**
    * Create L3vpn.
    *
-   * @param l3vpn L3vpn parameters.
+   * @param createL3vpnReq L3vpn create parameters.
    * @return 201 if success.
    */
   @POST
@@ -102,40 +109,56 @@ public class L3Resource {
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public Response createL3vpn(@ApiParam(value = "L2vpn information", required = true)
-                                                     NL3Vpn l3vpn,
-                                               @ApiParam(value = "Controller uuid, the format is"
+                                @NotNull NCreateL3vpnReq createL3vpnReq,
+                              @ApiParam(value = "Controller uuid, the format is"
                                                    + " X-Driver-Parameter:extSysID={ctrlUuid}",
                                                    required = true)
-                                               @HeaderParam("X-Driver-Parameter")
-                                                   String controllerIdPara)
+                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
-    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
-    SL3vpn southL3vpn = L3Converter.convertNbiToSbi(l3vpn);
-    if (southL3vpn == null
-        || southL3vpn.getAcs() == null
-        || southL3vpn.getAcs().getL3Acs().isEmpty()) {
+    NL3Vpn l3vpn = createL3vpnReq.getL3vpn();
+    if (l3vpn == null || l3vpn.getId() == null || l3vpn.getId().isEmpty()) {
       return Response
           .status(Response.Status.BAD_REQUEST)
           .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Input L3vpn can not be converted to south L3vpn.")
+          .entity("L3vpn is null or l3vpn id is null or empty.")
           .build();
     }
-    SL3vpnCreateInput sl3vpnCreateInput = new SL3vpnCreateInput();
-    sl3vpnCreateInput.setSncL3vpn(southL3vpn);
+    String controllerId;
     try {
-      L3Service l3Service = new L3Service(
-          EsrUtil.getSdnoControllerUrl(controllerId, config));
+      controllerId = ServiceUtil.getControllerId(controllerIdPara);
+      String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId, config);
+      SL3vpn southL3vpn  = L3Converter.convertNbiToSbi(l3vpn);
+      SL3vpnCreateInput sl3vpnCreateInput = new SL3vpnCreateInput();
+      sl3vpnCreateInput.setSncL3vpn(southL3vpn);
+      L3Service l3Service = new L3Service(controllerUrl);
       l3Service.createL3vpn(sl3vpnCreateInput);
     } catch (HttpErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
     } catch (IOException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return Response
           .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity(ExceptionUtils.getStackTrace(ex))
+          .entity("Controller returns error: " + ex.toString())
           .type(MediaType.TEXT_PLAIN_TYPE)
           .build();
     } catch (CommandErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
+    } catch (ParamErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity("Input L3vpn can not be converted to south L3vpn: " + ex.getErrorInfo())
+          .build();
+    } catch (ControllerNotFoundException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ex.toString())
+          .build();
     }
     String externalId = l3vpn.getId();
     uuidMapDao.insert(l3vpn.getId(), externalId, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
@@ -174,44 +197,62 @@ public class L3Resource {
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public Response deleteL3vpn(@ApiParam(value = "L2vpn uuid", required = true)
-                                @PathParam("vpnid") String vpnid,
+                                @PathParam("vpnid") @NotNull String vpnid,
                               @ApiParam(value = "Controller uuid, "
                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
                                   required = true)
                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
-    String controllerId = ServiceUtil.getControllerId(controllerIdPara);
-    String southL3vpnId = getSouthL3vpnId(vpnid, controllerId);
-    if (southL3vpnId == null || vpnid == null) {
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .entity("Can not find L3vpn.")
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .build();
-    }
-
+    String controllerId;
     try {
+      controllerId = ServiceUtil.getControllerId(controllerIdPara);
+      String southL3vpnId = getSouthL3vpnId(vpnid, controllerId);
       L3Service l3Service = new L3Service(
           EsrUtil.getSdnoControllerUrl(controllerId, config));
       l3Service.deleteL3vpn(southL3vpnId);
     } catch (HttpErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
     } catch (CommandErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
     } catch (IOException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return Response
           .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity(ExceptionUtils.getStackTrace(ex))
+          .entity("Controller returns error: " + ex.toString())
           .type(MediaType.TEXT_PLAIN_TYPE)
           .build();
+    } catch (ParamErrorException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ex.getErrorInfo())
+          .build();
+    } catch (ControllerNotFoundException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response
+          .status(Response.Status.BAD_REQUEST)
+          .type(MediaType.TEXT_PLAIN_TYPE)
+          .entity(ex.toString())
+          .build();
+    } catch (ResourceNotFoundException ex) {
+      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      return Response.ok().build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
     // TODO: 2016/9/13 return value should be L3VpnResponse.
     return Response.ok().build();
   }
 
-  private String getSouthL3vpnId(String uuid, String controllerId) {
-    return uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.L3VPN.name(),
-        controllerId).getExternalId();
+  private String getSouthL3vpnId(String uuid, String controllerId)
+      throws ResourceNotFoundException {
+    UuidMap uuidMap = uuidMapDao.get(uuid, UuidMap.UuidTypeEnum.L3VPN.name(),
+        controllerId);
+    if (uuidMap == null) {
+      throw new ResourceNotFoundException("L3vpn " + uuid);
+    }
+    return uuidMap.getExternalId();
   }
 }

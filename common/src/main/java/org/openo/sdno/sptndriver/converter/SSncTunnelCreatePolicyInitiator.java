@@ -16,6 +16,7 @@
 
 package org.openo.sdno.sptndriver.converter;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NTunnelService;
 import org.openo.sdno.sptndriver.models.south.SAdminStatus;
 import org.openo.sdno.sptndriver.models.south.SSncTunnelCreatePolicy;
@@ -35,10 +36,10 @@ public class SSncTunnelCreatePolicyInitiator {
    * @param tunnelService NBI tunnel service.
    * @return SBI Tunnel create policy.
    */
-  public static SSncTunnelCreatePolicy initTunnelPolicy(NTunnelService tunnelService) {
+  public static SSncTunnelCreatePolicy initTunnelPolicy(NTunnelService tunnelService)
+      throws ParamErrorException {
     if (tunnelService == null) {
-      LOGGER.error("TunnelService is null.");
-      return null;
+      throw new ParamErrorException("Input tunnel service is null.");
     }
     SSncTunnelCreatePolicy tunnelCreatePolicy = new SSncTunnelCreatePolicy();
     tunnelCreatePolicy.setName(null);

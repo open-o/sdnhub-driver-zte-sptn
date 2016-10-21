@@ -16,6 +16,7 @@
 
 package org.openo.sdno.sptndriver.converter;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NHubGroup;
 import org.openo.sdno.sptndriver.models.north.NL3Ac;
 import org.openo.sdno.sptndriver.models.north.NL3Acs;
@@ -51,7 +52,8 @@ public class HubSpokePolicyInitiator {
    */
   public static SHubSpokePolicy initHubSpokePolicy(NTopologyService topologyService,
                                                    NL3Acs l3acs,
-                                         SL3vpn.TopoModeEnum topoModeEnum) {
+                                         SL3vpn.TopoModeEnum topoModeEnum)
+      throws ParamErrorException {
     SHubSpokePolicy hubSpokePolicy = new SHubSpokePolicy();
     hubSpokePolicy.setHubFullmeshed(false);
     hubSpokePolicy.setPrimaryBackupConnected(true);
@@ -64,14 +66,13 @@ public class HubSpokePolicyInitiator {
   }
 
   private static SHubSpokeNodes convertNbiToSbi(NTopologyService topologyService,
-                                                NL3Acs l3acs) {
+                                                NL3Acs l3acs)
+      throws ParamErrorException {
     if (l3acs == null || l3acs.getAc() == null) {
-      LOGGER.error("North ac list is null.");
-      return null;
+      throw new ParamErrorException("Input l3 ac list is null.");
     }
     if (topologyService == null) {
-      LOGGER.error("North topology service is null.");
-      return null;
+      throw new ParamErrorException("Input topology service is null.");
     }
     Map<String, String> acIdToNeIdMap = getAcIdToNeIdMap(l3acs);
     SHubSpokeNodes hubSpokeNodes = new SHubSpokeNodes();
@@ -86,10 +87,10 @@ public class HubSpokePolicyInitiator {
     return hubSpokeNodes;
   }
 
-  private static Map<String, String> getAcIdToNeIdMap(NL3Acs l3acs) {
+  private static Map<String, String> getAcIdToNeIdMap(NL3Acs l3acs)
+      throws ParamErrorException {
     if (l3acs == null || l3acs.getAc() == null) {
-      LOGGER.error("Ac list is null.");
-      return null;
+      throw new ParamErrorException("Input l3 ac list is null.");
     }
     List<NL3Ac> acList = l3acs.getAc();
     Map<String, String> acIdToNeIdMap = new HashMap<>();

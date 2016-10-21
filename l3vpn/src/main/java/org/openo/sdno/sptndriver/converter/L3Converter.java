@@ -20,6 +20,7 @@ import org.openo.sdno.sptndriver.enums.AdminStatusEnum;
 import org.openo.sdno.sptndriver.enums.OperateStatusEnum;
 import org.openo.sdno.sptndriver.enums.l3vpn.RouteProtocolEnum;
 import org.openo.sdno.sptndriver.enums.l3vpn.TopoModeEnum;
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NL3Ac;
 import org.openo.sdno.sptndriver.models.north.NL3Acs;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
@@ -52,11 +53,12 @@ public class L3Converter {
    * @param nl3Vpn NBI L3vpn.
    * @return SBI L3vpn.
    */
-  public static SL3vpn convertNbiToSbi(NL3Vpn nl3Vpn) {
+  public static SL3vpn convertNbiToSbi(NL3Vpn nl3Vpn)
+      throws ParamErrorException {
     if (nl3Vpn == null) {
-      LOGGER.error("Input l3vpn is null.");
-      return null;
+      throw new ParamErrorException("Input l3vpn is null.");
     }
+
     SL3vpn sl3vpn = new SL3vpn();
     sl3vpn.setId(nl3Vpn.getId());
     sl3vpn.setName(null);
@@ -82,7 +84,8 @@ public class L3Converter {
     return sl3vpn;
   }
 
-  private static SL3acs convertNbiToSbi(NL3Acs nl3Acs) {
+  private static SL3acs convertNbiToSbi(NL3Acs nl3Acs)
+      throws ParamErrorException {
     SL3acs sl3acs = new SL3acs();
     List<SL3ac> acList = sl3acs.getL3Acs();
     for (NL3Ac nl3Ac : nl3Acs.getAc()) {
@@ -91,10 +94,10 @@ public class L3Converter {
     return sl3acs;
   }
 
-  private static SL3ac convertAc(NL3Ac nl3Ac) {
+  private static SL3ac convertAc(NL3Ac nl3Ac)
+      throws ParamErrorException {
     if (nl3Ac == null) {
-      LOGGER.error("North L3ac is null.");
-      return null;
+      throw new ParamErrorException("Input l3 ac list is null.");
     }
 
     SL3ac sl3ac = new SL3ac();

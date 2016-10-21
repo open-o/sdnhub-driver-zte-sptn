@@ -17,12 +17,9 @@
 package org.openo.sdno.sptndriver.utils;
 
 import org.openo.sdno.sptndriver.config.Config;
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ControllerNotFoundException;
 import org.openo.sdno.sptndriver.models.esr.SdnController;
 import org.openo.sdno.sptndriver.services.EsrService;
-
-import java.io.IOException;
 
 /**
  *  The Utility class of External Service Register(ESR).
@@ -37,9 +34,14 @@ public class EsrUtil {
    */
   public static String getSdnoControllerUrl(String controllerId,
                                         Config config)
-      throws IOException, HttpErrorException, CommandErrorException {
+      throws ControllerNotFoundException {
     EsrService esrService = new EsrService(config.getMsbUrl());
-    SdnController sdnController = esrService.getSdnoController(controllerId);
+    SdnController sdnController;
+    try {
+      sdnController = esrService.getSdnoController(controllerId);
+    } catch (Exception ex) {
+      throw new ControllerNotFoundException(ex, controllerId);
+    }
     return sdnController.getUrl();
   }
 }

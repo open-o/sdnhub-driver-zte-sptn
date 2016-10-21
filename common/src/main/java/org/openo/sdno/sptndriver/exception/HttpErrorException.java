@@ -18,6 +18,8 @@ package org.openo.sdno.sptndriver.exception;
 
 import java.io.IOException;
 
+import javax.ws.rs.core.MediaType;
+
 import retrofit2.Response;
 
 /**
@@ -35,17 +37,18 @@ public class HttpErrorException extends Exception {
    *  Get the response constructed from the HTTP error.
    * @return  Response which is returned to LCM.
    */
-  public javax.ws.rs.core.Response getResponse(){
+  public javax.ws.rs.core.Response getResponse() {
 
     String errorStr = "unknown error";
     try {
       errorStr = response.errorBody().string();
-    } catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
     return javax.ws.rs.core.Response
         .status(response.code())
         .entity(errorStr)
+        .type(MediaType.TEXT_PLAIN_TYPE)
         .build();
 
   }

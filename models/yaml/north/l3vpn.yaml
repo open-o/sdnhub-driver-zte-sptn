@@ -48,7 +48,7 @@ paths:
           description: L3Vpn conenction
           required: true
           schema:
-            $ref: "#/definitions/L3Vpn"
+            $ref: "#/definitions/CreateL3vpnReq"
       responses:
         201:
           description: create L3Vpn connection.
@@ -56,20 +56,13 @@ paths:
             $ref: '#/definitions/L3VpnResponse'
         400:
           description: create L3Vpn Instances failure as parameters invalid.
-          schema:
-            $ref: '#/definitions/Error'
         401:
           description: unauthorized.
-          schema:
-            $ref: '#/definitions/Error'
         404:
           description: create L3Vpn Instances failure as can't reach server.
-          schema:
-            $ref: '#/definitions/Error'
         500:
           description: create L3Vpn Instances failure as inner error.
-          schema:
-            $ref: '#/definitions/Error'
+
  /l3vpns/{vpnid}:
     delete:
       summary: Delete the L3VPN whose Id is specified in the path
@@ -98,20 +91,12 @@ paths:
             $ref: '#/definitions/L3VpnResponse'
         400:
           description: delete a L3Vpn Instance failure as parameters invalid.
-          schema:
-            $ref: '#/definitions/Error'
         401:
           description: unauthorized.
-          schema:
-            $ref: '#/definitions/Error'
         404:
           description: delete a L3Vpn Instance failure as can't reach server.
-          schema:
-            $ref: '#/definitions/Error'
         500:
           description: delete a L3Vpn Instance failure as inner error.
-          schema:
-            $ref: '#/definitions/Error'
 
     get:
       summary: query the L3VPN whose Id is specified in the path
@@ -139,20 +124,12 @@ paths:
             $ref: '#/definitions/L3VpnResponse'
         400:
           description: Query a L3Vpn Instance failure as parameters invalid.
-          schema:
-            $ref: '#/definitions/Error'
         401:
           description: unauthorized.
-          schema:
-            $ref: '#/definitions/Error'
         404:
           description: Query a L3Vpn Instance failure as can't reach server.
-          schema:
-            $ref: '#/definitions/Error'
         500:
           description: Query a L3Vpn Instance failure as inner error.
-          schema:
-            $ref: '#/definitions/Error'
 
     put:
       summary: update the L3VPN whose Id is specified in the path
@@ -178,7 +155,7 @@ paths:
           description: L3Vpn conenction
           required: true
           schema:
-            $ref: "#/definitions/L3Vpn"
+            $ref: "#/definitions/UpdateL3vpnReq"
       responses:
         200:
           description: update a L3Vpn connection
@@ -186,22 +163,32 @@ paths:
             $ref: '#/definitions/L3VpnResponse'
         400:
           description: update a L3Vpn Instance failure as parameters invalid.
-          schema:
-            $ref: '#/definitions/Error'
         401:
           description: unauthorized.
-          schema:
-            $ref: '#/definitions/Error'
         404:
           description: update a L3Vpn Instance failure as can't reach server.
-          schema:
-            $ref: '#/definitions/Error'
         500:
           description: update a L3Vpn Instance failure as inner error.
-          schema:
-            $ref: '#/definitions/Error'
 
 definitions:
+
+  CreateL3vpnReq:
+    description: Create L3VPN request body.
+    type: object
+    required:
+      - l3vpn
+    properties:
+      l3vpn:
+        $ref: "#/definitions/L3Vpn"
+
+  UpdateL3vpnReq:
+    description: Update L3VPN request body.
+    type: object
+    required:
+      - l3vpn
+    properties:
+      l3vpn:
+        $ref: "#/definitions/L3Vpn"
 
   AutoSelectTunnel:
     description: Policy Constraints of auto select tunnel policy
@@ -1001,14 +988,3 @@ definitions:
         type: object
         additionalProperties:
           type: string
-
-  Error:
-    type: object
-    required:
-      - code
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
