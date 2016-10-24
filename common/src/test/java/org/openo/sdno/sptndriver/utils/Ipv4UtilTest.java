@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Created by Fengjie on 2016/9/13.
+ * The class to test Ipv4Util.
  */
 public class Ipv4UtilTest {
   @Before

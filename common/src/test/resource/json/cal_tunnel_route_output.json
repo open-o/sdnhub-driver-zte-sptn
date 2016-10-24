@@ -1,0 +1,40 @@
+{
+  "input": {
+    "route-cal-reqs": {
+      "route-cal-req": [
+        {
+          "route-cal-req-container": {
+            "sequence-no": "1",
+            "calculate-policy": "local-protection",
+            "calculate-type": "strict-separate",
+            "calculate-mode": "simple",
+            "calculate-interconnection-mode": "nni-nni",
+            "layer-rate": "lsp",
+            "left-ne-ids": {
+              "left-ne-id": [
+                {
+                  "ne-id": "53319217-4670-49c3-8d82-68ba1350c542"
+                }
+              ]
+            },
+            "right-ne-ids": {
+              "right-ne-id": [
+                {
+                  "ne-id": "f8d01f79-b2f7-4e4a-bbfc-23f670041e04"
+                }
+              ]
+            },
+            "work-calculate-constraint": {
+              "bandwidth": "1024",
+              "cal-policy": "bandwidth-balancing"
+            },
+            "protect-calculate-constraint": {
+              "bandwidth": "1024",
+              "cal-policy": "bandwidth-balancing"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
