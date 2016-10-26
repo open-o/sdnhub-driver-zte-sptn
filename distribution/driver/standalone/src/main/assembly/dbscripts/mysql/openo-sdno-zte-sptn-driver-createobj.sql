@@ -1,6 +1,6 @@
 --
 --
--- Copyright 2016 [ZTE] and others.
+-- Copyright 2016 ZTE Corporation.
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@
 /******************drop old database and user***************************/
 use mysql;
 drop database IF  EXISTS sdno_driver_zte_sptn;
-delete from user where User='sdno_driver_zte_sptn';
+delete from user where User='sptn_driver';
 FLUSH PRIVILEGES;
 
 /******************create new database and user***************************/
 create database sdno_driver_zte_sptn CHARACTER SET utf8;
 
-GRANT ALL PRIVILEGES ON sdno_driver_zte_sptn.* TO 'sdno_driver_zte_sptn'@'%' IDENTIFIED BY 'Test_12345' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON sdno_driver_zte_sptn.* TO 'sptn_driver'@'%' IDENTIFIED BY 'Test_12345' WITH GRANT OPTION;
 
-GRANT ALL PRIVILEGES ON sdno_driver_zte_sptn.* TO 'sdno_driver_zte_sptn'@'localhost' IDENTIFIED BY 'Test_12345' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON sdno_driver_zte_sptn.* TO 'sptn_driver'@'localhost' IDENTIFIED BY 'Test_12345' WITH GRANT OPTION;
 
 FLUSH PRIVILEGES;
 
