@@ -52,7 +52,7 @@ logging:
       timeZone: UTC
 database:
   driverClass: com.mysql.jdbc.Driver
-  user: sdno_driver_zte_sptn
+  user: sptn_driver
   password: Test_12345
   url: jdbc:mysql://localhost/sdno_driver_zte_sptn
   
