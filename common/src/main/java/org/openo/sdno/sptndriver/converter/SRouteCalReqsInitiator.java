@@ -145,7 +145,12 @@ public class SRouteCalReqsInitiator {
     routeCalReq.setRightNeIds(new SRouteCalReqElementRightneids());
     routeCalReq.getRightNeIds().getRightNeId().add(rightNe);
     SCalculateConstraint calculateConstraint = new SCalculateConstraint();
-    calculateConstraint.setBandwidth(mplsTePolicy.getBandwidth().toString());
+    if (mplsTePolicy.getBandwidth() == null) {
+      calculateConstraint.setBandwidth("0");
+    } else {
+      calculateConstraint.setBandwidth(mplsTePolicy.getBandwidth().toString());
+    }
+
     calculateConstraint.setCalPolicy(SCalculateConstraint.CalPolicyEnum.BANDWIDTH_BALANCING);
     routeCalReq.setWorkCalculateConstraint(calculateConstraint);
     if (hasProtect) {

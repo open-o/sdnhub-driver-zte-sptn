@@ -114,7 +114,9 @@ public class SQosInitiator {
    */
   public static SQos initAcQos(String acId, NQosIfCar upStreamQos, NQosIfCar downStreamQos) {
     SQos qos = initCacClosedQos(acId);
-    if (upStreamQos != null && upStreamQos.getEnable()) {
+    if (upStreamQos != null
+        && upStreamQos.getEnable() != null
+        && upStreamQos.getEnable()) {
       qos.setCacMode(SCacMode.OPEN.toString());
       qos.setA2zPolicing(SQosPolicing.OPEN.toString());
       qos.setA2zCir(upStreamQos.getCir().toString());
@@ -123,7 +125,9 @@ public class SQosInitiator {
       qos.setA2zPbs(getSouthPbs(upStreamQos.getPbs()));
     }
 
-    if (downStreamQos != null && downStreamQos.getEnable()) {
+    if (downStreamQos != null
+        && downStreamQos.getEnable() != null
+        && downStreamQos.getEnable()) {
       qos.setCacMode(SCacMode.OPEN.toString());
       qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
       qos.setZ2aCir(downStreamQos.getCir().toString());
