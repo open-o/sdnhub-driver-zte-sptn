@@ -16,6 +16,11 @@
 
 package org.openo.sdno.sptndriver.enums.pw;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Enum of PW control word.
  */
@@ -51,13 +56,18 @@ public enum CtrlWordEnum {
    * @param name String value of SBI control word.
    * @return Integer value of NBI control word.
    */
-  public static Integer getIndex(String name) {
+  public static Integer getIndex(String name)
+          throws ParamErrorException {
     for (CtrlWordEnum e : CtrlWordEnum.values()) {
       if (e.getName().equals(name)) {
         return e.index;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (CtrlWordEnum ctrlWordEnum : CtrlWordEnum.values()) {
+      validValues.add(ctrlWordEnum.getName().toString());
+    }
+    throw new ParamErrorException(validValues.toArray(), name);
   }
 
   /**

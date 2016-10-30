@@ -138,7 +138,8 @@ public class L2Converter {
    * @param ac NBI AC.
    * @return SBI AC.
    */
-  private static SServiceEndPoint northToSouth(NL2Ac ac) {
+  private static SServiceEndPoint northToSouth(NL2Ac ac)
+          throws ParamErrorException {
     if (ac == null) {
       LOGGER.error("input ac is null.");
       return null;

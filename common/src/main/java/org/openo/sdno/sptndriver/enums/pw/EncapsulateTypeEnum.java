@@ -16,7 +16,11 @@
 
 package org.openo.sdno.sptndriver.enums.pw;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.south.SEncapsulateType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Enum of encapsulate type.
@@ -53,13 +57,18 @@ public enum EncapsulateTypeEnum {
    * @param name NBI encapsulate type.
    * @return SBI encapsulate type.
    */
-  public static SEncapsulateType convertNbiToSbi(String name) {
+  public static SEncapsulateType convertNbiToSbi(String name)
+          throws ParamErrorException {
     for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
       if (e.getNorth().equals(name)) {
         return e.south;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (EncapsulateTypeEnum encapsulateTypeEnum : EncapsulateTypeEnum.values()) {
+      validValues.add(encapsulateTypeEnum.getNorth().toString());
+    }
+    throw new ParamErrorException(validValues.toArray(), name);
   }
 
   /**
