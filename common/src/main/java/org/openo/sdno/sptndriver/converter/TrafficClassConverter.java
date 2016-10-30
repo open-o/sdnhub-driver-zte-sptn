@@ -16,7 +16,11 @@
 
 package org.openo.sdno.sptndriver.converter;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.south.STrafficClass;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class to convert traffic class enumerator.
@@ -29,7 +33,8 @@ public class TrafficClassConverter {
    * @param trafficClass String traffic class.
    * @return Enumerator traffic class, return null if input is illegal.
    */
-  public static STrafficClass getEnum(String trafficClass) {
+  public static STrafficClass getEnum(String trafficClass)
+          throws ParamErrorException {
     if (trafficClass == null) {
       return null;
     }
@@ -38,7 +43,11 @@ public class TrafficClassConverter {
         return enumTrafficClass;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (STrafficClass accessActionEnum : STrafficClass.values()) {
+      validValues.add(accessActionEnum.toString());
+    }
+    throw new ParamErrorException(validValues.toArray(), trafficClass);
   }
 
 }

@@ -16,7 +16,11 @@
 
 package org.openo.sdno.sptndriver.enums.ac;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.south.SServiceEndPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Enumerator of access type.
@@ -54,13 +58,18 @@ public enum AccessTypeEnum {
    * @param north NBI access type.
    * @return SBI access type.
    */
-  public static SServiceEndPoint.AccessTypeEnum convertNbiToSbi(String north) {
+  public static SServiceEndPoint.AccessTypeEnum convertNbiToSbi(String north)
+          throws ParamErrorException {
     for (AccessTypeEnum e : AccessTypeEnum.values()) {
       if (e.getNorth().equals(north)) {
         return e.south;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
+      validValues.add(accessTypeEnum.getNorth().toString());
+    }
+    throw new ParamErrorException(validValues.toArray(), north);
   }
 
   /**

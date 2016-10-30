@@ -16,7 +16,11 @@
 
 package org.openo.sdno.sptndriver.enums;
 
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.south.SOperateStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Enumerator of operate status.
@@ -53,13 +57,22 @@ public enum OperateStatusEnum {
    * @param northValue NBI operate status
    * @return SBI operate status
    */
-  public static SOperateStatus convertNbiToSbi(String northValue) {
+  public static SOperateStatus convertNbiToSbi(String northValue)
+          throws ParamErrorException {
+    if (northValue == null) {
+      return null;
+    }
+
     for (OperateStatusEnum e : OperateStatusEnum.values()) {
       if (e.getNorthValue().equals(northValue)) {
         return e.southValue;
       }
     }
-    return null;
+    List<String> validValues = new ArrayList<>();
+    for (OperateStatusEnum operateStatusEnum : OperateStatusEnum.values()) {
+      validValues.add(operateStatusEnum.getNorthValue().toString());
+    }
+    throw new ParamErrorException(validValues.toArray(), northValue);
   }
 
   /**
