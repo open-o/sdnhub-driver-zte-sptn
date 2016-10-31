@@ -37,9 +37,9 @@ public class CommandErrorException extends Exception {
    * @return Response which is returned to LCM.
    */
   public Response getResponse() {
-    String errorMsg = null;
+    String errorMsg;
     if (m_cmdResult != null && m_cmdResult.getFailedResources() != null) {
-      errorMsg = m_cmdResult.getFailedResources().getErrorMessage();
+      errorMsg = m_cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
     } else {
       errorMsg = "Command Result is null.";
     }

@@ -16,7 +16,8 @@
 
 package org.openo.sdno.sptndriver.simulator.resouces;
 
-import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.openo.sdno.sptndriver.utils.JsonUtil;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,7 +41,20 @@ public class L3Resource {
   @POST
   @Path("/snc-l3vpns")
   public Response createL3vpn(Object l3vpn) {
-    return Response.ok(new SCommandResultOutput()).build();
+    Object output;
+    try {
+      output = JsonUtil.readJsonFromFile("./conf/json/create_l3vpn.json");
+    } catch (Exception ex) {
+      return Response
+              .status(Response.Status.INTERNAL_SERVER_ERROR)
+              .entity(ExceptionUtils.getStackTrace(ex))
+              .type(MediaType.TEXT_PLAIN_TYPE)
+              .build();
+    }
+    return Response
+            .status(Response.Status.CREATED)
+            .entity(output)
+            .build();
   }
 
   /**

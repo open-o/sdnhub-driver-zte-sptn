@@ -90,7 +90,7 @@ public class L2Resource {
   }
 
   /**
-   * The post method to create E-Line.
+   * The post method to create L2vpn.
    *
    * @param createL2vpnReq Parameter of create L2vpn.
    * @return 201 if success
@@ -119,13 +119,14 @@ public class L2Resource {
       })
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
-  public Response createEline( @ApiParam(value = "L2vpn information",
+  public Response createL2vpn( @ApiParam(value = "L2vpn information",
                                    required = true) NCreateL2vpnReq createL2vpnReq,
                                @ApiParam(value = "Controller uuid, "
                                    + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
                                    required = true)
                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    LOGGER.info("Create l2vpn begin.");
     NL2Vpn l2vpn = createL2vpnReq.getL2vpnVpws();
     if (l2vpn.getId() == null || l2vpn.getId().isEmpty()) {
       return Response
@@ -181,14 +182,15 @@ public class L2Resource {
 
 
     uuidMapDao.insert(l2vpn.getId(), externalId, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
+    LOGGER.info("Create l2vpn end.");
     return Response.status(Response.Status.CREATED)
         .entity(l2vpn).build();
   }
 
   /**
-   * The delete method to delete E-Line.
+   * The delete method to delete L2vpn.
    *
-   * @param vpnid Global UUID of E-Line(UUID in SDN-O).
+   * @param vpnid Global UUID of L2vpn(UUID in SDN-O).
    * @return 200 if success
    */
   @DELETE
@@ -214,13 +216,14 @@ public class L2Resource {
       })
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
-  public Response deleteEline(@ApiParam(value = "L2vpn uuid", required = true)
+  public Response deleteL2vpn(@ApiParam(value = "L2vpn uuid", required = true)
                                 @PathParam("vpnid") @NotNull String vpnid,
                               @ApiParam(value = "Controller uuid, "
                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
                                   required = true)
                                 @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    LOGGER.info("Delete l2vpn begin, id is: " + vpnid);
     String controllerId;
     String southElineId;
 
@@ -267,6 +270,7 @@ public class L2Resource {
       return Response.ok().build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
+    LOGGER.info("Delete l2vpn end.");
     return Response.ok().build();
   }
 
