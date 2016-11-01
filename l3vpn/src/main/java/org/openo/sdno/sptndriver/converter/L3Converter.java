@@ -105,7 +105,7 @@ public class L3Converter {
     sl3ac.setNeId(nl3Ac.getNeId());
     sl3ac.setLtpId(nl3Ac.getLtpId());
     if (nl3Ac.getL3Access() != null) {
-      sl3ac.setIpAddr(nl3Ac.getL3Access().getIpv4Address());
+      sl3ac.setIpAddr(Ipv4Util.getDotIp(nl3Ac.getL3Access().getIpv4Address()));
       sl3ac.setProtocolList(convertProtocol(nl3Ac.getL3Access().getRoutes(), sl3ac.getLtpId()));
     }
     sl3ac.setQos(SQosInitiator.initAcQos(nl3Ac.getId(),
