@@ -152,9 +152,15 @@ public class L2Converter {
     NL2Access nl2Access = ac.getL2Access();
     if (nl2Access != null) {
       ep.setAccessType(AccessTypeEnum.convertNbiToSbi(nl2Access.getAccessType().toString()));
-      ep.setDot1qVlanBitmap(nl2Access.getDot1qVlanBitmap().toString());
-      ep.setQinqCvlanBitmap(nl2Access.getQinqCvlanBitmap().toString());
-      ep.setQinqSvlanBitmap(nl2Access.getQinqSvlanBitmap().toString());
+      if (nl2Access.getDot1qVlanBitmap() != null) {
+        ep.setDot1qVlanBitmap(nl2Access.getDot1qVlanBitmap().toString());
+      }
+      if (nl2Access.getQinqCvlanBitmap() != null) {
+        ep.setQinqCvlanBitmap(nl2Access.getQinqCvlanBitmap().toString());
+      }
+      if (nl2Access.getQinqSvlanBitmap() != null) {
+        ep.setQinqSvlanBitmap(nl2Access.getQinqSvlanBitmap().toString());
+      }
       String accessAction = nl2Access.getAccessAction().toString();
       ep.setAccessAction(AccessActionEnum.convertNbiToSbi(accessAction));
       if (accessAction != null) {
@@ -189,7 +195,8 @@ public class L2Converter {
       return false;
     }
     for (NPw pw : pwList.getPws()) {
-      if (pw.getProtectionRole().equals(NPw.ProtectionRoleEnum.BACKUP)) {
+      if (pw.getProtectionRole() != null
+              && pw.getProtectionRole().equals(NPw.ProtectionRoleEnum.BACKUP)) {
         return true;
       }
     }
