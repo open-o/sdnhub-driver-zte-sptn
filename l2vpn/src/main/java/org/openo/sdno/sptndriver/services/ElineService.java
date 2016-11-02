@@ -16,6 +16,7 @@
 
 package org.openo.sdno.sptndriver.services;
 
+import com.google.gson.Gson;
 import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
@@ -64,6 +65,8 @@ public class ElineService {
     String printText = "Create eline and tunnels "
         + createElineAndTunnels.getInput().getSncEline().getId();
     LOGGER.debug(printText + " begin. ");
+    Gson gson = new Gson();
+    LOGGER.debug("Send to Controller: " + gson.toJson(createElineAndTunnels));
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
