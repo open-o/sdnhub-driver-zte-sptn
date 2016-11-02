@@ -17,6 +17,7 @@
 package org.openo.sdno.sptndriver.services;
 
 import com.google.gson.Gson;
+import okhttp3.OkHttpClient;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
@@ -31,6 +32,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * L3vpn service CRUD.
@@ -56,7 +58,13 @@ public class L3Service {
     LOGGER.debug(printText + " begin. ");
     Gson gson = new Gson();
     LOGGER.debug("Send to controller: " + gson.toJson(l3vpn));
+    final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .readTimeout(ServiceUtil.DEFAULT_TIME_OUT, TimeUnit.SECONDS)
+            .connectTimeout(ServiceUtil.DEFAULT_TIME_OUT, TimeUnit.SECONDS)
+            .writeTimeout(ServiceUtil.DEFAULT_TIME_OUT, TimeUnit.SECONDS)
+            .build();
     Retrofit retrofit = new Retrofit.Builder()
+            .client(okHttpClient)
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
