@@ -874,14 +874,29 @@ definitions:
       description: Inluding 1(success), 2(failed), 3(partly failed)
       format: int8
      success-resources:
-      type: array
-      items:
-       $ref: '#/definitions/SuccessResource'
+       $ref: '#/definitions/SuccessResources'
      failed-resources:
-      $ref: '#/definitions/FailedResource'
+      $ref: '#/definitions/FailedResources'
+  SuccessResources:
+    type: object
+    properties:
+      success-resource-list:
+        type: array
+        items:
+          $ref: '#/definitions/SuccessResource'
   SuccessResource:
-   type: string
-   format: string
+    type: object
+    properties:
+      resourceId:
+        type: string
+        format: string
+  FailedResources:
+    type: object
+    properties:
+      failed-resource-list:
+        type: array
+        items:
+          $ref: '#/definitions/FailedResource'
   FailedResource:
    type: object
    properties:

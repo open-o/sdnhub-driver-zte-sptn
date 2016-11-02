@@ -22,6 +22,7 @@ import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.exception.ParamErrorException;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResult;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
@@ -55,6 +56,29 @@ public class ServiceUtil {
         return;
       }
       SCommandResult commandResult = response.body().getOutput();
+      checkSuccess(commandResult, logger,printText);
+    } else {
+      logger.error(printText + " failed, response unsuccessful.");
+      throw new HttpErrorException(response);
+    }
+  }
+  /**
+   * Parse the result of REST commands that the return type is SCmdResultAndNcdResRelations.
+   *
+   * @param response Response of execution.
+   * @throws CommandErrorException When command result is not successful.
+   * @throws HttpErrorException    When receives HTTP error.
+   */
+  public static void parseCmdResultAndNcdResRelations(Response<SCmdResultAndNcdResRelations> response,
+                                              Logger logger,
+                                              String printText)
+          throws CommandErrorException, HttpErrorException {
+    if (response.isSuccessful()) {
+      if (response.body() == null || response.body() == null) {
+        logger.info(printText + " successfully, but response is null.");
+        return;
+      }
+      SCommandResult commandResult = response.body().getCommandResult();
       checkSuccess(commandResult, logger,printText);
     } else {
       logger.error(printText + " failed, response unsuccessful.");

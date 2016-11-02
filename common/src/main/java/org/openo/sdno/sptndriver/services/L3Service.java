@@ -16,20 +16,21 @@
 
 package org.openo.sdno.sptndriver.services;
 
+import com.google.gson.Gson;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.io.IOException;
 
 /**
  * L3vpn service CRUD.
@@ -49,19 +50,23 @@ public class L3Service {
    *
    * @param l3vpn L3vpn information
    */
-  public void createL3vpn(SL3vpnCreateInput l3vpn)
+  public String createL3vpn(SL3vpnCreateInput l3vpn)
       throws HttpErrorException, IOException, CommandErrorException {
     String printText = "Create l3vpn " + l3vpn.getSncL3vpn().getId();
     LOGGER.debug(printText + " begin. ");
+    Gson gson = new Gson();
+    LOGGER.debug("Send to controller: " + gson.toJson(l3vpn));
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
-    Call<SCommandResultOutput> cmdCall = service.createL3vpn(l3vpn);
-    Response<SCommandResultOutput> response = cmdCall.execute();
-    ServiceUtil.parseCommandResultOutput(response, LOGGER, printText);
+    Call<SCmdResultAndNcdResRelations> cmdCall = service.createL3vpn(l3vpn);
+    Response<SCmdResultAndNcdResRelations> response = cmdCall.execute();
+    ServiceUtil.parseCmdResultAndNcdResRelations(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
+    return response.body().getCommandResult().getSuccessResources()
+            .getSuccessResourceList().get(0).getResourceId();
   }
 
   /**

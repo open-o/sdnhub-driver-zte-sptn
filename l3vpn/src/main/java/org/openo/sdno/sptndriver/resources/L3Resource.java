@@ -18,6 +18,7 @@ package org.openo.sdno.sptndriver.resources;
 
 import com.codahale.metrics.annotation.Timed;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.openo.sdno.sptndriver.config.Config;
@@ -115,8 +116,12 @@ public class L3Resource {
                                                    required = true)
                                 @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    LOGGER.info("Create l3vpn begin.");
+    Gson gson = new Gson();
+    LOGGER.debug("Create l3vpn input Json: " + gson.toJson(createL3vpnReq));
     NL3Vpn l3vpn = createL3vpnReq.getL3vpn();
     if (l3vpn == null || l3vpn.getId() == null || l3vpn.getId().isEmpty()) {
+      LOGGER.error("L3vpn is null or l3vpn id is null or empty.");
       return Response
           .status(Response.Status.BAD_REQUEST)
           .type(MediaType.TEXT_PLAIN_TYPE)
@@ -124,6 +129,7 @@ public class L3Resource {
           .build();
     }
     String controllerId;
+    String externalId;
     try {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
       String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId, config);
@@ -131,7 +137,7 @@ public class L3Resource {
       SL3vpnCreateInput sl3vpnCreateInput = new SL3vpnCreateInput();
       sl3vpnCreateInput.setSncL3vpn(southL3vpn);
       L3Service l3Service = new L3Service(controllerUrl);
-      l3Service.createL3vpn(sl3vpnCreateInput);
+      externalId = l3Service.createL3vpn(sl3vpnCreateInput);
     } catch (HttpErrorException ex) {
       LOGGER.error(ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
@@ -160,8 +166,8 @@ public class L3Resource {
           .entity(ex.toString())
           .build();
     }
-    String externalId = l3vpn.getId();
     uuidMapDao.insert(l3vpn.getId(), externalId, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
+    LOGGER.info("Create l3vpn end.");
     return Response.status(Response.Status.CREATED)
         .entity(l3vpn).build();
 
@@ -203,6 +209,7 @@ public class L3Resource {
                                   required = true)
                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
+    LOGGER.info("Delete l3vpn begin, id is: " + vpnid);
     String controllerId;
     try {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
@@ -242,7 +249,7 @@ public class L3Resource {
       return Response.ok().build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
-    // TODO: 2016/9/13 return value should be L3VpnResponse.
+    LOGGER.info("Delete l3vpn end.");
     return Response.ok().build();
   }
 
