@@ -39,7 +39,7 @@ public class SOamInitiator {
     oam.setMegId("-1");
     oam.setMeps(initMeps());
     oam.setMeps(null);
-    oam.setCcAllow(false);
+    oam.setCcAllow(true);
     oam.setCcExp(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
     oam.setCcInterval(SOam.CcIntervalEnum.NUMBER_3_DOT_3);
     oam.setLmMode(SOamMode.DISABLE);
