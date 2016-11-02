@@ -17,7 +17,6 @@
 package org.openo.sdno.sptndriver.utils;
 
 import com.google.gson.Gson;
-
 import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
@@ -28,7 +27,6 @@ import org.openo.sdno.sptndriver.models.south.SCommandResult;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import retrofit2.Response;
 
 /**
@@ -38,6 +36,10 @@ public class ServiceUtil {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(ServiceUtil.class);
+  /**
+   *  Default time out of rest command, in seconds.
+   */
+  public static final int DEFAULT_TIME_OUT = 600;
 
   /**
    * Parse the result of REST commands that the return type is SCommandResultOutput.
