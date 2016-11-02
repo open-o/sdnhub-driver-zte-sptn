@@ -21,10 +21,7 @@ import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.*;
 
 /**
  * Interface of SBI L3vpn service provided by SPTN controller.
@@ -47,6 +44,6 @@ public interface L3ServiceInterface {
    * @return Command result, including success, fail and partially fail.
    */
   @Headers(Config.CONTROLLER_ICT_AUTH)
-  @POST("restconf/data/sptn-service-l3vpn:service/snc-l3vpns/snc-l3vpn={id}")
+  @DELETE("restconf/data/sptn-service-l3vpn:service/snc-l3vpns/snc-l3vpn={id}")
   Call<SCommandResultOutput> deleteL3vpn(@Path("id") String l3vpnId);
 }
