@@ -134,7 +134,7 @@ public class SRouteCalReqsInitiator {
     }
 
     routeCalReq.setCalculateInterconnectionMode(SRouteCalReqElement
-        .CalculateInterconnectionModeEnum.UNI_UNI);
+        .CalculateInterconnectionModeEnum.NNI_NNI);
     routeCalReq.setLayerRate(SRouteCalReqElement.LayerRateEnum.LSP);
     SNeId leftNe = new SNeId();
     leftNe.setNeId(ingressNe);
