@@ -19,7 +19,9 @@ package org.openo.sdno.sptndriver.services;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Interface of driver manager service.
@@ -28,4 +30,7 @@ public interface DriverManagerServiceInterface {
 
   @POST("/openoapi/drivermgr/v1/drivers")
   Call<ResponseBody> registerDriver(@Body Object driverInfo);
+
+  @DELETE("/openoapi/drivermgr/v1/drivers/{instanceId}")
+  Call<ResponseBody> unregisterDriver(@Path("instanceId") String instanceId);
 }

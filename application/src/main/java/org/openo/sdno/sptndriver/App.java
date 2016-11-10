@@ -18,7 +18,9 @@ package org.openo.sdno.sptndriver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.openo.sdno.sptndriver.common.DriverManagerRegister;
+import org.openo.sdno.sptndriver.common.DriverManagerUnregister;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.healthCheck.CustomHealthCheck;
 import org.openo.sdno.sptndriver.resources.L2Resource;
@@ -44,6 +46,10 @@ public class App extends Application<Config> {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(App.class);
+
+  private Thread driverManagerRegister;
+
+  public static String driverInstanceId;
 
   /**
    * Main function.
@@ -71,7 +77,7 @@ public class App extends Application<Config> {
    * @param environment Environment.
    */
   @Override
-  public void run(Config config, Environment environment) {
+  public void run(final Config config, Environment environment) {
     LOGGER.info("Method App#run() called");
     // Create a DBI factory and build a JDBI instance
     final DBIFactory factory = new DBIFactory();
@@ -84,13 +90,15 @@ public class App extends Application<Config> {
     environment.jersey().register(new L2Resource(environment.getValidator(), config, jdbi));
     environment.jersey().register(new L3Resource(environment.getValidator(), config, jdbi));
 
-    initSwaggerConfig(environment, config);
+    initSwaggerConfig(config, environment);
 
     registerToDriverMgr(config);
+
+    addLifeCycleListener(config, environment);
   }
 
 
-  private void initSwaggerConfig(Environment environment, Config configuration) {
+  private void initSwaggerConfig(Config configuration, Environment environment) {
     environment.jersey().register(new ApiListingResource());
     environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
@@ -112,8 +120,46 @@ public class App extends Application<Config> {
   }
 
   private void registerToDriverMgr(Config config) {
-    Thread driverManagerRegister = new Thread(new DriverManagerRegister(config));
-    driverManagerRegister.setName("register sdn-o sptn driver to Driver Manager");
+    driverManagerRegister = new Thread(new DriverManagerRegister(config));
+    driverManagerRegister.setName("Register sdn-o sptn driver to Driver Manager");
     driverManagerRegister.start();
   }
+
+  private void unregisterFromDriverMgr(Config config) {
+    Thread driverManagerUnregister = new Thread(new DriverManagerUnregister(config));
+    driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
+    driverManagerUnregister.start();
+  }
+
+  private void addLifeCycleListener(final Config config, Environment environment) {
+    environment.lifecycle().addLifeCycleListener(new LifeCycle.Listener() {
+      @Override
+      public void lifeCycleStarting(LifeCycle lifeCycle) {
+
+      }
+
+      @Override
+      public void lifeCycleStarted(LifeCycle lifeCycle) {
+
+      }
+
+      @Override
+      public void lifeCycleFailure(LifeCycle lifeCycle, Throwable throwable) {
+        driverManagerRegister.interrupt();
+        unregisterFromDriverMgr(config);
+      }
+
+      @Override
+      public void lifeCycleStopping(LifeCycle lifeCycle) {
+        driverManagerRegister.interrupt();
+        unregisterFromDriverMgr(config);
+      }
+
+      @Override
+      public void lifeCycleStopped(LifeCycle lifeCycle) {
+
+      }
+    });
+  }
+
 }

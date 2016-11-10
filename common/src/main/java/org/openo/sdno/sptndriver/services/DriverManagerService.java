@@ -49,8 +49,7 @@ public class DriverManagerService {
    * @param driverInfo Information of driver.
    */
   public boolean registerDriver(Object driverInfo) {
-    String printText = "Register sptn driver ";
-    LOGGER.debug(printText + " begin. ");
+    LOGGER.debug("Register sptn driver begin. ");
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(msbUrl)
         .addConverterFactory(GsonConverterFactory.create())
@@ -61,28 +60,27 @@ public class DriverManagerService {
     try {
       response = cmdCall.execute();
     } catch (IOException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
       return false;
     }
 
     try {
-      ServiceUtil.parseResponse(response, LOGGER, printText);
+      ServiceUtil.parseResponse(response, LOGGER, "Register sptn driver");
     } catch (CommandErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
       return false;
     } catch (HttpErrorException ex) {
       if (ex.getResponse().getStatus() == RegisterStatus.INVALID_PARAMETER.status) {
         LOGGER.warn("Invalid parameter or register twice.");
         return true;
       } else {
-        LOGGER.error(String.format(printText
-            + "failed: Internal server error, error code is: "
-            + ex.getResponse().getStatus() ));
+        LOGGER.error("Register sptn driver failed: Internal server error, error code is: "
+            + ex.getResponse().getStatus());
         return false;
       }
     }
 
-    LOGGER.debug(printText + " end. ");
+    LOGGER.debug("Register sptn driver end. ");
     return true;
   }
 
@@ -93,5 +91,38 @@ public class DriverManagerService {
     RegisterStatus(int status) {
       this.status = status;
     }
+  }
+
+  /**
+   *  Unregister driver to driver manager.
+   * @param driverInstanceId Instance id of driver.
+   */
+  public boolean unregisterDriver(String driverInstanceId) {
+    LOGGER.debug("Unregister sptn driver  begin. ");
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(msbUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
+    DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
+    Call<ResponseBody> cmdCall = service.unregisterDriver(driverInstanceId);
+    Response<ResponseBody> response;
+    try {
+      response = cmdCall.execute();
+    } catch (IOException ex) {
+      LOGGER.error("Unregister sptn driver command execute failed, due to: "
+          + ExceptionUtils.getStackTrace(ex));
+      return false;
+    }
+
+    try {
+      ServiceUtil.parseResponse(response, LOGGER, "Unregister sptn driver");
+    } catch (Exception ex) {
+      LOGGER.error("Unregister sptn driver parse response failed, due to: "
+          + ExceptionUtils.getStackTrace(ex));
+      return false;
+    }
+
+    LOGGER.debug("Unregister sptn driver end. ");
+    return true;
   }
 }

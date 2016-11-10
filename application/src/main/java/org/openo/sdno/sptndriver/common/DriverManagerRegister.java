@@ -16,15 +16,16 @@
 
 package org.openo.sdno.sptndriver.common;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.json.simple.parser.ParseException;
+import org.openo.sdno.sptndriver.App;
 import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.services.DriverManagerService;
 import org.openo.sdno.sptndriver.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * The class to register sptn driver to driver manager.
@@ -57,6 +58,7 @@ public class DriverManagerRegister implements Runnable {
       threadSleep(30000);
       LOGGER.info(logText + ": " + retry++);
     }
+    App.driverInstanceId = parseDriverInstanceId(driverInfo);
     LOGGER.info(logText + " success!");
     LOGGER.info(logText + " end.");
   }
@@ -76,10 +78,22 @@ public class DriverManagerRegister implements Runnable {
     driverInfo = null;
     try {
       driverInfo = JsonUtil.readJsonFromFile("./conf/driver.json");
-    } catch (IOException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-    } catch (ParseException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+    } catch (Exception ex) {
+      LOGGER.error("Failed to read ./conf/driver.json due to "
+          + ExceptionUtils.getStackTrace(ex));
     }
   }
+
+  private String parseDriverInstanceId(Object driverInfo) {
+    if (driverInfo == null) {
+      return null;
+    }
+    Gson gson = new Gson();
+    String str = gson.toJson(driverInfo);
+    JsonObject jsonObject = gson.fromJson(str, JsonObject.class);
+    String driverId = jsonObject.get("driverInfo").getAsJsonObject().get("instanceID").toString();
+    String[] strArray = driverId.split("\"");
+    return strArray[1];
+  }
+
 }
