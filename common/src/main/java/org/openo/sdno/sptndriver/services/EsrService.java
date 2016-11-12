@@ -28,7 +28,6 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * The ESR service class.
@@ -53,10 +52,7 @@ public class EsrService {
       throws CommandErrorException, HttpErrorException, IOException {
     String printText = "Get controller " + controllerId;
     LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(msbUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(msbUrl);
     EsrServiceInterface service = retrofit.create(EsrServiceInterface.class);
     Call<SdnController> cmdCall = service.getSdnoController(controllerId);
     Response<SdnController> response;

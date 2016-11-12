@@ -17,6 +17,8 @@
 package org.openo.sdno.sptndriver.utils;
 
 import com.google.gson.Gson;
+
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
@@ -27,7 +29,13 @@ import org.openo.sdno.sptndriver.models.south.SCommandResult;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Utility class for REST commands processing services.
@@ -36,10 +44,6 @@ public class ServiceUtil {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(ServiceUtil.class);
-  /**
-   *  Default time out of rest command, in seconds.
-   */
-  public static final int DEFAULT_TIME_OUT = 600;
 
   /**
    * Parse the result of REST commands that the return type is SCommandResultOutput.
@@ -194,6 +198,24 @@ public class ServiceUtil {
     }
 
     throw new ParamErrorException("Controller id must like extSysID={ctrlUuid}.");
+  }
+
+  /**
+   *  Initiate class Retrofit, set the default timeout to DEFAULT_TIME_OUT.
+   * @param destUrl Destination url.
+   * @return An instance of Retrofit.
+   */
+  public static Retrofit initRetrofit(String destUrl) {
+    final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+        .readTimeout(AppConfig.getConfig().getTimeout(), TimeUnit.SECONDS)
+        .connectTimeout(AppConfig.getConfig().getTimeout(), TimeUnit.SECONDS)
+        .writeTimeout(AppConfig.getConfig().getTimeout(), TimeUnit.SECONDS)
+        .build();
+    return new Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl(destUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
   }
 
 }

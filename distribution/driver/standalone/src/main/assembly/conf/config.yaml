@@ -55,4 +55,6 @@ database:
   user: sptn_driver
   password: Test_12345
   url: jdbc:mysql://localhost/sdno_driver_zte_sptn
+# Timeout in seconds.
+timeout: 600
   

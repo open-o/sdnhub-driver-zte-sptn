@@ -17,6 +17,7 @@
 package org.openo.sdno.sptndriver.services;
 
 import com.google.gson.Gson;
+
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
@@ -24,12 +25,12 @@ import org.openo.sdno.sptndriver.models.south.SRouteCalResultsOutput;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
 
 /**
  * SBI Tunnel Services.
@@ -59,10 +60,7 @@ public class TunnelService {
       throws HttpErrorException, IOException, CommandErrorException {
     String printText = "Calculate route of tunnel ";
     LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     TunnelServiceInterface service = retrofit.create(TunnelServiceInterface.class);
     Gson gson = new Gson();
     LOGGER.debug("Calculate tunnel send to controller is: " + gson.toJson(routeCalcReqsInput));

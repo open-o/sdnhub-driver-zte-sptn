@@ -99,10 +99,7 @@ public class DriverManagerService {
    */
   public boolean unregisterDriver(String driverInstanceId) {
     LOGGER.debug("Unregister sptn driver  begin. ");
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(msbUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(msbUrl);
     DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
     Call<ResponseBody> cmdCall = service.unregisterDriver(driverInstanceId);
     Response<ResponseBody> response;

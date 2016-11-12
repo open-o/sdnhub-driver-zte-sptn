@@ -16,7 +16,7 @@
 
 package org.openo.sdno.sptndriver.services;
 
-import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalResultsOutput;
 
@@ -36,7 +36,7 @@ public interface TunnelServiceInterface {
    * @param routeCalcReqsInput Request to calculate tunnel routes.
    * @return Tunnel routes result.
    */
-  @Headers(Config.CONTROLLER_ICT_AUTH)
+  @Headers(AppConfig.CONTROLLER_ICT_AUTH)
   @POST("restconf/operations/sptn-service-route:request-routes")
   Call<SRouteCalResultsOutput> calcRoutes(
       @Body SRouteCalReqsInput routeCalcReqsInput);

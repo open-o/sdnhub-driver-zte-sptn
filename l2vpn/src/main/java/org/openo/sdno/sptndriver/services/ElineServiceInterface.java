@@ -16,7 +16,7 @@
 
 package org.openo.sdno.sptndriver.services;
 
-import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
@@ -37,7 +37,7 @@ public interface ElineServiceInterface {
    * @param createElineAndTunnels  Input parameter of create E-Line and tunnels.
    * @return Command result, including success, fail and partially fail.
    */
-  @Headers(Config.CONTROLLER_ICT_AUTH)
+  @Headers(AppConfig.CONTROLLER_ICT_AUTH)
   @POST("restconf/operations/sptn-service-eline:create-snc-eline-tunnels")
   Call<SCmdResultAndNcdResRelationsOutput> createElineAndTunnels(
       @Body SCreateElineAndTunnelsInput createElineAndTunnels);
@@ -47,7 +47,7 @@ public interface ElineServiceInterface {
    * @param elineId UUID of E-Line to be delete.
    * @return Command result, including success, fail and partially fail.
    */
-  @Headers(Config.CONTROLLER_ICT_AUTH)
+  @Headers(AppConfig.CONTROLLER_ICT_AUTH)
   @POST("restconf/operations/sptn-service-eline:delete-snc-eline")
   Call<SCommandResultOutput> deleteEline(@Body SDeleteElineInput elineId);
 }

@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.common;
 
 import org.openo.sdno.sptndriver.App;
-import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.SptnDriverConfig;
 import org.openo.sdno.sptndriver.services.DriverManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 public class DriverManagerUnregister implements Runnable {
   private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerUnregister.class);
 
-  private Config config;
+  private SptnDriverConfig config;
 
-  public DriverManagerUnregister(Config config) {
+  public DriverManagerUnregister(SptnDriverConfig config) {
     this.config = config;
   }
 

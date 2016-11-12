@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.openo.sdno.sptndriver.common.DriverManagerRegister;
 import org.openo.sdno.sptndriver.common.DriverManagerUnregister;
-import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.healthCheck.CustomHealthCheck;
 import org.openo.sdno.sptndriver.resources.L2Resource;
 import org.openo.sdno.sptndriver.resources.L3Resource;
@@ -42,7 +42,7 @@ import io.swagger.jaxrs.listing.ApiListingResource;
 /**
  * SDN-O SPTN driver application class.
  */
-public class App extends Application<Config> {
+public class App extends Application<SptnDriverConfig> {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(App.class);
@@ -66,7 +66,7 @@ public class App extends Application<Config> {
    * @param bootstrap Bootstrap.
    */
   @Override
-  public void initialize(Bootstrap<Config> bootstrap) {
+  public void initialize(Bootstrap<SptnDriverConfig> bootstrap) {
     bootstrap.addBundle(new AssetsBundle("/api-doc", "/api-doc", "index.html", "api-doc"));
   }
 
@@ -77,8 +77,9 @@ public class App extends Application<Config> {
    * @param environment Environment.
    */
   @Override
-  public void run(final Config config, Environment environment) {
+  public void run(final SptnDriverConfig config, Environment environment) {
     LOGGER.info("Method App#run() called");
+    AppConfig.setConfig(config);
     // Create a DBI factory and build a JDBI instance
     final DBIFactory factory = new DBIFactory();
     final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "mysql");
@@ -98,7 +99,7 @@ public class App extends Application<Config> {
   }
 
 
-  private void initSwaggerConfig(Config configuration, Environment environment) {
+  private void initSwaggerConfig(SptnDriverConfig configuration, Environment environment) {
     environment.jersey().register(new ApiListingResource());
     environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
@@ -119,19 +120,19 @@ public class App extends Application<Config> {
     config.setScan(true);
   }
 
-  private void registerToDriverMgr(Config config) {
+  private void registerToDriverMgr(SptnDriverConfig config) {
     driverManagerRegister = new Thread(new DriverManagerRegister(config));
     driverManagerRegister.setName("Register sdn-o sptn driver to Driver Manager");
     driverManagerRegister.start();
   }
 
-  private void unregisterFromDriverMgr(Config config) {
+  private void unregisterFromDriverMgr(SptnDriverConfig config) {
     Thread driverManagerUnregister = new Thread(new DriverManagerUnregister(config));
     driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
     driverManagerUnregister.start();
   }
 
-  private void addLifeCycleListener(final Config config, Environment environment) {
+  private void addLifeCycleListener(final SptnDriverConfig config, Environment environment) {
     environment.lifecycle().addLifeCycleListener(new LifeCycle.Listener() {
       @Override
       public void lifeCycleStarting(LifeCycle lifeCycle) {

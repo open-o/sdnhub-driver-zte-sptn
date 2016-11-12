@@ -17,7 +17,7 @@
 package org.openo.sdno.sptndriver.services;
 
 import com.google.gson.Gson;
-import okhttp3.OkHttpClient;
+
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
@@ -26,13 +26,12 @@ import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * L3vpn service CRUD.
@@ -58,16 +57,7 @@ public class L3Service {
     LOGGER.debug(printText + " begin. ");
     Gson gson = new Gson();
     LOGGER.debug("Send to controller: " + gson.toJson(l3vpn));
-    final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .readTimeout(ServiceUtil.DEFAULT_TIME_OUT, TimeUnit.SECONDS)
-            .connectTimeout(ServiceUtil.DEFAULT_TIME_OUT, TimeUnit.SECONDS)
-            .writeTimeout(ServiceUtil.DEFAULT_TIME_OUT, TimeUnit.SECONDS)
-            .build();
-    Retrofit retrofit = new Retrofit.Builder()
-            .client(okHttpClient)
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
     Call<SCmdResultAndNcdResRelations> cmdCall = service.createL3vpn(l3vpn);
     Response<SCmdResultAndNcdResRelations> response = cmdCall.execute();
@@ -86,10 +76,7 @@ public class L3Service {
       throws IOException, HttpErrorException, CommandErrorException {
     String printText = "Delete L3vpn " + l3vpnId;
     LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
     Call<SCommandResultOutput> cmdCall = service.deleteL3vpn(l3vpnId);
     Response<SCommandResultOutput> response = cmdCall.execute();

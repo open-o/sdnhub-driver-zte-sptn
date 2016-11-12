@@ -17,6 +17,7 @@
 package org.openo.sdno.sptndriver.services;
 
 import com.google.gson.Gson;
+
 import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
@@ -33,7 +34,6 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 
@@ -67,10 +67,7 @@ public class ElineService {
     LOGGER.debug(printText + " begin. ");
     Gson gson = new Gson();
     LOGGER.debug("Send to Controller: " + gson.toJson(createElineAndTunnels));
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     ElineServiceInterface service = retrofit.create(ElineServiceInterface.class);
     Call<SCmdResultAndNcdResRelationsOutput> repos
         = service.createElineAndTunnels(createElineAndTunnels);
@@ -89,10 +86,7 @@ public class ElineService {
       throws IOException, HttpErrorException, CommandErrorException {
     String printText = "Delete Eline " + elineId.getInput().getElineId();
     LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     ElineServiceInterface service = retrofit.create(ElineServiceInterface.class);
     Call<SCommandResultOutput> repos = service.deleteEline(elineId);
     Response<SCommandResultOutput> response = repos.execute();

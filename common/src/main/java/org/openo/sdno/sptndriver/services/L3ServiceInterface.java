@@ -16,12 +16,17 @@
 
 package org.openo.sdno.sptndriver.services;
 
-import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
+
 import retrofit2.Call;
-import retrofit2.http.*;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Interface of SBI L3vpn service provided by SPTN controller.
@@ -33,7 +38,7 @@ public interface L3ServiceInterface {
    * @param l3vpn Input parameter of create L3vpn.
    * @return Command result, including success, fail and partially fail.
    */
-  @Headers(Config.CONTROLLER_ICT_AUTH)
+  @Headers(AppConfig.CONTROLLER_ICT_AUTH)
   @POST("restconf/data/sptn-service-l3vpn:service/snc-l3vpns")
   Call<SCmdResultAndNcdResRelations> createL3vpn(@Body SL3vpnCreateInput l3vpn);
 
@@ -43,7 +48,7 @@ public interface L3ServiceInterface {
    * @param l3vpnId UUID of L3vpn to be delete.
    * @return Command result, including success, fail and partially fail.
    */
-  @Headers(Config.CONTROLLER_ICT_AUTH)
+  @Headers(AppConfig.CONTROLLER_ICT_AUTH)
   @DELETE("restconf/data/sptn-service-l3vpn:service/snc-l3vpns/snc-l3vpn={id}")
   Call<SCommandResultOutput> deleteL3vpn(@Path("id") String l3vpnId);
 }

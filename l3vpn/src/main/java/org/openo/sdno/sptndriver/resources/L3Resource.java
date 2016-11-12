@@ -16,9 +16,10 @@
 
 package org.openo.sdno.sptndriver.resources;
 
+import com.google.gson.Gson;
+
 import com.codahale.metrics.annotation.Timed;
 
-import com.google.gson.Gson;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.openo.sdno.sptndriver.config.Config;

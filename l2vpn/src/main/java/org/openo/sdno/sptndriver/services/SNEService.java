@@ -19,13 +19,13 @@ package org.openo.sdno.sptndriver.services;
 
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.south.brs.SME;
+import org.openo.sdno.sptndriver.utils.ServiceUtil;
 
 import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * The class of NE service.
@@ -50,10 +50,7 @@ public class SNEService {
    * @return NE information.
    */
   public SME getNeByID(String neid) throws HttpErrorException, IOException {
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     ISNeService service = retrofit.create(ISNeService.class);
     Call<SME> repos = service.getNeByID(neid);
 

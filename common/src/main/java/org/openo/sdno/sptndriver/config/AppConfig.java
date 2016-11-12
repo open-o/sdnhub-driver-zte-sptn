@@ -16,17 +16,19 @@
 
 package org.openo.sdno.sptndriver.config;
 
-import io.dropwizard.db.DataSourceFactory;
-
 /**
- * Configuration interface of SDN-O SPTN driver.
+ * The class to statically store Config instance.
  */
-public interface Config {
+public class AppConfig {
+  public static final String CONTROLLER_ICT_AUTH
+      = "ICTAuthentication:21232F297A57A5A743894A0E4A801FC3";
+  private static Config config;
 
-  public int getTimeout();
+  public static Config getConfig() {
+    return config;
+  }
 
-  public String getMsbUrl();
-
-  public DataSourceFactory getDataSourceFactory();
-
+  public static void setConfig(Config configInstance) {
+    config = configInstance;
+  }
 }

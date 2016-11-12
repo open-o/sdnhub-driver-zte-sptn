@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.openo.sdno.sptndriver.App;
-import org.openo.sdno.sptndriver.config.Config;
+import org.openo.sdno.sptndriver.SptnDriverConfig;
 import org.openo.sdno.sptndriver.services.DriverManagerService;
 import org.openo.sdno.sptndriver.utils.JsonUtil;
 import org.slf4j.Logger;
@@ -35,9 +35,9 @@ public class DriverManagerRegister implements Runnable {
 
   private Object driverInfo;
 
-  private Config config;
+  private SptnDriverConfig config;
 
-  public DriverManagerRegister(Config config) {
+  public DriverManagerRegister(SptnDriverConfig config) {
     this.config = config;
     initDriverInfo();
   }
