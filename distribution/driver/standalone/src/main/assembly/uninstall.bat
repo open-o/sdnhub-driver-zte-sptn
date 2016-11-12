@@ -15,20 +15,20 @@
 @REM
 
 @echo off
-title stopping sdno-driver-zte-sptn
-
+call stop.bat
 set HOME=%~dp0
-set Main_Class="org.openo.sdno.sptndriver.App"
-
-echo ================== sdno-driver-zte-sptn info =============================================
+set user=%1
+set password=%2
+set port=3306
+set host=127.0.0.1
+echo start uninstall sdno_driver_zte_sptn
 echo HOME=$HOME
-echo Main_Class=%Main_Class%
-echo ===============================================================================
-
-echo ### Stopping sdno-driver-zte-sptn
 cd /d %HOME%
-
-for /f "delims=" %%i in ('"%JAVA_HOME%\bin\jcmd"') do (
-  call find_kill_process "%%i" %Main_Class%
-)
+mysql -u%user% -p%password% -P%port% -h%host% < dbscripts\mysql\openo-sdno-zte-sptn-driver-clear.sql
+set "err=%errorlevel%"
+if "%err%"=="0" (
+   echo uninstall sdno_driver_zte_sptn success
+  ) else (
+    echo failed uninstall sdno_driver_zte_sptn
+  )
 pause
