@@ -17,6 +17,7 @@
 package org.openo.sdno.sptndriver.services;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
@@ -38,10 +39,8 @@ public class DriverManagerService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerService.class);
 
-  private String msbUrl;
+  public DriverManagerService() {
 
-  public DriverManagerService(String msbUrl) {
-    this.msbUrl = msbUrl;
   }
 
   /**
@@ -51,7 +50,7 @@ public class DriverManagerService {
   public boolean registerDriver(Object driverInfo) {
     LOGGER.debug("Register sptn driver begin. ");
     Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(msbUrl)
+        .baseUrl(AppConfig.getConfig().getMsbUrl())
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
@@ -99,7 +98,7 @@ public class DriverManagerService {
    */
   public boolean unregisterDriver(String driverInstanceId) {
     LOGGER.debug("Unregister sptn driver  begin. ");
-    Retrofit retrofit = ServiceUtil.initRetrofit(msbUrl);
+    Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
     DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
     Call<ResponseBody> cmdCall = service.unregisterDriver(driverInstanceId);
     Response<ResponseBody> response;

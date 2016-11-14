@@ -88,12 +88,12 @@ public class App extends Application<SptnDriverConfig> {
     environment.healthChecks().register("healthcheck", healthCheck);
 
     // Add the resource to the environment
-    environment.jersey().register(new L2Resource(environment.getValidator(), config, jdbi));
-    environment.jersey().register(new L3Resource(environment.getValidator(), config, jdbi));
+    environment.jersey().register(new L2Resource(environment.getValidator(), jdbi));
+    environment.jersey().register(new L3Resource(environment.getValidator(), jdbi));
 
     initSwaggerConfig(config, environment);
 
-    registerToDriverMgr(config);
+    registerToDriverMgr();
 
     addLifeCycleListener(config, environment);
   }
@@ -120,14 +120,14 @@ public class App extends Application<SptnDriverConfig> {
     config.setScan(true);
   }
 
-  private void registerToDriverMgr(SptnDriverConfig config) {
-    driverManagerRegister = new Thread(new DriverManagerRegister(config));
+  private void registerToDriverMgr() {
+    driverManagerRegister = new Thread(new DriverManagerRegister());
     driverManagerRegister.setName("Register sdn-o sptn driver to Driver Manager");
     driverManagerRegister.start();
   }
 
-  private void unregisterFromDriverMgr(SptnDriverConfig config) {
-    Thread driverManagerUnregister = new Thread(new DriverManagerUnregister(config));
+  private void unregisterFromDriverMgr() {
+    Thread driverManagerUnregister = new Thread(new DriverManagerUnregister());
     driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
     driverManagerUnregister.start();
   }
@@ -147,13 +147,13 @@ public class App extends Application<SptnDriverConfig> {
       @Override
       public void lifeCycleFailure(LifeCycle lifeCycle, Throwable throwable) {
         driverManagerRegister.interrupt();
-        unregisterFromDriverMgr(config);
+        unregisterFromDriverMgr();
       }
 
       @Override
       public void lifeCycleStopping(LifeCycle lifeCycle) {
         driverManagerRegister.interrupt();
-        unregisterFromDriverMgr(config);
+        unregisterFromDriverMgr();
       }
 
       @Override

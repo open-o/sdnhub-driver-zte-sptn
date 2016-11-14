@@ -16,6 +16,7 @@
 
 package org.openo.sdno.sptndriver.services;
 
+import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.models.esr.SdnController;
@@ -36,11 +37,7 @@ public class EsrService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EsrService.class);
 
-  private String msbUrl;
-
-  public EsrService(String msbUrl) {
-    this.msbUrl = msbUrl;
-  }
+  public EsrService() {}
 
   /**
    * Get SDN-O controller.
@@ -52,7 +49,7 @@ public class EsrService {
       throws CommandErrorException, HttpErrorException, IOException {
     String printText = "Get controller " + controllerId;
     LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = ServiceUtil.initRetrofit(msbUrl);
+    Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
     EsrServiceInterface service = retrofit.create(EsrServiceInterface.class);
     Call<SdnController> cmdCall = service.getSdnoController(controllerId);
     Response<SdnController> response;

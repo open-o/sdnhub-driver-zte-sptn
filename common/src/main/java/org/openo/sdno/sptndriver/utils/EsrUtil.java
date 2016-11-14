@@ -29,13 +29,11 @@ public class EsrUtil {
   /**
    * Get SDN-O controller URL by controller id.
    * @param controllerId SDN-O controller id.
-   * @param config Configuration.
    * @return SDN-O controller URL.
    */
-  public static String getSdnoControllerUrl(String controllerId,
-                                        Config config)
+  public static String getSdnoControllerUrl(String controllerId)
       throws ControllerNotFoundException {
-    EsrService esrService = new EsrService(config.getMsbUrl());
+    EsrService esrService = new EsrService();
     SdnController sdnController;
     try {
       sdnController = esrService.getSdnoController(controllerId);

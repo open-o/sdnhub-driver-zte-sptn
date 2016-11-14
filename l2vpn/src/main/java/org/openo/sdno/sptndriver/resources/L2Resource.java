@@ -20,7 +20,6 @@ import com.codahale.metrics.annotation.Timed;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
@@ -75,17 +74,14 @@ public class L2Resource {
       LoggerFactory.getLogger(L2Resource.class);
   private final Validator validator;
   private final UuidMapDao uuidMapDao;
-  private Config config;
 
   /**
    * The constructor.
    *
    * @param validator validation parameter.
-   * @param config    Configurations read from configuration file.
    */
-  public L2Resource(Validator validator, Config config, DBI jdbi) {
+  public L2Resource(Validator validator, DBI jdbi) {
     this.validator = validator;
-    this.config = config;
     this.uuidMapDao = jdbi.onDemand(UuidMapDao.class);
   }
 
@@ -140,7 +136,7 @@ public class L2Resource {
     try {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
       SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
-      String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId, config);
+      String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId);
       TunnelService tunnelServices = new TunnelService(controllerUrl);
       SCreateElineAndTunnelsInput createElineAndTunnels =
           L2Converter.convertL2ToElineTunnerCreator(l2vpn);
@@ -236,7 +232,7 @@ public class L2Resource {
       deleteEline.setElineId(southElineId);
       elineDeleteInput.setInput(deleteEline);
       ElineService elineServices = new ElineService(
-          EsrUtil.getSdnoControllerUrl(controllerId, config));
+          EsrUtil.getSdnoControllerUrl(controllerId));
       elineServices.deleteEline(elineDeleteInput);
     } catch (HttpErrorException ex) {
       LOGGER.error(ExceptionUtils.getStackTrace(ex));

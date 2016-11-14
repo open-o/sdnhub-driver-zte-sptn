@@ -17,7 +17,6 @@
 package org.openo.sdno.sptndriver.common;
 
 import org.openo.sdno.sptndriver.App;
-import org.openo.sdno.sptndriver.SptnDriverConfig;
 import org.openo.sdno.sptndriver.services.DriverManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +27,7 @@ import org.slf4j.LoggerFactory;
 public class DriverManagerUnregister implements Runnable {
   private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerUnregister.class);
 
-  private SptnDriverConfig config;
-
-  public DriverManagerUnregister(SptnDriverConfig config) {
-    this.config = config;
-  }
+  public DriverManagerUnregister() {}
 
   @Override
   public void run() {
@@ -43,7 +38,7 @@ public class DriverManagerUnregister implements Runnable {
       return;
     }
 
-    DriverManagerService driverManagerService = new DriverManagerService(config.getMsbUrl());
+    DriverManagerService driverManagerService  = new DriverManagerService();
 
     if (!driverManagerService.unregisterDriver(App.driverInstanceId)) {
       LOGGER.error("Unregister sdn-o zte sptn driver from driver manager failed, id: "

@@ -22,7 +22,6 @@ import com.codahale.metrics.annotation.Timed;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import org.openo.sdno.sptndriver.config.Config;
 import org.openo.sdno.sptndriver.converter.L3Converter;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
@@ -72,11 +71,9 @@ public class L3Resource {
   private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(L3Resource.class);
   private final Validator validator;
   private final UuidMapDao uuidMapDao;
-  private Config config;
 
-  public L3Resource(Validator validator, Config config, DBI jdbi) {
+  public L3Resource(Validator validator, DBI jdbi) {
     this.validator = validator;
-    this.config = config;
     this.uuidMapDao = jdbi.onDemand(UuidMapDao.class);
   }
 
@@ -133,7 +130,7 @@ public class L3Resource {
     String externalId;
     try {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
-      String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId, config);
+      String controllerUrl = EsrUtil.getSdnoControllerUrl(controllerId);
       SL3vpn southL3vpn  = L3Converter.convertNbiToSbi(l3vpn);
       SL3vpnCreateInput sl3vpnCreateInput = new SL3vpnCreateInput();
       sl3vpnCreateInput.setSncL3vpn(southL3vpn);
@@ -216,7 +213,7 @@ public class L3Resource {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
       String southL3vpnId = getSouthL3vpnId(vpnid, controllerId);
       L3Service l3Service = new L3Service(
-          EsrUtil.getSdnoControllerUrl(controllerId, config));
+          EsrUtil.getSdnoControllerUrl(controllerId));
       l3Service.deleteL3vpn(southL3vpnId);
     } catch (HttpErrorException ex) {
       LOGGER.error(ExceptionUtils.getStackTrace(ex));

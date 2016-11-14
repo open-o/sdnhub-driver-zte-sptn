@@ -21,7 +21,6 @@ import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.openo.sdno.sptndriver.App;
-import org.openo.sdno.sptndriver.SptnDriverConfig;
 import org.openo.sdno.sptndriver.services.DriverManagerService;
 import org.openo.sdno.sptndriver.utils.JsonUtil;
 import org.slf4j.Logger;
@@ -35,10 +34,8 @@ public class DriverManagerRegister implements Runnable {
 
   private Object driverInfo;
 
-  private SptnDriverConfig config;
 
-  public DriverManagerRegister(SptnDriverConfig config) {
-    this.config = config;
+  public DriverManagerRegister() {
     initDriverInfo();
   }
 
@@ -51,7 +48,7 @@ public class DriverManagerRegister implements Runnable {
       return;
     }
 
-    DriverManagerService driverManagerService = new DriverManagerService(config.getMsbUrl());
+    DriverManagerService driverManagerService = new DriverManagerService();
     int retry = 1;
     while (!driverManagerService.registerDriver(driverInfo)) {
       LOGGER.warn(logText + " failed, sleep 30S and try again.");
