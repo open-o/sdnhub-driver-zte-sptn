@@ -66,15 +66,6 @@
           "sn-support": "0",
           "vccv-type": "0",
           "conn-ack-type": "0",
-          "oam": {
-            "belonged-id": "b852bc70-b025-41f5-b4cb-cd667512ecc0",
-            "meg-id": "-1",
-            "cc-allow": true,
-            "cc-exp": "CS7",
-            "cc-interval": "3.3",
-            "lm-mode": "disable",
-            "dm-mode": "disable"
-          },
           "qos": {
             "belonged-id": "b852bc70-b025-41f5-b4cb-cd667512ecc0",
             "tunnel-mode": "pipeline",

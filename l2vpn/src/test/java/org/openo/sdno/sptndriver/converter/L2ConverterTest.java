@@ -74,7 +74,9 @@ public class L2ConverterTest {
       SSncPw sSncPw = realValue.getInput().getSncEline().getSncPws().getSncPw();
       sSncPw.setId(null);
       sSncPw.getQos().setBelongedId(null);
-      sSncPw.getOam().setBelongedId(null);
+      if (sSncPw.getOam() != null) {
+        sSncPw.getOam().setBelongedId(null);
+      }
     }
   }
 }

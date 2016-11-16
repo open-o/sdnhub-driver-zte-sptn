@@ -53,9 +53,14 @@ public class SSncTunnelCreatePolicyInitiator {
     // todo tunnelCreatePolicy.setIsShared(false);
     tunnelCreatePolicy.setQos(SQosInitiator.initQos(tunnelService.getMplsTe()));
     tunnelCreatePolicy.setAdminStatus(SAdminStatus.UP);
-    tunnelCreatePolicy.setLspOam(SOamInitiator.initOam(null));
+
     tunnelCreatePolicy.setSncSwitch(
         SSncSwitchInitiator.initLspSncSwitch(tunnelService.getMplsTe()));
+    if (SSncSwitchInitiator.hasProtect(tunnelService.getMplsTe())) {
+      tunnelCreatePolicy.setLspOam(SOamInitiator.initOam(null));
+    } else {
+      tunnelCreatePolicy.setLspOam(null);
+    }
     return tunnelCreatePolicy;
   }
 
