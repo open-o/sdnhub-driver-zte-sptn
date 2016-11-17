@@ -244,7 +244,8 @@ public class L2Converter {
       sncPw.setVccvType("0");
       sncPw.setConnAckType("0");
       sncPw.setQos(SQosInitiator.initCacClosedQos(sncPw.getId()));
-      sncPw.setOam(SOamInitiator.initOam(sncPw.getId()));
+      // Doesn't support protect now, no need to set oam.
+      sncPw.setOam(null);
       pwList.setSncPw(sncPw);
     }
 

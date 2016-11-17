@@ -110,14 +110,6 @@
       "wtr": "300",
       "hold-off-time": "0"
     },
-    "admin-status": "admin-up",
-    "lsp-oam": {
-      "meg-id": "-1",
-      "cc-allow": true,
-      "cc-exp": "CS7",
-      "cc-interval": "3.3",
-      "lm-mode": "disable",
-      "dm-mode": "disable"
-    }
+    "admin-status": "admin-up"
   }
 }

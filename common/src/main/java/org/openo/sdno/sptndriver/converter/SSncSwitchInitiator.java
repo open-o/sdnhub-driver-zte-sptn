@@ -84,7 +84,7 @@ public class SSncSwitchInitiator {
       coRoute = policy.getCoRoute();
     }
 
-    if (policy != null && policy.getPathProtectPolicy() != null) {
+    if (hasProtect(policy)) {
       NPathProtectPolicy pathProtectPolicy = policy.getPathProtectPolicy();
       hasProt = true;
       if (pathProtectPolicy.getRevertive() != null
@@ -109,6 +109,15 @@ public class SSncSwitchInitiator {
     //sncSwitch.setRerouteWtr(DEFAULT_REROUTE_WTR);
 
     return sncSwitch;
+  }
+
+  /**
+   * Whether tunnel has protection.
+   * @param policy Tunnel create policy.
+   * @return Whether has protection.
+   */
+  public static boolean hasProtect(NMplsTePolicy policy) {
+    return policy != null && policy.getPathProtectPolicy() != null;
   }
 
   /**
