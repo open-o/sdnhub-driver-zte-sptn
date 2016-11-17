@@ -125,7 +125,12 @@ public class SRouteCalReqsInitiator {
     SRouteCalReqElement routeCalReq = new SRouteCalReqElement();
     routeCalReq.setSequenceNo(WORK_SEQUENCE_NO);
 
-    routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.LOCAL_PROTECTION);
+    if (!hasProtect) {
+      routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.MASTER);
+    } else {
+      routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.LOCAL_PROTECTION);
+    }
+
     routeCalReq.setCalculateMode(SRouteCalReqElement.CalculateModeEnum.SIMPLE);
     if (isBestEffort(mplsTePolicy)) {
       routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.BESTEFFORT_SEPARATE);
