@@ -32,6 +32,7 @@ import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.exception.ResourceNotFoundException;
 import org.openo.sdno.sptndriver.models.north.NCreateL3vpnReq;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
+import org.openo.sdno.sptndriver.models.north.NL3vpnResponse;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
 import org.openo.sdno.sptndriver.services.L3Service;
@@ -180,7 +181,8 @@ public class L3Resource {
   @DELETE
   @Path("/l3vpns/{vpnid}")
   @ApiOperation(value = "Delete a L3vpn connection",
-      code = HttpStatus.OK_200)
+      code = HttpStatus.OK_200,
+      response = NL3vpnResponse.class)
   @ApiResponses(value = {
       @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
           message = "Delete a L3Vpn connection failure as parameters invalid.",
@@ -209,6 +211,7 @@ public class L3Resource {
       throws URISyntaxException {
     LOGGER.info("Delete l3vpn begin, id is: " + vpnid);
     String controllerId;
+    NL3vpnResponse l3vpnResponse = new NL3vpnResponse();
     try {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
       String southL3vpnId = getSouthL3vpnId(vpnid, controllerId);
@@ -244,11 +247,13 @@ public class L3Resource {
           .build();
     } catch (ResourceNotFoundException ex) {
       LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response.ok().build();
+      return Response.status(Response.Status.OK)
+          .entity(l3vpnResponse).build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
     LOGGER.info("Delete l3vpn end.");
-    return Response.ok().build();
+    return Response.status(Response.Status.OK)
+        .entity(l3vpnResponse).build();
   }
 
   private String getSouthL3vpnId(String uuid, String controllerId)
