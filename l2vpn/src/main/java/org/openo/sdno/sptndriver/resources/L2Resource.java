@@ -192,7 +192,8 @@ public class L2Resource {
   @DELETE
   @Path("/l2vpn_vpwss/{vpnid}")
   @ApiOperation(value = "Delete a L2Vpn Connection ",
-      code = HttpStatus.OK_200)
+      code = HttpStatus.OK_200,
+      response = NL2Vpn.class)
   @ApiResponses(value = {
       @ApiResponse(code = HttpStatus.BAD_REQUEST_400,
           message = "Delete a L2Vpn Instance failure as parameters invalid.",
@@ -222,7 +223,8 @@ public class L2Resource {
     LOGGER.info("Delete l2vpn begin, id is: " + vpnid);
     String controllerId;
     String southElineId;
-
+    NL2Vpn l2vpn = new NL2Vpn();
+    l2vpn.setId(vpnid);
     try {
       controllerId = ServiceUtil.getControllerId(controllerIdPara);
       southElineId = getSouthElineId(vpnid, controllerId);
@@ -263,11 +265,13 @@ public class L2Resource {
           .build();
     } catch (ResourceNotFoundException ex) {
       LOGGER.warn(ExceptionUtils.getStackTrace(ex));
-      return Response.ok().build();
+      return Response.status(Response.Status.OK)
+          .entity(l2vpn).build();
     }
     uuidMapDao.delete(vpnid, UuidMap.UuidTypeEnum.ELINE.name(), controllerId);
     LOGGER.info("Delete l2vpn end.");
-    return Response.ok().build();
+    return Response.status(Response.Status.OK)
+        .entity(l2vpn).build();
   }
 
 
