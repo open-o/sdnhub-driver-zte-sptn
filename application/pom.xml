@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>application</artifactId>
+    <name>sdno-driver-zte-sptn/application</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

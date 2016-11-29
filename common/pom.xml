@@ -24,6 +24,7 @@
 
     <groupId>org.openo.sdno.driver-zte-sptn</groupId>
     <artifactId>common</artifactId>
+    <name>sdno-driver-zte-sptn/common</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

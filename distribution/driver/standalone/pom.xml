@@ -23,7 +23,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>standalone</artifactId>
-    <name>openo/sdno/drivers/zte-sptn/distribution/driver/standalone</name>
+    <name>sdno-driver-zte-sptn/distribution/driver/standalone</name>
     <packaging>pom</packaging>
 
     <properties>

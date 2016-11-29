@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>l2vpn</artifactId>
+    <name>sdno-driver-zte-sptn/l2vpn</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

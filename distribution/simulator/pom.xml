@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Copyright 2016 ZTE Corporation.
   ~
@@ -24,7 +23,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>simulator-distribution</artifactId>
-    <name>openo/sdno/drivers/zte-sptn/distribution/simulator</name>
+    <name>sdno-driver-zte-sptn/distribution/simulator</name>
     <packaging>pom</packaging>
 
     <modules>
