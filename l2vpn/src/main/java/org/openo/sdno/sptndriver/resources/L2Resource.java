@@ -24,11 +24,8 @@ import org.openo.sdno.sptndriver.converter.L2Converter;
 import org.openo.sdno.sptndriver.converter.SRouteCalReqsInitiator;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.ControllerNotFoundException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
-import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.exception.ResourceNotFoundException;
+import org.openo.sdno.sptndriver.exception.ServerException;
 import org.openo.sdno.sptndriver.models.north.NCreateL2vpnReq;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
@@ -42,7 +39,6 @@ import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.validation.constraints.NotNull;
@@ -113,12 +109,12 @@ public class L2Resource {
       })
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
-  public Response createL2vpn( @ApiParam(value = "L2vpn information",
-                                   required = true) NCreateL2vpnReq createL2vpnReq,
-                               @ApiParam(value = "Controller uuid, "
-                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
-                                   required = true)
-                               @HeaderParam("X-Driver-Parameter") String controllerIdPara)
+  public Response createL2vpn(@ApiParam(value = "L2vpn information",
+      required = true) NCreateL2vpnReq createL2vpnReq,
+                              @ApiParam(value = "Controller uuid, "
+                                  + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
+                                  required = true)
+                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
     LOGGER.info("Create l2vpn begin.");
     NL2Vpn l2vpn = createL2vpnReq.getL2vpnVpws();
@@ -145,33 +141,10 @@ public class L2Resource {
       // Create Eline.
       ElineService elineServices = new ElineService(controllerUrl);
       externalId = elineServices.createElineAndTunnels(createElineAndTunnels);
-    } catch (HttpErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+    } catch (ServerException ex) {
+      LOGGER.error("Create l2vpn failed, due to: "
+          + ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
-    } catch (IOException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Controller returns error: " + ex.toString())
-          .build();
-    } catch (CommandErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return ex.getResponse();
-    } catch (ParamErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Input L2 parameter error: " + ex.getErrorInfo())
-          .build();
-    } catch (ControllerNotFoundException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ex.toString())
-          .build();
     }
 
 
@@ -212,11 +185,11 @@ public class L2Resource {
   @Produces(MediaType.APPLICATION_JSON)
   @Timed
   public Response deleteL2vpn(@ApiParam(value = "L2vpn uuid", required = true)
-                                @PathParam("vpnid") @NotNull String vpnid,
+                              @PathParam("vpnid") @NotNull String vpnid,
                               @ApiParam(value = "Controller uuid, "
                                   + "the format is X-Driver-Parameter:extSysID={ctrlUuid}",
                                   required = true)
-                                @HeaderParam("X-Driver-Parameter") String controllerIdPara)
+                              @HeaderParam("X-Driver-Parameter") String controllerIdPara)
       throws URISyntaxException {
     LOGGER.info("Delete l2vpn begin, id is: " + vpnid);
     String controllerId;
@@ -234,35 +207,13 @@ public class L2Resource {
       ElineService elineServices = new ElineService(
           EsrUtil.getSdnoControllerUrl(controllerId));
       elineServices.deleteEline(elineDeleteInput);
-    } catch (HttpErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+    } catch (ServerException ex) {
+      LOGGER.error("Delete l2vpn failed, due to: "
+          + ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
-    } catch (CommandErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return ex.getResponse();
-    } catch (IOException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Controller returns error: " + ex.toString())
-          .build();
-    } catch (ParamErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Input L2 parameter error: " + ex.getErrorInfo())
-          .build();
-    } catch (ControllerNotFoundException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ex.toString())
-          .build();
     } catch (ResourceNotFoundException ex) {
-      LOGGER.warn(ExceptionUtils.getStackTrace(ex));
+      LOGGER.warn("Delete l2vpn successful, though it is not found in driver: "
+          + ExceptionUtils.getStackTrace(ex));
       return Response.status(Response.Status.OK)
           .entity(l2vpn).build();
     }

@@ -24,29 +24,32 @@ import javax.ws.rs.core.Response;
 /**
  *  Exception when the command result from controller is failed.
  */
-public class CommandErrorException extends Exception {
+public class CommandErrorException extends ServerException {
 
-  private SCommandResult m_cmdResult;
+  private SCommandResult cmdResult;
 
   public CommandErrorException(SCommandResult cmdResult) {
-    m_cmdResult = cmdResult;
+    this.cmdResult = cmdResult;
   }
 
-  /**
-   *  Get response constructed from command result of controller.
-   * @return Response which is returned to LCM.
-   */
-  public Response getResponse() {
+  @Override
+  public String toString() {
     String errorMsg;
-    if (m_cmdResult != null && m_cmdResult.getFailedResources() != null) {
-      errorMsg = m_cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
+    if (cmdResult != null && cmdResult.getFailedResources() != null) {
+      errorMsg = "Controller returns failure: "
+          + cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
     } else {
-      errorMsg = "Command Result is null.";
+      errorMsg = "Error information from controller is null.";
     }
+    return errorMsg;
+  }
+
+  @Override
+  public Response getResponse() {
     return Response
         .status(Response.Status.NOT_IMPLEMENTED)
         .type(MediaType.TEXT_PLAIN_TYPE)
-        .entity(errorMsg)
+        .entity(toString())
         .build();
   }
 }

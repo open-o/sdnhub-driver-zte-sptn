@@ -16,43 +16,28 @@
 
 package org.openo.sdno.sptndriver.exception;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
-
-import retrofit2.Response;
+import javax.ws.rs.core.Response;
 
 /**
- *  The exception happened when the controller returns HTTP error.
+ * Wrap IOException to construct Response.
  */
-public class HttpErrorException extends ServerException {
+public class ServerIoException extends ServerException {
 
-  private Response response;
+  private java.io.IOException ex;
 
-  public HttpErrorException(Response response) {
-    this.response = response;
+  public ServerIoException(IOException ex) {
+    this.ex = ex;
   }
 
   @Override
-  public String toString() {
-    String errorStr = "Controller returns unsuccessful status: ";
-    try {
-      errorStr += response.errorBody().string();
-    } catch (IOException ex) {
-      errorStr += ExceptionUtils.getStackTrace(ex);
-    }
-    return errorStr;
-  }
-
-  @Override
-  public javax.ws.rs.core.Response getResponse() {
-    return javax.ws.rs.core.Response
-        .status(response.code())
-        .entity(toString())
+  public Response getResponse() {
+    return Response
+        .status(Response.Status.INTERNAL_SERVER_ERROR)
+        .entity(ex.toString())
         .type(MediaType.TEXT_PLAIN_TYPE)
         .build();
-
   }
 }

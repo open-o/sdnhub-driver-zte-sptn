@@ -18,8 +18,8 @@ package org.openo.sdno.sptndriver.services;
 
 import com.google.gson.Gson;
 
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ServerException;
+import org.openo.sdno.sptndriver.exception.ServerIoException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SL3vpnCreateInput;
@@ -52,7 +52,7 @@ public class L3Service {
    * @param l3vpn L3vpn information
    */
   public String createL3vpn(SL3vpnCreateInput l3vpn)
-      throws HttpErrorException, IOException, CommandErrorException {
+      throws ServerException {
     String printText = "Create l3vpn " + l3vpn.getSncL3vpn().getId();
     LOGGER.debug(printText + " begin. ");
     Gson gson = new Gson();
@@ -60,7 +60,12 @@ public class L3Service {
     Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
     Call<SCmdResultAndNcdResRelations> cmdCall = service.createL3vpn(l3vpn);
-    Response<SCmdResultAndNcdResRelations> response = cmdCall.execute();
+    Response<SCmdResultAndNcdResRelations> response;
+    try {
+      response = cmdCall.execute();
+    } catch (IOException ex) {
+      throw new ServerIoException(ex);
+    }
     ServiceUtil.parseCmdResultAndNcdResRelations(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
     return response.body().getCommandResult().getSuccessResources()
@@ -73,13 +78,18 @@ public class L3Service {
    * @param l3vpnId L3vpn UUID
    */
   public void deleteL3vpn(String l3vpnId)
-      throws IOException, HttpErrorException, CommandErrorException {
+      throws ServerException {
     String printText = "Delete L3vpn " + l3vpnId;
     LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
     Call<SCommandResultOutput> cmdCall = service.deleteL3vpn(l3vpnId);
-    Response<SCommandResultOutput> response = cmdCall.execute();
+    Response<SCommandResultOutput> response;
+    try {
+      response = cmdCall.execute();
+    } catch (IOException ex) {
+      throw new ServerIoException(ex);
+    }
     ServiceUtil.parseRpcResult(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
   }

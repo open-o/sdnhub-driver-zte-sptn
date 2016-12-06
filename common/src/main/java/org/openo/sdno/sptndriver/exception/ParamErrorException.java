@@ -16,17 +16,25 @@
 
 package org.openo.sdno.sptndriver.exception;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 /**
  * The exception class for wrong parameter.
  */
-public class ParamErrorException extends Exception {
+public class ParamErrorException extends ServerException {
   private String errorInfo;
 
   public ParamErrorException(String errorInfo) {
     this.errorInfo = errorInfo;
   }
 
-  public ParamErrorException (Object[] validValues, String inputValue)
+  /**
+   * Parameter exception of invalid input.
+   * @param validValues Expected valid input array
+   * @param inputValue Actual input
+   */
+  public ParamErrorException(Object[] validValues, String inputValue)
       throws ParamErrorException {
     errorInfo = "Valid values are: {";
     for (Object para : validValues) {
@@ -39,7 +47,17 @@ public class ParamErrorException extends Exception {
     errorInfo += inputValue + ". ";
   }
 
-  public String getErrorInfo() {
+  @Override
+  public String toString() {
     return errorInfo;
+  }
+
+  @Override
+  public Response getResponse() {
+    return Response
+        .status(Response.Status.BAD_REQUEST)
+        .type(MediaType.TEXT_PLAIN_TYPE)
+        .entity(toString())
+        .build();
   }
 }

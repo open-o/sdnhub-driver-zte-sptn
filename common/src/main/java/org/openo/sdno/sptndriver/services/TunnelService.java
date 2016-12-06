@@ -18,8 +18,8 @@ package org.openo.sdno.sptndriver.services;
 
 import com.google.gson.Gson;
 
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ServerException;
+import org.openo.sdno.sptndriver.exception.ServerIoException;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
 import org.openo.sdno.sptndriver.models.south.SRouteCalResultsOutput;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
@@ -57,7 +57,7 @@ public class TunnelService {
    * @return route result.
    */
   public SRouteCalResultsOutput calcRoutes(SRouteCalReqsInput routeCalcReqsInput)
-      throws HttpErrorException, IOException, CommandErrorException {
+      throws ServerException {
     String printText = "Calculate route of tunnel ";
     LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
@@ -65,7 +65,12 @@ public class TunnelService {
     Gson gson = new Gson();
     LOGGER.debug("Calculate tunnel send to controller is: " + gson.toJson(routeCalcReqsInput));
     Call<SRouteCalResultsOutput> repos = service.calcRoutes(routeCalcReqsInput);
-    Response<SRouteCalResultsOutput> response = repos.execute();
+    Response<SRouteCalResultsOutput> response;
+    try {
+      response = repos.execute();
+    } catch (IOException ex) {
+      throw new ServerIoException(ex);
+    }
     SRouteCalResultsOutput output = ServiceUtil.parseResponse(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
     return output;

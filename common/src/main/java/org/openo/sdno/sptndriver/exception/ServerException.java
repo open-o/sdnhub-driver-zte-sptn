@@ -16,19 +16,15 @@
 
 package org.openo.sdno.sptndriver.exception;
 
+import javax.ws.rs.core.Response;
+
 /**
- * Throw this exception if the entity(like L2 or L3) can not be found.
+ * Base exception class.
  */
-public class ResourceNotFoundException extends Exception {
-  private Object resource;
-
-  public ResourceNotFoundException(Object resource) {
-    this.resource = resource;
-  }
-
-  @Override
-  public String toString() {
-    return "Can not find " + resource.toString();
-  }
-
+public abstract class ServerException extends Exception {
+  /**
+   * Convert exception to Response.
+   * @return HTTP response.
+   */
+  public abstract Response getResponse();
 }

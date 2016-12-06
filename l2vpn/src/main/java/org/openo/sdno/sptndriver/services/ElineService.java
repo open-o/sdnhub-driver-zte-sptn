@@ -19,8 +19,8 @@ package org.openo.sdno.sptndriver.services;
 import com.google.gson.Gson;
 
 import org.openo.sdno.sptndriver.converter.L2Converter;
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ServerException;
+import org.openo.sdno.sptndriver.exception.ServerIoException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResultOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
@@ -61,7 +61,7 @@ public class ElineService {
    * @param createElineAndTunnels E-Line and tunnels information
    */
   public String createElineAndTunnels(SCreateElineAndTunnelsInput createElineAndTunnels)
-      throws HttpErrorException, IOException, CommandErrorException {
+      throws ServerException {
     String printText = "Create eline and tunnels "
         + createElineAndTunnels.getInput().getSncEline().getId();
     LOGGER.debug(printText + " begin. ");
@@ -71,7 +71,12 @@ public class ElineService {
     ElineServiceInterface service = retrofit.create(ElineServiceInterface.class);
     Call<SCmdResultAndNcdResRelationsOutput> repos
         = service.createElineAndTunnels(createElineAndTunnels);
-    Response<SCmdResultAndNcdResRelationsOutput> response = repos.execute();
+    Response<SCmdResultAndNcdResRelationsOutput> response;
+    try {
+      response = repos.execute();
+    } catch (IOException ex) {
+      throw new ServerIoException(ex);
+    }
     ServiceUtil.parseCmdResultAndNcdResRelOutput(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
     return L2Converter.getReturnId(response.body());
@@ -83,13 +88,18 @@ public class ElineService {
    * @param elineId E-Line UUID
    */
   public void deleteEline(SDeleteElineInput elineId)
-      throws IOException, HttpErrorException, CommandErrorException {
+      throws ServerException {
     String printText = "Delete Eline " + elineId.getInput().getElineId();
     LOGGER.debug(printText + " begin. ");
     Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
     ElineServiceInterface service = retrofit.create(ElineServiceInterface.class);
     Call<SCommandResultOutput> repos = service.deleteEline(elineId);
-    Response<SCommandResultOutput> response = repos.execute();
+    Response<SCommandResultOutput> response;
+    try {
+      response = repos.execute();
+    } catch (IOException ex) {
+      throw new ServerIoException(ex);
+    }
     ServiceUtil.parseRpcResult(response, LOGGER, printText);
     LOGGER.debug(printText + " end. ");
   }

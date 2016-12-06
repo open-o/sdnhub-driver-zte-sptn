@@ -25,11 +25,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.openo.sdno.sptndriver.converter.L3Converter;
 import org.openo.sdno.sptndriver.db.dao.UuidMapDao;
 import org.openo.sdno.sptndriver.db.model.UuidMap;
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.ControllerNotFoundException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
-import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.exception.ResourceNotFoundException;
+import org.openo.sdno.sptndriver.exception.ServerException;
 import org.openo.sdno.sptndriver.models.north.NCreateL3vpnReq;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
 import org.openo.sdno.sptndriver.models.north.NL3vpnResponse;
@@ -41,7 +38,6 @@ import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.validation.constraints.NotNull;
@@ -134,33 +130,10 @@ public class L3Resource {
       sl3vpnCreateInput.setSncL3vpn(southL3vpn);
       L3Service l3Service = new L3Service(controllerUrl);
       externalId = l3Service.createL3vpn(sl3vpnCreateInput);
-    } catch (HttpErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+    } catch (ServerException ex) {
+      LOGGER.error("Create l3vpn failed, due to: "
+          + ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
-    } catch (IOException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity("Controller returns error: " + ex.toString())
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .build();
-    } catch (CommandErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return ex.getResponse();
-    } catch (ParamErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity("Input L3vpn can not be converted to south L3vpn: " + ex.getErrorInfo())
-          .build();
-    } catch (ControllerNotFoundException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ex.toString())
-          .build();
     }
     uuidMapDao.insert(l3vpn.getId(), externalId, UuidMap.UuidTypeEnum.L3VPN.name(), controllerId);
     LOGGER.info("Create l3vpn end.");
@@ -215,35 +188,13 @@ public class L3Resource {
       L3Service l3Service = new L3Service(
           EsrUtil.getSdnoControllerUrl(controllerId));
       l3Service.deleteL3vpn(southL3vpnId);
-    } catch (HttpErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+    } catch (ServerException ex) {
+      LOGGER.error("Delete l3vpn failed, due to: "
+          + ExceptionUtils.getStackTrace(ex));
       return ex.getResponse();
-    } catch (CommandErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return ex.getResponse();
-    } catch (IOException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity("Controller returns error: " + ex.toString())
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .build();
-    } catch (ParamErrorException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ex.getErrorInfo())
-          .build();
-    } catch (ControllerNotFoundException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
-      return Response
-          .status(Response.Status.BAD_REQUEST)
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .entity(ex.toString())
-          .build();
     } catch (ResourceNotFoundException ex) {
-      LOGGER.error(ExceptionUtils.getStackTrace(ex));
+      LOGGER.warn("Delete l3vpn successful, though it is not found in driver: "
+          + ExceptionUtils.getStackTrace(ex));
       return Response.status(Response.Status.OK)
           .entity(l3vpnResponse).build();
     }

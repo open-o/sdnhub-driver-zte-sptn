@@ -16,18 +16,31 @@
 
 package org.openo.sdno.sptndriver.exception;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 /**
  * When can not find controller, throw this exception.
  */
-public class ControllerNotFoundException extends Exception{
+public class ControllerNotFoundException extends ServerException {
   private String errorInfo;
 
   public ControllerNotFoundException(Exception ex, String controllerId) {
-    errorInfo = "Can not find controller: " + ex.toString();
+    errorInfo = "Can not find controller: " + controllerId
+        + "due to: " + ex.toString();
   }
 
   @Override
   public String toString() {
     return errorInfo;
+  }
+
+  @Override
+  public Response getResponse() {
+    return Response
+        .status(Response.Status.BAD_REQUEST)
+        .type(MediaType.TEXT_PLAIN_TYPE)
+        .entity(toString())
+        .build();
   }
 }
