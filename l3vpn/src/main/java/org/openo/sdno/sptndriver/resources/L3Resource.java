@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
@@ -70,11 +69,9 @@ import io.swagger.annotations.ApiResponses;
 public class L3Resource {
 
   private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(L3Resource.class);
-  private final Validator validator;
   private final UuidMapDao uuidMapDao;
 
-  public L3Resource(Validator validator, DBI jdbi) {
-    this.validator = validator;
+  public L3Resource( DBI jdbi) {
     this.uuidMapDao = jdbi.onDemand(UuidMapDao.class);
   }
 

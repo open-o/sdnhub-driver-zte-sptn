@@ -88,8 +88,8 @@ public class App extends Application<SptnDriverConfig> {
     environment.healthChecks().register("healthcheck", healthCheck);
 
     // Add the resource to the environment
-    environment.jersey().register(new L2Resource(environment.getValidator(), jdbi));
-    environment.jersey().register(new L3Resource(environment.getValidator(), jdbi));
+    environment.jersey().register(new L2Resource(jdbi));
+    environment.jersey().register(new L3Resource(jdbi));
 
     initSwaggerConfig(config, environment);
 

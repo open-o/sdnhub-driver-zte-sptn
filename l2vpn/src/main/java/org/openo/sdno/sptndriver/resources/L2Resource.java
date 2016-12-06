@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
@@ -72,16 +71,15 @@ public class L2Resource {
 
   private static final org.slf4j.Logger LOGGER =
       LoggerFactory.getLogger(L2Resource.class);
-  private final Validator validator;
+
   private final UuidMapDao uuidMapDao;
 
   /**
    * The constructor.
    *
-   * @param validator validation parameter.
+   * @param jdbi Database parameter
    */
-  public L2Resource(Validator validator, DBI jdbi) {
-    this.validator = validator;
+  public L2Resource(DBI jdbi) {
     this.uuidMapDao = jdbi.onDemand(UuidMapDao.class);
   }
 
