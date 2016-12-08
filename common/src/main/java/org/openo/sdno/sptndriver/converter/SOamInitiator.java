@@ -26,40 +26,40 @@ import org.openo.sdno.sptndriver.models.south.SOamMode;
  */
 public class SOamInitiator {
 
-  /**
-   * Initialization of OAM.
-   *
-   * @param sncId OAM related connection ID.
-   * @return OAM
-   */
-  public static SOam initOam(String sncId) {
-    SOam oam = new SOam();
-    oam.setBelongedId(sncId);
-    oam.setName(null);
-    oam.setMegId("-1");
-    oam.setMeps(initMeps());
-    oam.setMeps(null);
-    oam.setCcAllow(true);
-    oam.setCcExp(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
-    oam.setCcInterval(SOam.CcIntervalEnum.NUMBER_3_DOT_3);
-    oam.setLmMode(SOamMode.DISABLE);
-    oam.setDmMode(SOamMode.DISABLE);
-    return oam;
-  }
+    /**
+     * Initialization of OAM.
+     *
+     * @param sncId OAM related connection ID.
+     * @return OAM
+     */
+    public static SOam initOam(String sncId) {
+        SOam oam = new SOam();
+        oam.setBelongedId(sncId);
+        oam.setName(null);
+        oam.setMegId("-1");
+        oam.setMeps(initMeps());
+        oam.setMeps(null);
+        oam.setCcAllow(true);
+        oam.setCcExp(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
+        oam.setCcInterval(SOam.CcIntervalEnum.NUMBER_3_DOT_3);
+        oam.setLmMode(SOamMode.DISABLE);
+        oam.setDmMode(SOamMode.DISABLE);
+        return oam;
+    }
 
-  /**
-   * Initialize Mep list of OAM.
-   *
-   * @return Mep list
-   */
-  private static SMeps initMeps() {
-    SMep mep1 = new SMep();
-    mep1.setId("1");
-    SMep mep2 = new SMep();
-    mep2.setId("2");
-    SMeps meps = new SMeps();
-    meps.add(mep1);
-    meps.add(mep2);
-    return meps;
-  }
+    /**
+     * Initialize Mep list of OAM.
+     *
+     * @return Mep list
+     */
+    private static SMeps initMeps() {
+        SMep mep1 = new SMep();
+        mep1.setId("1");
+        SMep mep2 = new SMep();
+        mep2.setId("2");
+        SMeps meps = new SMeps();
+        meps.add(mep1);
+        meps.add(mep2);
+        return meps;
+    }
 }

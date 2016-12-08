@@ -41,106 +41,107 @@ import java.util.Map;
  * The class to initiate hub spoke policy.
  */
 public class HubSpokePolicyInitiator {
-  private static final Logger LOGGER = LoggerFactory.getLogger(HubSpokePolicyInitiator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HubSpokePolicyInitiator.class);
 
-  /**
-   *  The method to initiate hub spoke policy.
-   * @param topologyService NBI topology service.
-   * @param topoModeEnum SBI topology enumerator.
-   * @param l3acs NBI L3acs.
-   * @return SBI hub spoke policy.
-   */
-  public static SHubSpokePolicy initHubSpokePolicy(NTopologyService topologyService,
-                                                   NL3Acs l3acs,
-                                         SL3vpn.TopoModeEnum topoModeEnum)
-      throws ParamErrorException {
-    SHubSpokePolicy hubSpokePolicy = new SHubSpokePolicy();
-    hubSpokePolicy.setHubFullmeshed(false);
-    hubSpokePolicy.setPrimaryBackupConnected(true);
-    if (topoModeEnum == SL3vpn.TopoModeEnum.HUB_SPOKE) {
-      hubSpokePolicy.setNodeList(convertNbiToSbi(topologyService, l3acs));
-    } else if (topoModeEnum == SL3vpn.TopoModeEnum.ANY_TO_ANY) {
-      hubSpokePolicy.setHubFullmeshed(true);
+    /**
+     * The method to initiate hub spoke policy.
+     *
+     * @param topologyService NBI topology service.
+     * @param topoModeEnum    SBI topology enumerator.
+     * @param l3acs           NBI L3acs.
+     * @return SBI hub spoke policy.
+     */
+    public static SHubSpokePolicy initHubSpokePolicy(NTopologyService topologyService,
+                                                     NL3Acs l3acs,
+                                                     SL3vpn.TopoModeEnum topoModeEnum)
+        throws ParamErrorException {
+        SHubSpokePolicy hubSpokePolicy = new SHubSpokePolicy();
+        hubSpokePolicy.setHubFullmeshed(false);
+        hubSpokePolicy.setPrimaryBackupConnected(true);
+        if (topoModeEnum == SL3vpn.TopoModeEnum.HUB_SPOKE) {
+            hubSpokePolicy.setNodeList(convertNbiToSbi(topologyService, l3acs));
+        } else if (topoModeEnum == SL3vpn.TopoModeEnum.ANY_TO_ANY) {
+            hubSpokePolicy.setHubFullmeshed(true);
+        }
+        return hubSpokePolicy;
     }
-    return hubSpokePolicy;
-  }
 
-  private static SHubSpokeNodes convertNbiToSbi(NTopologyService topologyService,
-                                                NL3Acs l3acs)
-      throws ParamErrorException {
-    if (l3acs == null || l3acs.getAc() == null) {
-      throw new ParamErrorException("Input l3 ac list is null.");
-    }
-    if (topologyService == null) {
-      throw new ParamErrorException("Input topology service is null.");
-    }
-    Map<String, String> acIdToNeIdMap = getAcIdToNeIdMap(l3acs);
-    SHubSpokeNodes hubSpokeNodes = new SHubSpokeNodes();
+    private static SHubSpokeNodes convertNbiToSbi(NTopologyService topologyService,
+                                                  NL3Acs l3acs)
+        throws ParamErrorException {
+        if (l3acs == null || l3acs.getAc() == null) {
+            throw new ParamErrorException("Input l3 ac list is null.");
+        }
+        if (topologyService == null) {
+            throw new ParamErrorException("Input topology service is null.");
+        }
+        Map<String, String> acIdToNeIdMap = getAcIdToNeIdMap(l3acs);
+        SHubSpokeNodes hubSpokeNodes = new SHubSpokeNodes();
 
-    List<SNodeId> nodeList = getNodeList(topologyService.getHubGroups(),
-        acIdToNeIdMap);
-    hubSpokeNodes.getHubSpokeNodes()
-        .addAll(convertSpokeNode(topologyService, acIdToNeIdMap, nodeList));
-    hubSpokeNodes.getHubSpokeNodes()
-        .addAll(convertHubNode(topologyService, acIdToNeIdMap));
+        List<SNodeId> nodeList = getNodeList(topologyService.getHubGroups(),
+            acIdToNeIdMap);
+        hubSpokeNodes.getHubSpokeNodes()
+            .addAll(convertSpokeNode(topologyService, acIdToNeIdMap, nodeList));
+        hubSpokeNodes.getHubSpokeNodes()
+            .addAll(convertHubNode(topologyService, acIdToNeIdMap));
 
-    return hubSpokeNodes;
-  }
+        return hubSpokeNodes;
+    }
 
-  private static Map<String, String> getAcIdToNeIdMap(NL3Acs l3acs)
-      throws ParamErrorException {
-    if (l3acs == null || l3acs.getAc() == null) {
-      throw new ParamErrorException("Input l3 ac list is null.");
+    private static Map<String, String> getAcIdToNeIdMap(NL3Acs l3acs)
+        throws ParamErrorException {
+        if (l3acs == null || l3acs.getAc() == null) {
+            throw new ParamErrorException("Input l3 ac list is null.");
+        }
+        List<NL3Ac> acList = l3acs.getAc();
+        Map<String, String> acIdToNeIdMap = new HashMap<>();
+        for (NL3Ac l3ac : acList) {
+            acIdToNeIdMap.put(l3ac.getId(), l3ac.getNeId());
+        }
+        return acIdToNeIdMap;
     }
-    List<NL3Ac> acList = l3acs.getAc();
-    Map<String, String> acIdToNeIdMap = new HashMap<>();
-    for (NL3Ac l3ac : acList) {
-      acIdToNeIdMap.put(l3ac.getId(), l3ac.getNeId());
-    }
-    return acIdToNeIdMap;
-  }
 
-  private static List<SNodeId> getNodeList(List<NHubGroup> hubGroups,
-                                           Map<String, String> acIdToNeIdMap) {
-    List<SNodeId> nodeList = new ArrayList<>();
-    for (NHubGroup hubGroup : hubGroups) {
-      SNodeId nodeId = new SNodeId();
-      nodeId.setNodeId(acIdToNeIdMap.get(hubGroup.getAcId()));
-      nodeList.add(nodeId);
+    private static List<SNodeId> getNodeList(List<NHubGroup> hubGroups,
+                                             Map<String, String> acIdToNeIdMap) {
+        List<SNodeId> nodeList = new ArrayList<>();
+        for (NHubGroup hubGroup : hubGroups) {
+            SNodeId nodeId = new SNodeId();
+            nodeId.setNodeId(acIdToNeIdMap.get(hubGroup.getAcId()));
+            nodeList.add(nodeId);
+        }
+        return nodeList;
     }
-    return nodeList;
-  }
 
-  private static List<SHubSpokeNode> convertHubNode(NTopologyService topologyService,
-                                               Map<String, String> acIdToNeIdMap) {
-    List<SHubSpokeNode> hubSpokeNodeList = new ArrayList<>();
-    List<NHubGroup> hubGroups = topologyService.getHubGroups();
-    for (NHubGroup hubGroup : hubGroups) {
-      SHubSpokeNode hubNode = new SHubSpokeNode();
-      hubNode.setNeId(acIdToNeIdMap.get(hubGroup.getAcId()));
-      hubNode.setNodeRole(SHubSpokeNode.NodeRoleEnum.HUB);
-      hubSpokeNodeList.add(hubNode);
+    private static List<SHubSpokeNode> convertHubNode(NTopologyService topologyService,
+                                                      Map<String, String> acIdToNeIdMap) {
+        List<SHubSpokeNode> hubSpokeNodeList = new ArrayList<>();
+        List<NHubGroup> hubGroups = topologyService.getHubGroups();
+        for (NHubGroup hubGroup : hubGroups) {
+            SHubSpokeNode hubNode = new SHubSpokeNode();
+            hubNode.setNeId(acIdToNeIdMap.get(hubGroup.getAcId()));
+            hubNode.setNodeRole(SHubSpokeNode.NodeRoleEnum.HUB);
+            hubSpokeNodeList.add(hubNode);
+        }
+        return hubSpokeNodeList;
     }
-    return hubSpokeNodeList;
-  }
 
-  private static List<SHubSpokeNode> convertSpokeNode(NTopologyService topologyService,
-                                                 Map<String, String> acIdToNeIdMap,
-                                                 List<SNodeId> nodeList) {
-    List<SHubSpokeNode> hubSpokeNodes = new ArrayList<>();
-    NSpokeGroup spokeGroup = topologyService.getSpokeGroup();
-    if (spokeGroup != null) {
-      List<NSpokeAcs> spokeAcList = spokeGroup.getSpokeAc();
-      for (NSpokeAcs spokeAcs : spokeAcList) {
-        SHubSpokeNode spokeNode = new SHubSpokeNode();
-        spokeNode.setNeId(acIdToNeIdMap.get(spokeAcs.getAcId()));
-        spokeNode.setNodeRole(SHubSpokeNode.NodeRoleEnum.SPOKE);
-        SBelongedHubs sBelongedHubs = new SBelongedHubs();
-        sBelongedHubs.setBelongedHubList(nodeList);
-        spokeNode.setBelongedHubs(sBelongedHubs);
-        hubSpokeNodes.add(spokeNode);
-      }
+    private static List<SHubSpokeNode> convertSpokeNode(NTopologyService topologyService,
+                                                        Map<String, String> acIdToNeIdMap,
+                                                        List<SNodeId> nodeList) {
+        List<SHubSpokeNode> hubSpokeNodes = new ArrayList<>();
+        NSpokeGroup spokeGroup = topologyService.getSpokeGroup();
+        if (spokeGroup != null) {
+            List<NSpokeAcs> spokeAcList = spokeGroup.getSpokeAc();
+            for (NSpokeAcs spokeAcs : spokeAcList) {
+                SHubSpokeNode spokeNode = new SHubSpokeNode();
+                spokeNode.setNeId(acIdToNeIdMap.get(spokeAcs.getAcId()));
+                spokeNode.setNodeRole(SHubSpokeNode.NodeRoleEnum.SPOKE);
+                SBelongedHubs sBelongedHubs = new SBelongedHubs();
+                sBelongedHubs.setBelongedHubList(nodeList);
+                spokeNode.setBelongedHubs(sBelongedHubs);
+                hubSpokeNodes.add(spokeNode);
+            }
+        }
+        return hubSpokeNodes;
     }
-    return hubSpokeNodes;
-  }
 }

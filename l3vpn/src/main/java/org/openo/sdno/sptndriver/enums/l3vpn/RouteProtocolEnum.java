@@ -22,59 +22,59 @@ import org.openo.sdno.sptndriver.models.south.SL3acProtocol;
  * Enumerator of route protocol.
  */
 public enum RouteProtocolEnum {
-  STATIC("static", SL3acProtocol.ProtocolTypeEnum.STATIC),
-  OSPF("ospf", SL3acProtocol.ProtocolTypeEnum.OSPF),
-  ISIS("isis",SL3acProtocol.ProtocolTypeEnum.ISIS),
-  BGP("bgp",SL3acProtocol.ProtocolTypeEnum.BGP);
-  private String north;
-  private SL3acProtocol.ProtocolTypeEnum south;
+    STATIC("static", SL3acProtocol.ProtocolTypeEnum.STATIC),
+    OSPF("ospf", SL3acProtocol.ProtocolTypeEnum.OSPF),
+    ISIS("isis", SL3acProtocol.ProtocolTypeEnum.ISIS),
+    BGP("bgp", SL3acProtocol.ProtocolTypeEnum.BGP);
+    private String north;
+    private SL3acProtocol.ProtocolTypeEnum south;
 
-  RouteProtocolEnum(String north, SL3acProtocol.ProtocolTypeEnum south) {
-    this.north = north;
-    this.south = south;
-  }
-
-  /**
-   * Convert SBI route protocol to NBI route protocol.
-   *
-   * @param southValue SBI route protocol.
-   * @return NBI route protocol.
-   */
-  public static String convertSbiToNbi(SL3acProtocol.ProtocolTypeEnum southValue) {
-    for (RouteProtocolEnum adminStatusEnum : RouteProtocolEnum.values()) {
-      if (adminStatusEnum.getSouthValue().equals(southValue)) {
-        return adminStatusEnum.north;
-      }
+    RouteProtocolEnum(String north, SL3acProtocol.ProtocolTypeEnum south) {
+        this.north = north;
+        this.south = south;
     }
-    return null;
-  }
 
-  /**
-   * Convert NBI route protocol to SBI route protocol.
-   *
-   * @param north NBI route protocol.
-   * @return SBI route protocol.
-   */
-  public static SL3acProtocol.ProtocolTypeEnum convertNbiToSbi(String north) {
-    for (RouteProtocolEnum adminStatusEnum : RouteProtocolEnum.values()) {
-      if (adminStatusEnum.getNorthValue().equals(north)) {
-        return adminStatusEnum.south;
-      }
+    /**
+     * Convert SBI route protocol to NBI route protocol.
+     *
+     * @param southValue SBI route protocol.
+     * @return NBI route protocol.
+     */
+    public static String convertSbiToNbi(SL3acProtocol.ProtocolTypeEnum southValue) {
+        for (RouteProtocolEnum adminStatusEnum : RouteProtocolEnum.values()) {
+            if (adminStatusEnum.getSouthValue().equals(southValue)) {
+                return adminStatusEnum.north;
+            }
+        }
+        return null;
     }
-    return null;
-  }
 
-  /**
-   * Get NBI route protocol.
-   */
-  public String getNorthValue() {
-    return north;
-  }
+    /**
+     * Convert NBI route protocol to SBI route protocol.
+     *
+     * @param north NBI route protocol.
+     * @return SBI route protocol.
+     */
+    public static SL3acProtocol.ProtocolTypeEnum convertNbiToSbi(String north) {
+        for (RouteProtocolEnum adminStatusEnum : RouteProtocolEnum.values()) {
+            if (adminStatusEnum.getNorthValue().equals(north)) {
+                return adminStatusEnum.south;
+            }
+        }
+        return null;
+    }
 
-  /**
-   * Get SBI route protocol.
-   */
-  public SL3acProtocol.ProtocolTypeEnum getSouthValue() {
-    return south;
-  }
+    /**
+     * Get NBI route protocol.
+     */
+    public String getNorthValue() {
+        return north;
+    }
+
+    /**
+     * Get SBI route protocol.
+     */
+    public SL3acProtocol.ProtocolTypeEnum getSouthValue() {
+        return south;
+    }
 }

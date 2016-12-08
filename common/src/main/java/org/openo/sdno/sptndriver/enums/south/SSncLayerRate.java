@@ -20,24 +20,24 @@ package org.openo.sdno.sptndriver.enums.south;
  * Enumerator of SNC switch layer rate.
  */
 public enum SSncLayerRate {
-  LSP(0),
-  PW(1);
-  private Integer value;
+    LSP(0),
+    PW(1);
+    private Integer value;
 
-  SSncLayerRate(Integer value) {
-    this.value = value;
-  }
+    SSncLayerRate(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 
-  /**
-   * Get Integer value of layer rate.
-   *
-   * @return Integer value of layer rate.
-   */
-  public Integer getValue() {
-    return value;
-  }
+    /**
+     * Get Integer value of layer rate.
+     *
+     * @return Integer value of layer rate.
+     */
+    public Integer getValue() {
+        return value;
+    }
 }

@@ -20,15 +20,15 @@ package org.openo.sdno.sptndriver.enums.south.qos;
  * Enumerator of QoS color mode.
  */
 public enum SColorMode {
-  UNWARE(0),
-  WARE(1);
-  private Integer value;
+    UNWARE(0),
+    WARE(1);
+    private Integer value;
 
-  SColorMode(Integer value) {
-    this.value = value;
-  }
+    SColorMode(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

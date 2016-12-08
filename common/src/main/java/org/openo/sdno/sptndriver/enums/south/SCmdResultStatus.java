@@ -17,19 +17,19 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enumerator of command result status.
+ * Enumerator of command result status.
  */
 public enum SCmdResultStatus {
-  SUCCESS(1),
-  FAILED(2),
-  PARTLY_FAILED(3);
-  private Integer value;
+    SUCCESS(1),
+    FAILED(2),
+    PARTLY_FAILED(3);
+    private Integer value;
 
-  SCmdResultStatus(Integer value) {
-    this.value = value;
-  }
+    SCmdResultStatus(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

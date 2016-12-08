@@ -22,11 +22,12 @@ import java.util.UUID;
  * The class of UUID utility.
  */
 public class UuidUtil {
-  /**
-   *  Generate a UUID.
-   * @return UUID
-   */
-  public static String getUuid() {
-    return UUID.randomUUID().toString();
-  }
+    /**
+     * Generate a UUID.
+     *
+     * @return UUID
+     */
+    public static String getUuid() {
+        return UUID.randomUUID().toString();
+    }
 }

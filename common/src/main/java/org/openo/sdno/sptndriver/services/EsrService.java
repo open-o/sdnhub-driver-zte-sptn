@@ -35,29 +35,30 @@ import retrofit2.Retrofit;
  */
 public class EsrService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(EsrService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EsrService.class);
 
-  public EsrService() {}
+    public EsrService() {
+    }
 
-  /**
-   * Get SDN-O controller.
-   *
-   * @param controllerId SDN-O controller id.
-   * @return SDN-O controller.
-   */
-  public SdnController getSdnoController(String controllerId)
-      throws CommandErrorException, HttpErrorException, IOException {
-    String printText = "Get controller " + controllerId;
-    LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
-    EsrServiceInterface service = retrofit.create(EsrServiceInterface.class);
-    Call<SdnController> cmdCall = service.getSdnoController(controllerId);
-    Response<SdnController> response;
-    response = cmdCall.execute();
+    /**
+     * Get SDN-O controller.
+     *
+     * @param controllerId SDN-O controller id.
+     * @return SDN-O controller.
+     */
+    public SdnController getSdnoController(String controllerId)
+        throws CommandErrorException, HttpErrorException, IOException {
+        String printText = "Get controller " + controllerId;
+        LOGGER.debug(printText + " begin. ");
+        Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
+        EsrServiceInterface service = retrofit.create(EsrServiceInterface.class);
+        Call<SdnController> cmdCall = service.getSdnoController(controllerId);
+        Response<SdnController> response;
+        response = cmdCall.execute();
 
-    SdnController sdnController = ServiceUtil.parseResponse(response, LOGGER, printText);
+        SdnController sdnController = ServiceUtil.parseResponse(response, LOGGER, printText);
 
-    LOGGER.debug(printText + " end. ");
-    return sdnController;
-  }
+        LOGGER.debug(printText + " end. ");
+        return sdnController;
+    }
 }

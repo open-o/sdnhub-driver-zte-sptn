@@ -17,18 +17,18 @@
 package org.openo.sdno.sptndriver.enums.south.pw;
 
 /**
- *  Enumerator of PW SN support.
+ * Enumerator of PW SN support.
  */
 public enum SSnSupport {
-  NOT_SUPPORT(0),
-  SUPPORT(1);
-  private Integer value;
+    NOT_SUPPORT(0),
+    SUPPORT(1);
+    private Integer value;
 
-  SSnSupport(Integer value) {
-    this.value = value;
-  }
+    SSnSupport(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

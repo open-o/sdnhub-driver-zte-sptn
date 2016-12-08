@@ -23,24 +23,24 @@ import javax.ws.rs.core.Response;
  * When can not find controller, throw this exception.
  */
 public class ControllerNotFoundException extends ServerException {
-  private String errorInfo;
+    private String errorInfo;
 
-  public ControllerNotFoundException(Exception ex, String controllerId) {
-    errorInfo = "Can not find controller: " + controllerId
-        + "due to: " + ex.toString();
-  }
+    public ControllerNotFoundException(Exception ex, String controllerId) {
+        errorInfo = "Can not find controller: " + controllerId
+            + "due to: " + ex.toString();
+    }
 
-  @Override
-  public String toString() {
-    return errorInfo;
-  }
+    @Override
+    public String toString() {
+        return errorInfo;
+    }
 
-  @Override
-  public Response getResponse() {
-    return Response
-        .status(Response.Status.BAD_REQUEST)
-        .type(MediaType.TEXT_PLAIN_TYPE)
-        .entity(toString())
-        .build();
-  }
+    @Override
+    public Response getResponse() {
+        return Response
+            .status(Response.Status.BAD_REQUEST)
+            .type(MediaType.TEXT_PLAIN_TYPE)
+            .entity(toString())
+            .build();
+    }
 }

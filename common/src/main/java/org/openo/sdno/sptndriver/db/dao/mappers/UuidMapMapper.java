@@ -16,23 +16,23 @@
 
 package org.openo.sdno.sptndriver.db.dao.mappers;
 
+import org.openo.sdno.sptndriver.db.model.UuidMap;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import org.openo.sdno.sptndriver.db.model.UuidMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *  The mapper class of UUID map.
+ * The mapper class of UUID map.
  */
 public class UuidMapMapper implements ResultSetMapper<UuidMap> {
-  @Override
-  public UuidMap map(int index, ResultSet resultSet, StatementContext statementContext)
-      throws SQLException {
-    return new UuidMap(resultSet.getString("UUID"),
-        resultSet.getString("EXTERNALID"),
-        UuidMap.UuidTypeEnum.valueOf(resultSet.getString("OBJTYPE")),
-        resultSet.getString("CONTROLLERID"));
-  }
+    @Override
+    public UuidMap map(int index, ResultSet resultSet, StatementContext statementContext)
+        throws SQLException {
+        return new UuidMap(resultSet.getString("UUID"),
+            resultSet.getString("EXTERNALID"),
+            UuidMap.UuidTypeEnum.valueOf(resultSet.getString("OBJTYPE")),
+            resultSet.getString("CONTROLLERID"));
+    }
 }

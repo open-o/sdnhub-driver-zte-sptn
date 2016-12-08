@@ -37,42 +37,42 @@ import retrofit2.Retrofit;
  */
 public class TunnelService {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(TunnelService.class);
-  private String baseUrl;
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(TunnelService.class);
+    private String baseUrl;
 
-  /**
-   * The Constructor.
-   *
-   * @param baseUrl URL of SPTN controller.
-   */
-  public TunnelService(String baseUrl) {
-    this.baseUrl = baseUrl;
-  }
-
-  /**
-   * Calculate route of tunnels.
-   *
-   * @param routeCalcReqsInput route request.
-   * @return route result.
-   */
-  public SRouteCalResultsOutput calcRoutes(SRouteCalReqsInput routeCalcReqsInput)
-      throws ServerException {
-    String printText = "Calculate route of tunnel ";
-    LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
-    TunnelServiceInterface service = retrofit.create(TunnelServiceInterface.class);
-    Gson gson = new Gson();
-    LOGGER.debug("Calculate tunnel send to controller is: " + gson.toJson(routeCalcReqsInput));
-    Call<SRouteCalResultsOutput> repos = service.calcRoutes(routeCalcReqsInput);
-    Response<SRouteCalResultsOutput> response;
-    try {
-      response = repos.execute();
-    } catch (IOException ex) {
-      throw new ServerIoException(ex);
+    /**
+     * The Constructor.
+     *
+     * @param baseUrl URL of SPTN controller.
+     */
+    public TunnelService(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
-    SRouteCalResultsOutput output = ServiceUtil.parseResponse(response, LOGGER, printText);
-    LOGGER.debug(printText + " end. ");
-    return output;
-  }
+
+    /**
+     * Calculate route of tunnels.
+     *
+     * @param routeCalcReqsInput route request.
+     * @return route result.
+     */
+    public SRouteCalResultsOutput calcRoutes(SRouteCalReqsInput routeCalcReqsInput)
+        throws ServerException {
+        String printText = "Calculate route of tunnel ";
+        LOGGER.debug(printText + " begin. ");
+        Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
+        TunnelServiceInterface service = retrofit.create(TunnelServiceInterface.class);
+        Gson gson = new Gson();
+        LOGGER.debug("Calculate tunnel send to controller is: " + gson.toJson(routeCalcReqsInput));
+        Call<SRouteCalResultsOutput> repos = service.calcRoutes(routeCalcReqsInput);
+        Response<SRouteCalResultsOutput> response;
+        try {
+            response = repos.execute();
+        } catch (IOException ex) {
+            throw new ServerIoException(ex);
+        }
+        SRouteCalResultsOutput output = ServiceUtil.parseResponse(response, LOGGER, printText);
+        LOGGER.debug(printText + " end. ");
+        return output;
+    }
 }

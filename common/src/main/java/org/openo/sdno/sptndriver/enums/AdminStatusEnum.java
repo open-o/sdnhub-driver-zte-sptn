@@ -26,67 +26,67 @@ import java.util.List;
  * Enumerator of administrative status.
  */
 public enum AdminStatusEnum {
-  UP("adminUp", SAdminStatus.UP),
-  DOWN("adminDown", SAdminStatus.DOWN);
-  private String north;
-  private SAdminStatus south;
+    UP("adminUp", SAdminStatus.UP),
+    DOWN("adminDown", SAdminStatus.DOWN);
+    private String north;
+    private SAdminStatus south;
 
-  AdminStatusEnum(String north, SAdminStatus south) {
-    this.north = north;
-    this.south = south;
-  }
-
-  /**
-   * Convert SBI administrative status to NBI administrative status.
-   *
-   * @param southValue SBI administrative status
-   * @return NBI administrative status
-   */
-  public static String convertSbiToNbi(SAdminStatus southValue)
-      throws ParamErrorException {
-    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
-      if (adminStatusEnum.getSouthValue().equals(southValue)) {
-        return adminStatusEnum.north;
-      }
+    AdminStatusEnum(String north, SAdminStatus south) {
+        this.north = north;
+        this.south = south;
     }
-    List<String> validValues = new ArrayList<>();
-    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
-      validValues.add(adminStatusEnum.getSouthValue().toString());
+
+    /**
+     * Convert SBI administrative status to NBI administrative status.
+     *
+     * @param southValue SBI administrative status
+     * @return NBI administrative status
+     */
+    public static String convertSbiToNbi(SAdminStatus southValue)
+        throws ParamErrorException {
+        for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+            if (adminStatusEnum.getSouthValue().equals(southValue)) {
+                return adminStatusEnum.north;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+            validValues.add(adminStatusEnum.getSouthValue().toString());
+        }
+        throw new ParamErrorException(validValues.toArray(), southValue.toString());
     }
-    throw new ParamErrorException(validValues.toArray(), southValue.toString());
-  }
 
-  /**
-   * Convert NBI administrative status to SBI administrative status.
-   *
-   * @param north NBI administrative status
-   * @return SBI administrative status
-   */
-  public static SAdminStatus convertNbiToSbi(String north) throws ParamErrorException {
+    /**
+     * Convert NBI administrative status to SBI administrative status.
+     *
+     * @param north NBI administrative status
+     * @return SBI administrative status
+     */
+    public static SAdminStatus convertNbiToSbi(String north) throws ParamErrorException {
 
-    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
-      if (adminStatusEnum.getNorthValue().equals(north)) {
-        return adminStatusEnum.south;
-      }
+        for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+            if (adminStatusEnum.getNorthValue().equals(north)) {
+                return adminStatusEnum.south;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
+            validValues.add(adminStatusEnum.getNorthValue());
+        }
+        throw new ParamErrorException(validValues.toArray(), north);
     }
-    List<String> validValues = new ArrayList<>();
-    for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
-      validValues.add(adminStatusEnum.getNorthValue());
+
+    /**
+     * Get NBI administrative status.
+     */
+    public String getNorthValue() {
+        return north;
     }
-    throw new ParamErrorException(validValues.toArray(), north);
-  }
 
-  /**
-   * Get NBI administrative status.
-   */
-  public String getNorthValue() {
-    return north;
-  }
-
-  /**
-   * Get SBI administrative status.
-   */
-  public SAdminStatus getSouthValue() {
-    return south;
-  }
+    /**
+     * Get SBI administrative status.
+     */
+    public SAdminStatus getSouthValue() {
+        return south;
+    }
 }

@@ -26,63 +26,63 @@ import java.util.List;
  * Enumerator of access type.
  */
 public enum AccessTypeEnum {
-  PORT("port", SServiceEndPoint.AccessTypeEnum.PORT),
-  DOT1Q("dot1q", SServiceEndPoint.AccessTypeEnum.DOT1Q),
-  QINQ("qinq", SServiceEndPoint.AccessTypeEnum.QINQ);
-  private String north;
-  private SServiceEndPoint.AccessTypeEnum south;
+    PORT("port", SServiceEndPoint.AccessTypeEnum.PORT),
+    DOT1Q("dot1q", SServiceEndPoint.AccessTypeEnum.DOT1Q),
+    QINQ("qinq", SServiceEndPoint.AccessTypeEnum.QINQ);
+    private String north;
+    private SServiceEndPoint.AccessTypeEnum south;
 
-  AccessTypeEnum(String north, SServiceEndPoint.AccessTypeEnum south) {
-    this.north = north;
-    this.south = south;
-  }
-
-  /**
-   * Convert SBI access type to NBI access type.
-   *
-   * @param south SBI access type.
-   * @return NBI access type.
-   */
-  public static String convertSouthToNorth(SServiceEndPoint.AccessTypeEnum south) {
-    for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
-      if (accessTypeEnum.getSouth().equals(south)) {
-        return accessTypeEnum.north;
-      }
+    AccessTypeEnum(String north, SServiceEndPoint.AccessTypeEnum south) {
+        this.north = north;
+        this.south = south;
     }
-    return null;
-  }
 
-  /**
-   * Convert NBI access type to SBI access type.
-   *
-   * @param north NBI access type.
-   * @return SBI access type.
-   */
-  public static SServiceEndPoint.AccessTypeEnum convertNbiToSbi(String north)
-          throws ParamErrorException {
-    for (AccessTypeEnum e : AccessTypeEnum.values()) {
-      if (e.getNorth().equals(north)) {
-        return e.south;
-      }
+    /**
+     * Convert SBI access type to NBI access type.
+     *
+     * @param south SBI access type.
+     * @return NBI access type.
+     */
+    public static String convertSouthToNorth(SServiceEndPoint.AccessTypeEnum south) {
+        for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
+            if (accessTypeEnum.getSouth().equals(south)) {
+                return accessTypeEnum.north;
+            }
+        }
+        return null;
     }
-    List<String> validValues = new ArrayList<>();
-    for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
-      validValues.add(accessTypeEnum.getNorth().toString());
+
+    /**
+     * Convert NBI access type to SBI access type.
+     *
+     * @param north NBI access type.
+     * @return SBI access type.
+     */
+    public static SServiceEndPoint.AccessTypeEnum convertNbiToSbi(String north)
+        throws ParamErrorException {
+        for (AccessTypeEnum e : AccessTypeEnum.values()) {
+            if (e.getNorth().equals(north)) {
+                return e.south;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
+            validValues.add(accessTypeEnum.getNorth());
+        }
+        throw new ParamErrorException(validValues.toArray(), north);
     }
-    throw new ParamErrorException(validValues.toArray(), north);
-  }
 
-  /**
-   * Get NBI access type.
-   */
-  public String getNorth() {
-    return north;
-  }
+    /**
+     * Get NBI access type.
+     */
+    public String getNorth() {
+        return north;
+    }
 
-  /**
-   * Get SBI access type.
-   */
-  public SServiceEndPoint.AccessTypeEnum getSouth() {
-    return south;
-  }
+    /**
+     * Get SBI access type.
+     */
+    public SServiceEndPoint.AccessTypeEnum getSouth() {
+        return south;
+    }
 }

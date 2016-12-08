@@ -33,20 +33,18 @@ import java.lang.reflect.Type;
 
 /**
  * The class to test SRouteCalReqsInitiator.
- *
  */
-public class SRouteCalReqsInitiatorTest
-{
+public class SRouteCalReqsInitiatorTest {
     @Test
-    public void initElineLspCalRoute() throws Exception
-    {
+    public void initElineLspCalRoute() throws Exception {
 
         File crtCase = new File("src/test/resource/json/cal_tunnel_route_input.json");
         JsonParser crtParser = new JsonParser();
         JsonElement crtBody = crtParser.parse(new FileReader(crtCase));
 
         Gson l2Gson = new Gson();
-        Type l2vpnType = new TypeToken<NL2Vpn>(){}.getType();
+        Type l2vpnType = new TypeToken<NL2Vpn>() {
+        }.getType();
         NL2Vpn l2vpn = l2Gson.fromJson(crtBody, l2vpnType);
 
         SRouteCalReqsInput routeCalInput = SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
@@ -56,12 +54,12 @@ public class SRouteCalReqsInitiatorTest
         JsonElement routeBody = routeParser.parse(new FileReader(routeCase));
 
         Gson routeGson = new Gson();
-        Type SRouteCalReqsInput = new TypeToken<SRouteCalReqsInput>(){}.getType();
+        Type SRouteCalReqsInput = new TypeToken<SRouteCalReqsInput>() {
+        }.getType();
         SRouteCalReqsInput calculateExpectation = routeGson.fromJson(routeBody, SRouteCalReqsInput);
 
         Assert.assertEquals(routeCalInput, calculateExpectation);
     }
-
 
 
 }

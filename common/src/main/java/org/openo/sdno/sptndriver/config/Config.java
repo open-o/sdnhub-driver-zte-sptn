@@ -23,10 +23,10 @@ import io.dropwizard.db.DataSourceFactory;
  */
 public interface Config {
 
-  public int getTimeout();
+    int getTimeout();
 
-  public String getMsbUrl();
+    String getMsbUrl();
 
-  public DataSourceFactory getDataSourceFactory();
+    DataSourceFactory getDataSourceFactory();
 
 }

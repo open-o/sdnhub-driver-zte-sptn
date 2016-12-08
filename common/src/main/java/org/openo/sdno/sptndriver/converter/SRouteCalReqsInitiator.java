@@ -38,141 +38,141 @@ import org.slf4j.LoggerFactory;
  */
 public class SRouteCalReqsInitiator {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SRouteCalReqsInitiator.class);
-  private static final String WORK_SEQUENCE_NO = "1";
-  private static final String PROTECTION_SEQUENCE_NO = "2";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SRouteCalReqsInitiator.class);
+    private static final String WORK_SEQUENCE_NO = "1";
+    private static final String PROTECTION_SEQUENCE_NO = "2";
 
-  /**
-   * Initialize LSP route calculate request of L2.
-   *
-   * @param l2vpn L2vpn create parameters.
-   * @return LSP route calculate request.
-   */
-  public static SRouteCalReqsInput initElineLspCalRoute(NL2Vpn l2vpn)
-      throws ParamErrorException {
-    if (l2vpn == null) {
-      throw new ParamErrorException("Input l2vpn is null.");
+    /**
+     * Initialize LSP route calculate request of L2.
+     *
+     * @param l2vpn L2vpn create parameters.
+     * @return LSP route calculate request.
+     */
+    public static SRouteCalReqsInput initElineLspCalRoute(NL2Vpn l2vpn)
+        throws ParamErrorException {
+        if (l2vpn == null) {
+            throw new ParamErrorException("Input l2vpn is null.");
+        }
+
+        NMplsTePolicy mplsTePolicy = null;
+        String ingressNe = null;
+        String egressNe = null;
+        // Try to get mplsTePolicy from particular constraints.
+        NTunnelService tunnelService = l2vpn.getTunnelService();
+        if (tunnelService != null
+            && tunnelService.getParticularConstraints() != null
+            && tunnelService.getParticularConstraints().getParticularConstraint() != null
+            && !tunnelService.getParticularConstraints().getParticularConstraint().isEmpty()) {
+            NParticularConstraint
+                particularConstraint =
+                tunnelService.getParticularConstraints().getParticularConstraint().get(0);
+            mplsTePolicy = particularConstraint.getMplsTe();
+            ingressNe = particularConstraint.getIngressNe();
+            egressNe = particularConstraint.getEgressNe();
+        }
+        // If get mplsTePolicy from particular constraints failed, try to get it from tunnel service.
+        if (mplsTePolicy == null
+            && tunnelService != null
+            && tunnelService.getMplsTe() != null) {
+            mplsTePolicy = tunnelService.getMplsTe();
+        }
+        // if initialization of ingress NE or egress NE failed, try to get the information from ACs.
+        if (ingressNe == null || egressNe == null) {
+            if (l2vpn.getAcs() != null
+                && l2vpn.getAcs().getAc() != null
+                && l2vpn.getAcs().getAc().size() == 2) {
+                ingressNe = l2vpn.getAcs().getAc().get(0).getNeId();
+                egressNe = l2vpn.getAcs().getAc().get(1).getNeId();
+            }
+        }
+        // if initialization of ingress NE or egress NE failed, try to get the information from PWs.
+        if (ingressNe == null || egressNe == null) {
+            if (l2vpn.getPws() != null
+                && l2vpn.getPws().getPws() != null
+                && l2vpn.getPws().getPws().size() == 2) {
+                ingressNe = l2vpn.getPws().getPws().get(0).getNeId();
+                egressNe = l2vpn.getPws().getPws().get(1).getNeId();
+            }
+        }
+
+        return initElineLspCalRoute(mplsTePolicy, ingressNe, egressNe);
     }
 
-    NMplsTePolicy mplsTePolicy = null;
-    String ingressNe = null;
-    String egressNe = null;
-    // Try to get mplsTePolicy from particular constraints.
-    NTunnelService tunnelService = l2vpn.getTunnelService();
-    if (tunnelService != null
-        && tunnelService.getParticularConstraints() != null
-        && tunnelService.getParticularConstraints().getParticularConstraint() != null
-        && !tunnelService.getParticularConstraints().getParticularConstraint().isEmpty()) {
-      NParticularConstraint
-          particularConstraint =
-          tunnelService.getParticularConstraints().getParticularConstraint().get(0);
-      mplsTePolicy = particularConstraint.getMplsTe();
-      ingressNe = particularConstraint.getIngressNe();
-      egressNe = particularConstraint.getEgressNe();
-    }
-    // If get mplsTePolicy from particular constraints failed, try to get it from tunnel service.
-    if (mplsTePolicy == null
-        && tunnelService != null
-        && tunnelService.getMplsTe() != null) {
-      mplsTePolicy = tunnelService.getMplsTe();
-    }
-    // if initialization of ingress NE or egress NE failed, try to get the information from ACs.
-    if (ingressNe == null || egressNe == null) {
-      if (l2vpn.getAcs() != null
-          && l2vpn.getAcs().getAc() != null
-          && l2vpn.getAcs().getAc().size() == 2) {
-        ingressNe = l2vpn.getAcs().getAc().get(0).getNeId();
-        egressNe = l2vpn.getAcs().getAc().get(1).getNeId();
-      }
-    }
-    // if initialization of ingress NE or egress NE failed, try to get the information from PWs.
-    if (ingressNe == null || egressNe == null) {
-      if (l2vpn.getPws() != null
-          && l2vpn.getPws().getPws() != null
-          && l2vpn.getPws().getPws().size() == 2) {
-        ingressNe = l2vpn.getPws().getPws().get(0).getNeId();
-        egressNe = l2vpn.getPws().getPws().get(1).getNeId();
-      }
+    private static SRouteCalReqsInput initElineLspCalRoute(NMplsTePolicy mplsTePolicy,
+                                                           String ingressNe,
+                                                           String egressNe)
+        throws ParamErrorException {
+        if (ingressNe == null || egressNe == null) {
+            throw new ParamErrorException("Ingress ne or egress ne is null.");
+        }
+
+        SRouteCalReqs routeCalReqs = new SRouteCalReqs();
+        boolean hasBackupLsp = hasProtection(mplsTePolicy);
+        SRouteCalReqContainer routeCalReqContainer
+            = initElineLspCalRoute(mplsTePolicy, ingressNe, egressNe, hasBackupLsp);
+        routeCalReqs.setRouteCalReqs(new SRouteCalReq());
+        routeCalReqs.getRouteCalReqs().getRouteCalReq().add(routeCalReqContainer);
+
+        SRouteCalReqsInput routeCalReqsInput = new SRouteCalReqsInput();
+        routeCalReqsInput.setInput(routeCalReqs);
+        return routeCalReqsInput;
     }
 
-    return initElineLspCalRoute(mplsTePolicy, ingressNe, egressNe);
-  }
+    private static SRouteCalReqContainer initElineLspCalRoute(NMplsTePolicy mplsTePolicy,
+                                                              String ingressNe,
+                                                              String egressNe,
+                                                              boolean hasProtect) {
+        SRouteCalReqElement routeCalReq = new SRouteCalReqElement();
+        routeCalReq.setSequenceNo(WORK_SEQUENCE_NO);
 
-  private static SRouteCalReqsInput initElineLspCalRoute(NMplsTePolicy mplsTePolicy,
-                                                         String ingressNe,
-                                                         String egressNe)
-      throws ParamErrorException {
-    if (ingressNe == null || egressNe == null) {
-      throw new ParamErrorException("Ingress ne or egress ne is null.");
+        if (!hasProtect) {
+            routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.MASTER);
+        } else {
+            routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.LOCAL_PROTECTION);
+        }
+
+        routeCalReq.setCalculateMode(SRouteCalReqElement.CalculateModeEnum.SIMPLE);
+        if (isBestEffort(mplsTePolicy)) {
+            routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.BESTEFFORT_SEPARATE);
+        } else {
+            routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.STRICT_SEPARATE);
+        }
+
+        routeCalReq.setCalculateInterconnectionMode(SRouteCalReqElement
+            .CalculateInterconnectionModeEnum.NNI_NNI);
+        routeCalReq.setLayerRate(SRouteCalReqElement.LayerRateEnum.LSP);
+        SNeId leftNe = new SNeId();
+        leftNe.setNeId(ingressNe);
+        SNeId rightNe = new SNeId();
+        rightNe.setNeId(egressNe);
+        routeCalReq.setLeftNeIds(new SRouteCalReqElementLeftneids());
+        routeCalReq.getLeftNeIds().getLeftNeId().add(leftNe);
+        routeCalReq.setRightNeIds(new SRouteCalReqElementRightneids());
+        routeCalReq.getRightNeIds().getRightNeId().add(rightNe);
+        SCalculateConstraint calculateConstraint = new SCalculateConstraint();
+        if (mplsTePolicy.getBandwidth() == null) {
+            calculateConstraint.setBandwidth("0");
+        } else {
+            calculateConstraint.setBandwidth(mplsTePolicy.getBandwidth().toString());
+        }
+
+        calculateConstraint.setCalPolicy(SCalculateConstraint.CalPolicyEnum.BANDWIDTH_BALANCING);
+        routeCalReq.setWorkCalculateConstraint(calculateConstraint);
+        if (hasProtect) {
+            routeCalReq.setProtectCalculateConstraint(calculateConstraint);
+        }
+        SRouteCalReqContainer routeCalReqContainer = new SRouteCalReqContainer();
+        routeCalReqContainer.setRouteCalReqContainer(routeCalReq);
+        return routeCalReqContainer;
     }
 
-    SRouteCalReqs routeCalReqs = new SRouteCalReqs();
-    boolean hasBackupLsp = hasProtection(mplsTePolicy);
-    SRouteCalReqContainer routeCalReqContainer
-        = initElineLspCalRoute(mplsTePolicy, ingressNe, egressNe, hasBackupLsp);
-    routeCalReqs.setRouteCalReqs(new SRouteCalReq());
-    routeCalReqs.getRouteCalReqs().getRouteCalReq().add(routeCalReqContainer);
-
-    SRouteCalReqsInput routeCalReqsInput = new SRouteCalReqsInput();
-    routeCalReqsInput.setInput(routeCalReqs);
-    return routeCalReqsInput;
-  }
-
-  private static SRouteCalReqContainer initElineLspCalRoute(NMplsTePolicy mplsTePolicy,
-                                                            String ingressNe,
-                                                            String egressNe,
-                                                            boolean hasProtect) {
-    SRouteCalReqElement routeCalReq = new SRouteCalReqElement();
-    routeCalReq.setSequenceNo(WORK_SEQUENCE_NO);
-
-    if (!hasProtect) {
-      routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.MASTER);
-    } else {
-      routeCalReq.setCalculatePolicy(SRouteCalReqElement.CalculatePolicyEnum.LOCAL_PROTECTION);
+    private static boolean hasProtection(NMplsTePolicy mplsTePolicy) {
+        return mplsTePolicy != null && mplsTePolicy.getPathProtectPolicy() != null;
     }
 
-    routeCalReq.setCalculateMode(SRouteCalReqElement.CalculateModeEnum.SIMPLE);
-    if (isBestEffort(mplsTePolicy)) {
-      routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.BESTEFFORT_SEPARATE);
-    } else {
-      routeCalReq.setCalculateType(SRouteCalReqElement.CalculateTypeEnum.STRICT_SEPARATE);
+    private static boolean isBestEffort(NMplsTePolicy mplsTePolicy) {
+        return mplsTePolicy != null && mplsTePolicy.getBesteffort() != null;
     }
-
-    routeCalReq.setCalculateInterconnectionMode(SRouteCalReqElement
-        .CalculateInterconnectionModeEnum.NNI_NNI);
-    routeCalReq.setLayerRate(SRouteCalReqElement.LayerRateEnum.LSP);
-    SNeId leftNe = new SNeId();
-    leftNe.setNeId(ingressNe);
-    SNeId rightNe = new SNeId();
-    rightNe.setNeId(egressNe);
-    routeCalReq.setLeftNeIds(new SRouteCalReqElementLeftneids());
-    routeCalReq.getLeftNeIds().getLeftNeId().add(leftNe);
-    routeCalReq.setRightNeIds(new SRouteCalReqElementRightneids());
-    routeCalReq.getRightNeIds().getRightNeId().add(rightNe);
-    SCalculateConstraint calculateConstraint = new SCalculateConstraint();
-    if (mplsTePolicy.getBandwidth() == null) {
-      calculateConstraint.setBandwidth("0");
-    } else {
-      calculateConstraint.setBandwidth(mplsTePolicy.getBandwidth().toString());
-    }
-
-    calculateConstraint.setCalPolicy(SCalculateConstraint.CalPolicyEnum.BANDWIDTH_BALANCING);
-    routeCalReq.setWorkCalculateConstraint(calculateConstraint);
-    if (hasProtect) {
-      routeCalReq.setProtectCalculateConstraint(calculateConstraint);
-    }
-    SRouteCalReqContainer routeCalReqContainer = new SRouteCalReqContainer();
-    routeCalReqContainer.setRouteCalReqContainer(routeCalReq);
-    return routeCalReqContainer;
-  }
-
-  private static boolean hasProtection(NMplsTePolicy mplsTePolicy) {
-    return mplsTePolicy != null && mplsTePolicy.getPathProtectPolicy() != null;
-  }
-
-  private static boolean isBestEffort(NMplsTePolicy mplsTePolicy) {
-    return mplsTePolicy != null && mplsTePolicy.getBesteffort() != null;
-  }
 
 
 }

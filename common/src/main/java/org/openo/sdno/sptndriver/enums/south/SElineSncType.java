@@ -17,19 +17,19 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enumerator of E-Line SNC type.
+ * Enumerator of E-Line SNC type.
  */
 public enum SElineSncType {
-  SIMPLE(1);
-  private Integer value;
+    SIMPLE(1);
+    private Integer value;
 
-  SElineSncType(Integer value) {
-    this.value = value;
-  }
+    SElineSncType(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }
 
 

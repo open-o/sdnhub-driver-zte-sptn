@@ -17,18 +17,18 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- *  Enumerator of QoS CAC mode.
+ * Enumerator of QoS CAC mode.
  */
 public enum SCacMode {
-  CLOSE(0),
-  OPEN(1);
-  private Integer value;
+    CLOSE(0),
+    OPEN(1);
+    private Integer value;
 
-  SCacMode(Integer value) {
-    this.value = value;
-  }
+    SCacMode(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

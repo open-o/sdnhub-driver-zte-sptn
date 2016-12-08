@@ -27,27 +27,27 @@ import java.util.List;
  */
 public class TrafficClassConverter {
 
-  /**
-   * Convert string to SBI traffic class enumerator.
-   *
-   * @param trafficClass String traffic class.
-   * @return Enumerator traffic class, return null if input is illegal.
-   */
-  public static STrafficClass getEnum(String trafficClass)
-          throws ParamErrorException {
-    if (trafficClass == null) {
-      return null;
+    /**
+     * Convert string to SBI traffic class enumerator.
+     *
+     * @param trafficClass String traffic class.
+     * @return Enumerator traffic class, return null if input is illegal.
+     */
+    public static STrafficClass getEnum(String trafficClass)
+        throws ParamErrorException {
+        if (trafficClass == null) {
+            return null;
+        }
+        for (STrafficClass enumTrafficClass : STrafficClass.values()) {
+            if (enumTrafficClass.toString().equals(trafficClass)) {
+                return enumTrafficClass;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (STrafficClass accessActionEnum : STrafficClass.values()) {
+            validValues.add(accessActionEnum.toString());
+        }
+        throw new ParamErrorException(validValues.toArray(), trafficClass);
     }
-    for (STrafficClass enumTrafficClass : STrafficClass.values()) {
-      if (enumTrafficClass.toString().equals(trafficClass)) {
-        return enumTrafficClass;
-      }
-    }
-    List<String> validValues = new ArrayList<>();
-    for (STrafficClass accessActionEnum : STrafficClass.values()) {
-      validValues.add(accessActionEnum.toString());
-    }
-    throw new ParamErrorException(validValues.toArray(), trafficClass);
-  }
 
 }

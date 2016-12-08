@@ -25,34 +25,34 @@ import javax.ws.rs.core.MediaType;
 import retrofit2.Response;
 
 /**
- *  The exception happened when the controller returns HTTP error.
+ * The exception happened when the controller returns HTTP error.
  */
 public class HttpErrorException extends ServerException {
 
-  private Response response;
+    private Response response;
 
-  public HttpErrorException(Response response) {
-    this.response = response;
-  }
-
-  @Override
-  public String toString() {
-    String errorStr = "Controller returns unsuccessful status: ";
-    try {
-      errorStr += response.errorBody().string();
-    } catch (IOException ex) {
-      errorStr += ExceptionUtils.getStackTrace(ex);
+    public HttpErrorException(Response response) {
+        this.response = response;
     }
-    return errorStr;
-  }
 
-  @Override
-  public javax.ws.rs.core.Response getResponse() {
-    return javax.ws.rs.core.Response
-        .status(response.code())
-        .entity(toString())
-        .type(MediaType.TEXT_PLAIN_TYPE)
-        .build();
+    @Override
+    public String toString() {
+        String errorStr = "Controller returns unsuccessful status: ";
+        try {
+            errorStr += response.errorBody().string();
+        } catch (IOException ex) {
+            errorStr += ExceptionUtils.getStackTrace(ex);
+        }
+        return errorStr;
+    }
 
-  }
+    @Override
+    public javax.ws.rs.core.Response getResponse() {
+        return javax.ws.rs.core.Response
+            .status(response.code())
+            .entity(toString())
+            .type(MediaType.TEXT_PLAIN_TYPE)
+            .build();
+
+    }
 }

@@ -20,13 +20,14 @@ package org.openo.sdno.sptndriver.utils;
  * The Math utility class.
  */
 public class MathUtil {
-  /**
-   *  Calculate the smallest value that is equal to or bigger than the result of divide.
-   * @param dividend The dividend.
-   * @param divider The divider.
-   * @return the smallest value that is equal to or bigger than the result of divide.
-   */
-  public static long ceil(float dividend, float divider) {
-    return (long)Math.ceil(dividend / divider);
-  }
+    /**
+     * Calculate the smallest value that is equal to or bigger than the result of divide.
+     *
+     * @param dividend The dividend.
+     * @param divider  The divider.
+     * @return the smallest value that is equal to or bigger than the result of divide.
+     */
+    public static long ceil(float dividend, float divider) {
+        return (long) Math.ceil(dividend / divider);
+    }
 }

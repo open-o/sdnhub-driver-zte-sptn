@@ -25,32 +25,32 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 
 /**
- *  The DAO class of UUID Map.
+ * The DAO class of UUID Map.
  */
 public interface UuidMapDao {
 
-  @Mapper(UuidMapMapper.class)
-  @SqlQuery("select * from IDMAP where "
-      + "UUID = :uuid "
-      + "and OBJTYPE = :type "
-      + "and CONTROLLERID = :controllerId")
-  UuidMap get(@Bind("uuid") String uuid,
-              @Bind("type") String type,
-              @Bind("controllerId") String controllerId);
+    @Mapper(UuidMapMapper.class)
+    @SqlQuery("select * from IDMAP where "
+        + "UUID = :uuid "
+        + "and OBJTYPE = :type "
+        + "and CONTROLLERID = :controllerId")
+    UuidMap get(@Bind("uuid") String uuid,
+                @Bind("type") String type,
+                @Bind("controllerId") String controllerId);
 
-  @GetGeneratedKeys
-  @SqlUpdate("insert into IDMAP (ID,UUID,EXTERNALID,OBJTYPE,CONTROLLERID)"
-      + " values (NULL, :uuid, :externalId, :type, :controllerId)")
-  int insert(@Bind("uuid") String uuid,
-                    @Bind("externalId") String externalId,
-                    @Bind("type") String type,
-                    @Bind("controllerId") String controllerId);
+    @GetGeneratedKeys
+    @SqlUpdate("insert into IDMAP (ID,UUID,EXTERNALID,OBJTYPE,CONTROLLERID)"
+        + " values (NULL, :uuid, :externalId, :type, :controllerId)")
+    int insert(@Bind("uuid") String uuid,
+               @Bind("externalId") String externalId,
+               @Bind("type") String type,
+               @Bind("controllerId") String controllerId);
 
-  @SqlUpdate("delete from IDMAP where "
-      + "UUID = :uuid "
-      + "and OBJTYPE = :type "
-      + "and CONTROLLERID = :controllerId")
-  void delete(@Bind("uuid") String uuid,
-              @Bind("type") String type,
-              @Bind("controllerId") String controllerId);
+    @SqlUpdate("delete from IDMAP where "
+        + "UUID = :uuid "
+        + "and OBJTYPE = :type "
+        + "and CONTROLLERID = :controllerId")
+    void delete(@Bind("uuid") String uuid,
+                @Bind("type") String type,
+                @Bind("controllerId") String controllerId);
 }

@@ -32,38 +32,40 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class ElineResource {
 
-  /**
-   *  Create an eline and related tunnels.
-   * @param eline eline information.
-   * @return 201 if success or 204 if failed.
-   */
-  @POST
-  @Path("/sptn-service-eline:create-snc-eline-tunnels")
-  public Response createElineAndTunnels(Object eline) {
-    Object output;
-    try {
-      output = JsonUtil.readJsonFromFile("./conf/json/create_eline_and_tunnels.json");
-    } catch (Exception ex) {
-      return Response
-          .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity(ExceptionUtils.getStackTrace(ex))
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .build();
+    /**
+     * Create an eline and related tunnels.
+     *
+     * @param eline eline information.
+     * @return 201 if success or 204 if failed.
+     */
+    @POST
+    @Path("/sptn-service-eline:create-snc-eline-tunnels")
+    public Response createElineAndTunnels(Object eline) {
+        Object output;
+        try {
+            output = JsonUtil.readJsonFromFile("./conf/json/create_eline_and_tunnels.json");
+        } catch (Exception ex) {
+            return Response
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(ExceptionUtils.getStackTrace(ex))
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .build();
+        }
+        return Response
+            .status(Response.Status.CREATED)
+            .entity(output)
+            .build();
     }
-    return Response
-        .status(Response.Status.CREATED)
-        .entity(output)
-        .build();
-  }
 
-  /**
-   *  Delete an eline.
-   * @param eline eline info
-   * @return 204
-   */
-  @POST
-  @Path("/sptn-service-eline:delete-snc-eline")
-  public Response deleteEline(Object eline) {
-    return Response.noContent().build();
-  }
+    /**
+     * Delete an eline.
+     *
+     * @param eline eline info
+     * @return 204
+     */
+    @POST
+    @Path("/sptn-service-eline:delete-snc-eline")
+    public Response deleteEline(Object eline) {
+        return Response.noContent().build();
+    }
 }

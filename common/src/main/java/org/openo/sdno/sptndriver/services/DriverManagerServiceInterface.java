@@ -28,9 +28,9 @@ import retrofit2.http.Path;
  */
 public interface DriverManagerServiceInterface {
 
-  @POST("/openoapi/drivermgr/v1/drivers")
-  Call<ResponseBody> registerDriver(@Body Object driverInfo);
+    @POST("/openoapi/drivermgr/v1/drivers")
+    Call<ResponseBody> registerDriver(@Body Object driverInfo);
 
-  @DELETE("/openoapi/drivermgr/v1/drivers/{instanceId}")
-  Call<ResponseBody> unregisterDriver(@Path("instanceId") String instanceId);
+    @DELETE("/openoapi/drivermgr/v1/drivers/{instanceId}")
+    Call<ResponseBody> unregisterDriver(@Path("instanceId") String instanceId);
 }

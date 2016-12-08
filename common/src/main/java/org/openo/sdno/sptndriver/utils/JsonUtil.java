@@ -23,13 +23,13 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- *  The Json util class
+ * The Json util class
  */
 public class JsonUtil {
 
-  public static Object readJsonFromFile(String fileName)
-      throws IOException, ParseException {
-    JSONParser parser = new JSONParser();
-    return parser.parse(new FileReader(fileName));
-  }
+    public static Object readJsonFromFile(String fileName)
+        throws IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        return parser.parse(new FileReader(fileName));
+    }
 }

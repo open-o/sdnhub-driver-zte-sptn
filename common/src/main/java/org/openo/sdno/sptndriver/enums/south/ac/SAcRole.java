@@ -17,18 +17,18 @@
 package org.openo.sdno.sptndriver.enums.south.ac;
 
 /**
- *  Enumerator of AC role.
+ * Enumerator of AC role.
  */
 public enum SAcRole {
-  MASTER(0),
-  SLAVE(1);
-  private Integer value;
+    MASTER(0),
+    SLAVE(1);
+    private Integer value;
 
-  SAcRole(Integer value) {
-    this.value = value;
-  }
+    SAcRole(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

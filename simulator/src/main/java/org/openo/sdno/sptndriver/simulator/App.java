@@ -28,43 +28,43 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
- *  The application class of sptn controller simulator.
+ * The application class of sptn controller simulator.
  */
 public class App extends Application<Config> {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(App.class);
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(App.class);
 
-  /**
-   * Main function.
-   *
-   * @param args args input by users
-   */
-  public static void main(String[] args) throws Exception {
-    new App().run(args);
-  }
+    /**
+     * Main function.
+     *
+     * @param args args input by users
+     */
+    public static void main(String[] args) throws Exception {
+        new App().run(args);
+    }
 
-  /**
-   * Initialize before the service started.
-   *
-   * @param bootstrap Bootstrap.
-   */
-  @Override
-  public void initialize(Bootstrap<Config> bootstrap) {
-  }
+    /**
+     * Initialize before the service started.
+     *
+     * @param bootstrap Bootstrap.
+     */
+    @Override
+    public void initialize(Bootstrap<Config> bootstrap) {
+    }
 
-  /**
-   * Run application.
-   *
-   * @param config      configuration settings read from configuration file.
-   * @param environment Environment.
-   */
-  @Override
-  public void run(Config config, Environment environment) {
-    LOGGER.info("Method App#run() called");
+    /**
+     * Run application.
+     *
+     * @param config      configuration settings read from configuration file.
+     * @param environment Environment.
+     */
+    @Override
+    public void run(Config config, Environment environment) {
+        LOGGER.info("Method App#run() called");
 
-    // Add the resource to the environment
-    environment.jersey().register(new L3Resource());
-    environment.jersey().register(new ElineResource());
-    environment.jersey().register(new TunnelResource());
-  }
+        // Add the resource to the environment
+        environment.jersey().register(new L3Resource());
+        environment.jersey().register(new ElineResource());
+        environment.jersey().register(new TunnelResource());
+    }
 }

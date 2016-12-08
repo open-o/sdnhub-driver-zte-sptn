@@ -17,19 +17,19 @@
 package org.openo.sdno.sptndriver.enums.south.pw;
 
 /**
- *  Enumerator of PW role.
+ * Enumerator of PW role.
  */
 public enum SPwRole {
-  MASTER(0),
-  SLAVE(1),
-  DNI_PW(2);
-  private Integer value;
+    MASTER(0),
+    SLAVE(1),
+    DNI_PW(2);
+    private Integer value;
 
-  SPwRole(Integer value) {
-    this.value = value;
-  }
+    SPwRole(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

@@ -17,18 +17,18 @@
 package org.openo.sdno.sptndriver.enums.south;
 
 /**
- *  Enumerator of service direction.
+ * Enumerator of service direction.
  */
 public enum SDirection {
-  UNI_DIRECTION(0),
-  BI_DIRECTION(1);
-  private Integer value;
+    UNI_DIRECTION(0),
+    BI_DIRECTION(1);
+    private Integer value;
 
-  SDirection(Integer value) {
-    this.value = value;
-  }
+    SDirection(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

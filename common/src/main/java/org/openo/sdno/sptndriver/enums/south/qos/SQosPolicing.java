@@ -17,18 +17,18 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- *  Enumerator of QoS policing.
+ * Enumerator of QoS policing.
  */
 public enum SQosPolicing {
-  CLOSE(0),
-  OPEN(1);
-  private Integer value;
+    CLOSE(0),
+    OPEN(1);
+    private Integer value;
 
-  SQosPolicing(Integer value) {
-    this.value = value;
-  }
+    SQosPolicing(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

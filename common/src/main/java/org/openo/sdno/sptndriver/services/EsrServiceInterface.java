@@ -27,12 +27,12 @@ import retrofit2.http.Path;
  */
 public interface EsrServiceInterface {
 
-  /**
-   * Get a SDN-O controller by controller id.
-   *
-   * @param controllerId SDN-O controller id.
-   * @return SDN-O controller information.
-   */
-  @GET("/openoapi/extsys/v1/sdncontrollers/{controllerId}")
-  Call<SdnController> getSdnoController(@Path("controllerId") String controllerId);
+    /**
+     * Get a SDN-O controller by controller id.
+     *
+     * @param controllerId SDN-O controller id.
+     * @return SDN-O controller information.
+     */
+    @GET("/openoapi/extsys/v1/sdncontrollers/{controllerId}")
+    Call<SdnController> getSdnoController(@Path("controllerId") String controllerId);
 }

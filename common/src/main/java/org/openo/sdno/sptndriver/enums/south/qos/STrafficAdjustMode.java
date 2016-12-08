@@ -17,19 +17,19 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- * Enumerator of QoS traffic adjust mode, whether the tunnel bandwidth is changed automatically with the
- * change of client service.
+ * Enumerator of QoS traffic adjust mode, whether the tunnel bandwidth is changed automatically with
+ * the change of client service.
  */
 public enum STrafficAdjustMode {
-  NOT_ADJUST(0),
-  AUTO_ADJUST(1);
-  private Integer value;
+    NOT_ADJUST(0),
+    AUTO_ADJUST(1);
+    private Integer value;
 
-  STrafficAdjustMode(Integer value) {
-    this.value = value;
-  }
+    STrafficAdjustMode(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

@@ -26,18 +26,18 @@ import javax.ws.rs.core.Response;
  */
 public class ServerIoException extends ServerException {
 
-  private java.io.IOException ex;
+    private java.io.IOException ex;
 
-  public ServerIoException(IOException ex) {
-    this.ex = ex;
-  }
+    public ServerIoException(IOException ex) {
+        this.ex = ex;
+    }
 
-  @Override
-  public Response getResponse() {
-    return Response
-        .status(Response.Status.INTERNAL_SERVER_ERROR)
-        .entity(ex.toString())
-        .type(MediaType.TEXT_PLAIN_TYPE)
-        .build();
-  }
+    @Override
+    public Response getResponse() {
+        return Response
+            .status(Response.Status.INTERNAL_SERVER_ERROR)
+            .entity(ex.toString())
+            .type(MediaType.TEXT_PLAIN_TYPE)
+            .build();
+    }
 }

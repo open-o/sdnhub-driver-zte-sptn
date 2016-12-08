@@ -23,58 +23,58 @@ import org.openo.sdno.sptndriver.models.south.SL3vpn;
  * Enumerator of topology mode.
  */
 public enum TopoModeEnum {
-  SPECIFIED("none", SL3vpn.TopoModeEnum.SPECIFIED),
-  ANY_TO_ANY("full-mesh", SL3vpn.TopoModeEnum.ANY_TO_ANY),
-  HUB_SPKOE("hub-spoke",SL3vpn.TopoModeEnum.HUB_SPOKE);
-  private String north;
-  private SL3vpn.TopoModeEnum south;
+    SPECIFIED("none", SL3vpn.TopoModeEnum.SPECIFIED),
+    ANY_TO_ANY("full-mesh", SL3vpn.TopoModeEnum.ANY_TO_ANY),
+    HUB_SPKOE("hub-spoke", SL3vpn.TopoModeEnum.HUB_SPOKE);
+    private String north;
+    private SL3vpn.TopoModeEnum south;
 
-  TopoModeEnum(String north, SL3vpn.TopoModeEnum south) {
-    this.north = north;
-    this.south = south;
-  }
-
-  /**
-   * Convert SBI topology mode to NBI topology mode.
-   *
-   * @param southValue SBI topology mode
-   * @return NBI topology mode
-   */
-  public static String convertSbiToNbi(SL3vpn.TopoModeEnum southValue) {
-    for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
-      if (adminStatusEnum.getSouthValue().equals(southValue)) {
-        return adminStatusEnum.north;
-      }
+    TopoModeEnum(String north, SL3vpn.TopoModeEnum south) {
+        this.north = north;
+        this.south = south;
     }
-    return null;
-  }
 
-  /**
-   * Convert NBI topology mode to SBI topology mode.
-   *
-   * @param north NBI topology mode
-   * @return SBI topology mode
-   */
-  public static SL3vpn.TopoModeEnum convertNbiToSbi(String north) {
-    for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
-      if (adminStatusEnum.getNorthValue().equals(north)) {
-        return adminStatusEnum.south;
-      }
+    /**
+     * Convert SBI topology mode to NBI topology mode.
+     *
+     * @param southValue SBI topology mode
+     * @return NBI topology mode
+     */
+    public static String convertSbiToNbi(SL3vpn.TopoModeEnum southValue) {
+        for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
+            if (adminStatusEnum.getSouthValue().equals(southValue)) {
+                return adminStatusEnum.north;
+            }
+        }
+        return null;
     }
-    return null;
-  }
 
-  /**
-   * Get NBI topology mode.
-   */
-  public String getNorthValue() {
-    return north;
-  }
+    /**
+     * Convert NBI topology mode to SBI topology mode.
+     *
+     * @param north NBI topology mode
+     * @return SBI topology mode
+     */
+    public static SL3vpn.TopoModeEnum convertNbiToSbi(String north) {
+        for (TopoModeEnum adminStatusEnum : TopoModeEnum.values()) {
+            if (adminStatusEnum.getNorthValue().equals(north)) {
+                return adminStatusEnum.south;
+            }
+        }
+        return null;
+    }
 
-  /**
-   * Get SBI topology mode.
-   */
-  public SL3vpn.TopoModeEnum getSouthValue() {
-    return south;
-  }
+    /**
+     * Get NBI topology mode.
+     */
+    public String getNorthValue() {
+        return north;
+    }
+
+    /**
+     * Get SBI topology mode.
+     */
+    public SL3vpn.TopoModeEnum getSouthValue() {
+        return south;
+    }
 }

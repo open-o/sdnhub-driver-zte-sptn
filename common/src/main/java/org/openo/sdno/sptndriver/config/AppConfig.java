@@ -20,15 +20,15 @@ package org.openo.sdno.sptndriver.config;
  * The class to statically store Config instance.
  */
 public class AppConfig {
-  public static final String CONTROLLER_ICT_AUTH
-      = "ICTAuthentication:21232F297A57A5A743894A0E4A801FC3";
-  private static Config config;
+    public static final String CONTROLLER_ICT_AUTH
+        = "ICTAuthentication:21232F297A57A5A743894A0E4A801FC3";
+    private static Config config;
 
-  public static Config getConfig() {
-    return config;
-  }
+    public static Config getConfig() {
+        return config;
+    }
 
-  public static void setConfig(Config configInstance) {
-    config = configInstance;
-  }
+    public static void setConfig(Config configInstance) {
+        config = configInstance;
+    }
 }

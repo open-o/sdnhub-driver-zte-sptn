@@ -44,123 +44,121 @@ import io.swagger.jaxrs.listing.ApiListingResource;
  */
 public class App extends Application<SptnDriverConfig> {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(App.class);
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(App.class);
+    public static String driverInstanceId;
+    private Thread driverManagerRegister;
 
-  private Thread driverManagerRegister;
+    /**
+     * Main function.
+     *
+     * @param args arguments, input by users
+     */
+    public static void main(String[] args) throws Exception {
+        new App().run(args);
+    }
 
-  public static String driverInstanceId;
+    /**
+     * Initialize before the service started.
+     *
+     * @param bootstrap Bootstrap.
+     */
+    @Override
+    public void initialize(Bootstrap<SptnDriverConfig> bootstrap) {
+        bootstrap.addBundle(new AssetsBundle("/api-doc", "/api-doc", "index.html", "api-doc"));
+    }
 
-  /**
-   * Main function.
-   *
-   * @param args arguments, input by users
-   */
-  public static void main(String[] args) throws Exception {
-    new App().run(args);
-  }
+    /**
+     * Run application.
+     *
+     * @param config      configuration settings read from configuration file.
+     * @param environment Environment.
+     */
+    @Override
+    public void run(final SptnDriverConfig config, Environment environment) {
+        LOGGER.info("Method App#run() called");
+        AppConfig.setConfig(config);
+        // Create a DBI factory and build a JDBI instance
+        final DBIFactory factory = new DBIFactory();
+        final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "mysql");
 
-  /**
-   * Initialize before the service started.
-   *
-   * @param bootstrap Bootstrap.
-   */
-  @Override
-  public void initialize(Bootstrap<SptnDriverConfig> bootstrap) {
-    bootstrap.addBundle(new AssetsBundle("/api-doc", "/api-doc", "index.html", "api-doc"));
-  }
+        CustomHealthCheck healthCheck = new CustomHealthCheck();
+        environment.healthChecks().register("healthcheck", healthCheck);
 
-  /**
-   * Run application.
-   *
-   * @param config      configuration settings read from configuration file.
-   * @param environment Environment.
-   */
-  @Override
-  public void run(final SptnDriverConfig config, Environment environment) {
-    LOGGER.info("Method App#run() called");
-    AppConfig.setConfig(config);
-    // Create a DBI factory and build a JDBI instance
-    final DBIFactory factory = new DBIFactory();
-    final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "mysql");
+        // Add the resource to the environment
+        environment.jersey().register(new L2Resource(jdbi));
+        environment.jersey().register(new L3Resource(jdbi));
 
-    CustomHealthCheck healthCheck = new CustomHealthCheck();
-    environment.healthChecks().register("healthcheck", healthCheck);
+        initSwaggerConfig(config, environment);
 
-    // Add the resource to the environment
-    environment.jersey().register(new L2Resource(jdbi));
-    environment.jersey().register(new L3Resource(jdbi));
+        registerToDriverMgr();
 
-    initSwaggerConfig(config, environment);
-
-    registerToDriverMgr();
-
-    addLifeCycleListener(config, environment);
-  }
+        addLifeCycleListener(config, environment);
+    }
 
 
-  private void initSwaggerConfig(SptnDriverConfig configuration, Environment environment) {
-    environment.jersey().register(new ApiListingResource());
-    environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private void initSwaggerConfig(SptnDriverConfig configuration, Environment environment) {
+        environment.jersey().register(new ApiListingResource());
+        environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    BeanConfig config = new BeanConfig();
-    config.setTitle("Open-o SDN-O ZTE SPTN Drvier API");
-    config.setVersion("1.0.0");
-    config.setResourcePackage("org.openo.sdno.sptndriver.resources");
-    // set rest api basepath in swagger
-    DefaultServerFactory serverFactory =
-        (DefaultServerFactory) configuration.getServerFactory();
-    String basePath = serverFactory.getApplicationContextPath();
-    String rootPath = serverFactory.getJerseyRootPath();
-    rootPath = rootPath.substring(0, rootPath.indexOf("/*"));
-    basePath =
-        basePath.equals("/") ? rootPath : (new StringBuilder()).append(basePath).append(rootPath)
-            .toString();
-    config.setBasePath(basePath);
-    config.setScan(true);
-  }
+        BeanConfig config = new BeanConfig();
+        config.setTitle("Open-o SDN-O ZTE SPTN Drvier API");
+        config.setVersion("1.0.0");
+        config.setResourcePackage("org.openo.sdno.sptndriver.resources");
+        // set rest api basepath in swagger
+        DefaultServerFactory serverFactory =
+            (DefaultServerFactory) configuration.getServerFactory();
+        String basePath = serverFactory.getApplicationContextPath();
+        String rootPath = serverFactory.getJerseyRootPath();
+        rootPath = rootPath.substring(0, rootPath.indexOf("/*"));
+        basePath =
+            basePath.equals("/") ? rootPath : (new StringBuilder()).append(basePath).append(rootPath)
+                .toString();
+        config.setBasePath(basePath);
+        config.setScan(true);
+    }
 
-  private void registerToDriverMgr() {
-    driverManagerRegister = new Thread(new DriverManagerRegister());
-    driverManagerRegister.setName("Register sdn-o sptn driver to Driver Manager");
-    driverManagerRegister.start();
-  }
+    private void registerToDriverMgr() {
+        driverManagerRegister = new Thread(new DriverManagerRegister());
+        driverManagerRegister.setName("Register sdn-o sptn driver to Driver Manager");
+        driverManagerRegister.start();
+    }
 
-  private void unregisterFromDriverMgr() {
-    Thread driverManagerUnregister = new Thread(new DriverManagerUnregister());
-    driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
-    driverManagerUnregister.start();
-  }
+    private void unregisterFromDriverMgr() {
+        Thread driverManagerUnregister = new Thread(new DriverManagerUnregister());
+        driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
+        driverManagerUnregister.start();
+    }
 
-  private void addLifeCycleListener(final SptnDriverConfig config, Environment environment) {
-    environment.lifecycle().addLifeCycleListener(new LifeCycle.Listener() {
-      @Override
-      public void lifeCycleStarting(LifeCycle lifeCycle) {
+    private void addLifeCycleListener(final SptnDriverConfig config, Environment environment) {
+        environment.lifecycle().addLifeCycleListener(new LifeCycle.Listener() {
+            @Override
+            public void lifeCycleStarting(LifeCycle lifeCycle) {
 
-      }
+            }
 
-      @Override
-      public void lifeCycleStarted(LifeCycle lifeCycle) {
+            @Override
+            public void lifeCycleStarted(LifeCycle lifeCycle) {
 
-      }
+            }
 
-      @Override
-      public void lifeCycleFailure(LifeCycle lifeCycle, Throwable throwable) {
-        driverManagerRegister.interrupt();
-        unregisterFromDriverMgr();
-      }
+            @Override
+            public void lifeCycleFailure(LifeCycle lifeCycle, Throwable throwable) {
+                driverManagerRegister.interrupt();
+                unregisterFromDriverMgr();
+            }
 
-      @Override
-      public void lifeCycleStopping(LifeCycle lifeCycle) {
-        driverManagerRegister.interrupt();
-        unregisterFromDriverMgr();
-      }
+            @Override
+            public void lifeCycleStopping(LifeCycle lifeCycle) {
+                driverManagerRegister.interrupt();
+                unregisterFromDriverMgr();
+            }
 
-      @Override
-      public void lifeCycleStopped(LifeCycle lifeCycle) {
+            @Override
+            public void lifeCycleStopped(LifeCycle lifeCycle) {
 
-      }
-    });
-  }
+            }
+        });
+    }
 
 }

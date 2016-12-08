@@ -17,18 +17,18 @@
 package org.openo.sdno.sptndriver.enums.south.qos;
 
 /**
- *  Enumerator of QoS converge mode.
+ * Enumerator of QoS converge mode.
  */
 public enum SConvergeMode {
-  NOT_CONVERGE(0),
-  CONVERGE(1);
-  private Integer value;
+    NOT_CONVERGE(0),
+    CONVERGE(1);
+    private Integer value;
 
-  SConvergeMode(Integer value) {
-    this.value = value;
-  }
+    SConvergeMode(Integer value) {
+        this.value = value;
+    }
 
-  public String toString() {
-    return String.valueOf(value);
-  }
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

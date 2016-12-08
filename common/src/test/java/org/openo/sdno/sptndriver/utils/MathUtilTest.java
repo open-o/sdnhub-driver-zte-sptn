@@ -20,11 +20,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class MathUtilTest {
-  @Test
-  public void ceil() throws Exception {
-    Assert.assertEquals(1, MathUtil.ceil(6,6));
-    Assert.assertEquals(2, MathUtil.ceil(7,6));
-    Assert.assertEquals(0, MathUtil.ceil(0,6));
-  }
+    @Test
+    public void ceil() throws Exception {
+        Assert.assertEquals(1, MathUtil.ceil(6, 6));
+        Assert.assertEquals(2, MathUtil.ceil(7, 6));
+        Assert.assertEquals(0, MathUtil.ceil(0, 6));
+    }
 
 }

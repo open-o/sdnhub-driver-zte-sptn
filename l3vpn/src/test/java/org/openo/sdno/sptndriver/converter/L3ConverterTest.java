@@ -41,52 +41,54 @@ import java.util.List;
  * The class to test L3Convert.
  */
 public class L3ConverterTest {
-  @Test
-  public void convertNbiToSbi() throws Exception {
-    File inputJson = new File("src/test/resource/json/create_l3vpn_input.json");
-    JsonParser crtParser = new JsonParser();
-    JsonElement crtBody = crtParser.parse(new FileReader(inputJson));
+    @Test
+    public void convertNbiToSbi() throws Exception {
+        File inputJson = new File("src/test/resource/json/create_l3vpn_input.json");
+        JsonParser crtParser = new JsonParser();
+        JsonElement crtBody = crtParser.parse(new FileReader(inputJson));
 
-    Gson gson = new Gson();
-    Type inputType = new TypeToken<NL3Vpn>(){}.getType();
-    NL3Vpn l3vpn = gson.fromJson(crtBody, inputType);
+        Gson gson = new Gson();
+        Type inputType = new TypeToken<NL3Vpn>() {
+        }.getType();
+        NL3Vpn l3vpn = gson.fromJson(crtBody, inputType);
 
-    SL3vpn calculatedOutput = L3Converter.convertNbiToSbi(l3vpn);
+        SL3vpn calculatedOutput = L3Converter.convertNbiToSbi(l3vpn);
 
-    File outputJson = new File("src/test/resource/json/create_l3vpn_output.json");
-    JsonParser routeParser = new JsonParser();
-    JsonElement outputBody = routeParser.parse(new FileReader(outputJson));
+        File outputJson = new File("src/test/resource/json/create_l3vpn_output.json");
+        JsonParser routeParser = new JsonParser();
+        JsonElement outputBody = routeParser.parse(new FileReader(outputJson));
 
-    Type outputType = new TypeToken<SL3vpn>(){}.getType();
-    SL3vpn expectedOutput = gson.fromJson(outputBody, outputType);
+        Type outputType = new TypeToken<SL3vpn>() {
+        }.getType();
+        SL3vpn expectedOutput = gson.fromJson(outputBody, outputType);
 
-    clearStaticRouteId(calculatedOutput);
-    clearStaticRouteId(expectedOutput);
-    if (calculatedOutput.getL3FrrList() == null) {
-      calculatedOutput.setL3FrrList(new ArrayList<SL3Frr>());
-    }
-    if (calculatedOutput.getBindRelationList() == null) {
-      calculatedOutput.setBindRelationList(new ArrayList<SL3BindRelation>());
-    }
-    Assert.assertEquals(calculatedOutput, expectedOutput);
-  }
-
-  private void clearStaticRouteId(SL3vpn sl3vpn) {
-    if (sl3vpn != null
-        && sl3vpn.getAcs() != null) {
-      List<SL3ac> sl3acList = sl3vpn.getAcs().getL3Acs();
-      for (SL3ac l3ac:sl3acList) {
-        if (l3ac.getProtocolList() != null) {
-          for (SL3acProtocol sl3acProtocol : l3ac.getProtocolList().getProtocols()) {
-            if (sl3acProtocol.getStaticRoutes() != null) {
-              for (SStaticRoute staticRoute: sl3acProtocol.getStaticRoutes().getStaticRouteList()) {
-                staticRoute.setId(null);
-              }
-            }
-          }
+        clearStaticRouteId(calculatedOutput);
+        clearStaticRouteId(expectedOutput);
+        if (calculatedOutput.getL3FrrList() == null) {
+            calculatedOutput.setL3FrrList(new ArrayList<SL3Frr>());
         }
-      }
+        if (calculatedOutput.getBindRelationList() == null) {
+            calculatedOutput.setBindRelationList(new ArrayList<SL3BindRelation>());
+        }
+        Assert.assertEquals(calculatedOutput, expectedOutput);
     }
-  }
+
+    private void clearStaticRouteId(SL3vpn sl3vpn) {
+        if (sl3vpn != null
+            && sl3vpn.getAcs() != null) {
+            List<SL3ac> sl3acList = sl3vpn.getAcs().getL3Acs();
+            for (SL3ac l3ac : sl3acList) {
+                if (l3ac.getProtocolList() != null) {
+                    for (SL3acProtocol sl3acProtocol : l3ac.getProtocolList().getProtocols()) {
+                        if (sl3acProtocol.getStaticRoutes() != null) {
+                            for (SStaticRoute staticRoute : sl3acProtocol.getStaticRoutes().getStaticRouteList()) {
+                                staticRoute.setId(null);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

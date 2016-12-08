@@ -22,34 +22,34 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *  Exception when the command result from controller is failed.
+ * Exception when the command result from controller is failed.
  */
 public class CommandErrorException extends ServerException {
 
-  private SCommandResult cmdResult;
+    private SCommandResult cmdResult;
 
-  public CommandErrorException(SCommandResult cmdResult) {
-    this.cmdResult = cmdResult;
-  }
-
-  @Override
-  public String toString() {
-    String errorMsg;
-    if (cmdResult != null && cmdResult.getFailedResources() != null) {
-      errorMsg = "Controller returns failure: "
-          + cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
-    } else {
-      errorMsg = "Error information from controller is null.";
+    public CommandErrorException(SCommandResult cmdResult) {
+        this.cmdResult = cmdResult;
     }
-    return errorMsg;
-  }
 
-  @Override
-  public Response getResponse() {
-    return Response
-        .status(Response.Status.NOT_IMPLEMENTED)
-        .type(MediaType.TEXT_PLAIN_TYPE)
-        .entity(toString())
-        .build();
-  }
+    @Override
+    public String toString() {
+        String errorMsg;
+        if (cmdResult != null && cmdResult.getFailedResources() != null) {
+            errorMsg = "Controller returns failure: "
+                + cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
+        } else {
+            errorMsg = "Error information from controller is null.";
+        }
+        return errorMsg;
+    }
+
+    @Override
+    public Response getResponse() {
+        return Response
+            .status(Response.Status.NOT_IMPLEMENTED)
+            .type(MediaType.TEXT_PLAIN_TYPE)
+            .entity(toString())
+            .build();
+    }
 }

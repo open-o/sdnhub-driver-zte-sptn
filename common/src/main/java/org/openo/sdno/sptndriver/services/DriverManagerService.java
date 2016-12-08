@@ -37,88 +37,91 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class DriverManagerService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerService.class);
 
-  public DriverManagerService() {
+    public DriverManagerService() {
 
-  }
-
-  /**
-   *  Register driver to driver manager.
-   * @param driverInfo Information of driver.
-   */
-  public boolean registerDriver(Object driverInfo) {
-    LOGGER.debug("Register sptn driver begin. ");
-    Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(AppConfig.getConfig().getMsbUrl())
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
-    DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
-    Call<ResponseBody> cmdCall = service.registerDriver(driverInfo);
-    Response<ResponseBody> response;
-    try {
-      response = cmdCall.execute();
-    } catch (IOException ex) {
-      LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
-      return false;
     }
 
-    try {
-      ServiceUtil.parseResponse(response, LOGGER, "Register sptn driver");
-    } catch (CommandErrorException ex) {
-      LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
-      return false;
-    } catch (HttpErrorException ex) {
-      if (ex.getResponse().getStatus() == RegisterStatus.INVALID_PARAMETER.status) {
-        LOGGER.warn("Invalid parameter or register twice.");
+    /**
+     * Register driver to driver manager.
+     *
+     * @param driverInfo Information of driver.
+     */
+    public boolean registerDriver(Object driverInfo) {
+        LOGGER.debug("Register sptn driver begin. ");
+        Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(AppConfig.getConfig().getMsbUrl())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+        DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
+        Call<ResponseBody> cmdCall = service.registerDriver(driverInfo);
+        Response<ResponseBody> response;
+        try {
+            response = cmdCall.execute();
+        } catch (IOException ex) {
+            LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
+            return false;
+        }
+
+        try {
+            ServiceUtil.parseResponse(response, LOGGER, "Register sptn driver");
+        } catch (CommandErrorException ex) {
+            LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
+            return false;
+        } catch (HttpErrorException ex) {
+            if (ex.getResponse().getStatus() == RegisterStatus.INVALID_PARAMETER.status) {
+                LOGGER.warn("Invalid parameter or register twice.");
+                return true;
+            } else {
+                LOGGER.error("Register sptn driver failed: Internal server error, error code is: "
+                    + ex.getResponse().getStatus());
+                return false;
+            }
+        }
+
+        LOGGER.debug("Register sptn driver end. ");
         return true;
-      } else {
-        LOGGER.error("Register sptn driver failed: Internal server error, error code is: "
-            + ex.getResponse().getStatus());
-        return false;
-      }
     }
 
-    LOGGER.debug("Register sptn driver end. ");
-    return true;
-  }
+    private enum RegisterStatus {
+        INVALID_PARAMETER(415),
+        INTERNAL_SERVER_ERROR(500);
+        private int status;
 
-  private enum RegisterStatus {
-    INVALID_PARAMETER(415),
-    INTERNAL_SERVER_ERROR(500);
-    private int status;
-    RegisterStatus(int status) {
-      this.status = status;
-    }
-  }
-
-  /**
-   *  Unregister driver to driver manager.
-   * @param driverInstanceId Instance id of driver.
-   */
-  public boolean unregisterDriver(String driverInstanceId) {
-    LOGGER.debug("Unregister sptn driver  begin. ");
-    Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
-    DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
-    Call<ResponseBody> cmdCall = service.unregisterDriver(driverInstanceId);
-    Response<ResponseBody> response;
-    try {
-      response = cmdCall.execute();
-    } catch (IOException ex) {
-      LOGGER.error("Unregister sptn driver command execute failed, due to: "
-          + ExceptionUtils.getStackTrace(ex));
-      return false;
+        RegisterStatus(int status) {
+            this.status = status;
+        }
     }
 
-    try {
-      ServiceUtil.parseResponse(response, LOGGER, "Unregister sptn driver");
-    } catch (Exception ex) {
-      LOGGER.error("Unregister sptn driver parse response failed, due to: "
-          + ExceptionUtils.getStackTrace(ex));
-      return false;
-    }
+    /**
+     * Unregister driver to driver manager.
+     *
+     * @param driverInstanceId Instance id of driver.
+     */
+    public boolean unregisterDriver(String driverInstanceId) {
+        LOGGER.debug("Unregister sptn driver  begin. ");
+        Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
+        DriverManagerServiceInterface service = retrofit.create(DriverManagerServiceInterface.class);
+        Call<ResponseBody> cmdCall = service.unregisterDriver(driverInstanceId);
+        Response<ResponseBody> response;
+        try {
+            response = cmdCall.execute();
+        } catch (IOException ex) {
+            LOGGER.error("Unregister sptn driver command execute failed, due to: "
+                + ExceptionUtils.getStackTrace(ex));
+            return false;
+        }
 
-    LOGGER.debug("Unregister sptn driver end. ");
-    return true;
-  }
+        try {
+            ServiceUtil.parseResponse(response, LOGGER, "Unregister sptn driver");
+        } catch (Exception ex) {
+            LOGGER.error("Unregister sptn driver parse response failed, due to: "
+                + ExceptionUtils.getStackTrace(ex));
+            return false;
+        }
+
+        LOGGER.debug("Unregister sptn driver end. ");
+        return true;
+    }
 }

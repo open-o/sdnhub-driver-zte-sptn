@@ -23,41 +23,42 @@ import javax.ws.rs.core.Response;
  * The exception class for wrong parameter.
  */
 public class ParamErrorException extends ServerException {
-  private String errorInfo;
+    private String errorInfo;
 
-  public ParamErrorException(String errorInfo) {
-    this.errorInfo = errorInfo;
-  }
-
-  /**
-   * Parameter exception of invalid input.
-   * @param validValues Expected valid input array
-   * @param inputValue Actual input
-   */
-  public ParamErrorException(Object[] validValues, String inputValue)
-      throws ParamErrorException {
-    errorInfo = "Valid values are: {";
-    for (Object para : validValues) {
-      errorInfo += para.toString() + ",";
+    public ParamErrorException(String errorInfo) {
+        this.errorInfo = errorInfo;
     }
-    errorInfo += "}, input value is: ";
-    if (inputValue == null) {
-      errorInfo += "null. ";
+
+    /**
+     * Parameter exception of invalid input.
+     *
+     * @param validValues Expected valid input array
+     * @param inputValue  Actual input
+     */
+    public ParamErrorException(Object[] validValues, String inputValue)
+        throws ParamErrorException {
+        errorInfo = "Valid values are: {";
+        for (Object para : validValues) {
+            errorInfo += para.toString() + ",";
+        }
+        errorInfo += "}, input value is: ";
+        if (inputValue == null) {
+            errorInfo += "null. ";
+        }
+        errorInfo += inputValue + ". ";
     }
-    errorInfo += inputValue + ". ";
-  }
 
-  @Override
-  public String toString() {
-    return errorInfo;
-  }
+    @Override
+    public String toString() {
+        return errorInfo;
+    }
 
-  @Override
-  public Response getResponse() {
-    return Response
-        .status(Response.Status.BAD_REQUEST)
-        .type(MediaType.TEXT_PLAIN_TYPE)
-        .entity(toString())
-        .build();
-  }
+    @Override
+    public Response getResponse() {
+        return Response
+            .status(Response.Status.BAD_REQUEST)
+            .type(MediaType.TEXT_PLAIN_TYPE)
+            .entity(toString())
+            .build();
+    }
 }

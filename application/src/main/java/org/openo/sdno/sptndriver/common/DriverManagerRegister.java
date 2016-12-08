@@ -30,67 +30,67 @@ import org.slf4j.LoggerFactory;
  * The class to register sptn driver to driver manager.
  */
 public class DriverManagerRegister implements Runnable {
-  private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerRegister.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerRegister.class);
 
-  private Object driverInfo;
+    private Object driverInfo;
 
 
-  public DriverManagerRegister() {
-    initDriverInfo();
-  }
-
-  @Override
-  public void run() {
-    String logText = "Register sdn-o zte sptn driver to driver manager";
-    LOGGER.info(logText + " begin");
-    if (driverInfo == null) {
-      LOGGER.error(logText + ": Read driver info from JSON file failed.");
-      return;
+    public DriverManagerRegister() {
+        initDriverInfo();
     }
 
-    DriverManagerService driverManagerService = new DriverManagerService();
-    int retry = 1;
-    while (!driverManagerService.registerDriver(driverInfo)) {
-      LOGGER.warn(logText + " failed, sleep 30S and try again.");
-      threadSleep(30000);
-      LOGGER.info(logText + ": " + retry++);
-    }
-    App.driverInstanceId = parseDriverInstanceId(driverInfo);
-    LOGGER.info(logText + " success!");
-    LOGGER.info(logText + " end.");
-  }
+    @Override
+    public void run() {
+        String logText = "Register sdn-o zte sptn driver to driver manager";
+        LOGGER.info(logText + " begin");
+        if (driverInfo == null) {
+            LOGGER.error(logText + ": Read driver info from JSON file failed.");
+            return;
+        }
 
-  private void threadSleep(int second) {
-    String logText = "Register sdn-o zte sptn driver to driver manager";
-    LOGGER.info(logText + " start sleep ....");
-    try {
-      Thread.sleep(second);
-    } catch (InterruptedException error) {
-      LOGGER.error(ExceptionUtils.getStackTrace(error));
+        DriverManagerService driverManagerService = new DriverManagerService();
+        int retry = 1;
+        while (!driverManagerService.registerDriver(driverInfo)) {
+            LOGGER.warn(logText + " failed, sleep 30S and try again.");
+            threadSleep(30000);
+            LOGGER.info(logText + ": " + retry++);
+        }
+        App.driverInstanceId = parseDriverInstanceId(driverInfo);
+        LOGGER.info(logText + " success!");
+        LOGGER.info(logText + " end.");
     }
-    LOGGER.info(logText + " sleep end.");
-  }
 
-  private void initDriverInfo() {
-    driverInfo = null;
-    try {
-      driverInfo = JsonUtil.readJsonFromFile("./conf/driver.json");
-    } catch (Exception ex) {
-      LOGGER.error("Failed to read ./conf/driver.json due to "
-          + ExceptionUtils.getStackTrace(ex));
+    private void threadSleep(int second) {
+        String logText = "Register sdn-o zte sptn driver to driver manager";
+        LOGGER.info(logText + " start sleep ....");
+        try {
+            Thread.sleep(second);
+        } catch (InterruptedException error) {
+            LOGGER.error(ExceptionUtils.getStackTrace(error));
+        }
+        LOGGER.info(logText + " sleep end.");
     }
-  }
 
-  private String parseDriverInstanceId(Object driverInfo) {
-    if (driverInfo == null) {
-      return null;
+    private void initDriverInfo() {
+        driverInfo = null;
+        try {
+            driverInfo = JsonUtil.readJsonFromFile("./conf/driver.json");
+        } catch (Exception ex) {
+            LOGGER.error("Failed to read ./conf/driver.json due to "
+                + ExceptionUtils.getStackTrace(ex));
+        }
     }
-    Gson gson = new Gson();
-    String str = gson.toJson(driverInfo);
-    JsonObject jsonObject = gson.fromJson(str, JsonObject.class);
-    String driverId = jsonObject.get("driverInfo").getAsJsonObject().get("instanceID").toString();
-    String[] strArray = driverId.split("\"");
-    return strArray[1];
-  }
+
+    private String parseDriverInstanceId(Object driverInfo) {
+        if (driverInfo == null) {
+            return null;
+        }
+        Gson gson = new Gson();
+        String str = gson.toJson(driverInfo);
+        JsonObject jsonObject = gson.fromJson(str, JsonObject.class);
+        String driverId = jsonObject.get("driverInfo").getAsJsonObject().get("instanceID").toString();
+        String[] strArray = driverId.split("\"");
+        return strArray[1];
+    }
 
 }

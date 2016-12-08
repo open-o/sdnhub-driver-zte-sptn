@@ -27,44 +27,46 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *  The class to execute L3vpn CRUD.
+ * The class to execute L3vpn CRUD.
  */
 @Path("/restconf/data/sptn-service-l3vpn:service/")
 @Produces(MediaType.APPLICATION_JSON)
 public class L3Resource {
 
-  /**
-   *  Create l3vpn.
-   * @param l3vpn L3vpn information.
-   * @return success or failed.
-   */
-  @POST
-  @Path("/snc-l3vpns")
-  public Response createL3vpn(Object l3vpn) {
-    Object output;
-    try {
-      output = JsonUtil.readJsonFromFile("./conf/json/create_l3vpn.json");
-    } catch (Exception ex) {
-      return Response
-              .status(Response.Status.INTERNAL_SERVER_ERROR)
-              .entity(ExceptionUtils.getStackTrace(ex))
-              .type(MediaType.TEXT_PLAIN_TYPE)
-              .build();
-    }
-    return Response
+    /**
+     * Create l3vpn.
+     *
+     * @param l3vpn L3vpn information.
+     * @return success or failed.
+     */
+    @POST
+    @Path("/snc-l3vpns")
+    public Response createL3vpn(Object l3vpn) {
+        Object output;
+        try {
+            output = JsonUtil.readJsonFromFile("./conf/json/create_l3vpn.json");
+        } catch (Exception ex) {
+            return Response
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(ExceptionUtils.getStackTrace(ex))
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .build();
+        }
+        return Response
             .status(Response.Status.CREATED)
             .entity(output)
             .build();
-  }
+    }
 
-  /**
-   *  Delete l3vpn
-   * @param id UUID of l3vpn to be deleted.
-   * @return 204
-   */
-  @POST
-  @Path("/snc-l3vpns/snc-l3vpn={id}")
-  public Response deleteL3vpn(@PathParam("id") String id) {
-    return Response.noContent().build();
-  }
+    /**
+     * Delete l3vpn
+     *
+     * @param id UUID of l3vpn to be deleted.
+     * @return 204
+     */
+    @POST
+    @Path("/snc-l3vpns/snc-l3vpn={id}")
+    public Response deleteL3vpn(@PathParam("id") String id) {
+        return Response.noContent().build();
+    }
 }

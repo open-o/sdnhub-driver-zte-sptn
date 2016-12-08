@@ -22,9 +22,10 @@ import javax.ws.rs.core.Response;
  * Base exception class.
  */
 public abstract class ServerException extends Exception {
-  /**
-   * Convert exception to Response.
-   * @return HTTP response.
-   */
-  public abstract Response getResponse();
+    /**
+     * Convert exception to Response.
+     *
+     * @return HTTP response.
+     */
+    public abstract Response getResponse();
 }

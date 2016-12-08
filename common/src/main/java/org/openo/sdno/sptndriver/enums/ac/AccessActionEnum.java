@@ -26,64 +26,64 @@ import java.util.List;
  * Enumerator of access action.
  */
 public enum AccessActionEnum {
-  KEEP("keep", SServiceEndPoint.AccessActionEnum.KEEP),
-  PUSH("push", SServiceEndPoint.AccessActionEnum.PUSH),
-  POP("pop", SServiceEndPoint.AccessActionEnum.POP),
-  SWAP("swap", SServiceEndPoint.AccessActionEnum.SWAP);
-  private String north;
-  private SServiceEndPoint.AccessActionEnum south;
+    KEEP("keep", SServiceEndPoint.AccessActionEnum.KEEP),
+    PUSH("push", SServiceEndPoint.AccessActionEnum.PUSH),
+    POP("pop", SServiceEndPoint.AccessActionEnum.POP),
+    SWAP("swap", SServiceEndPoint.AccessActionEnum.SWAP);
+    private String north;
+    private SServiceEndPoint.AccessActionEnum south;
 
-  AccessActionEnum(String name, SServiceEndPoint.AccessActionEnum index) {
-    this.north = name;
-    this.south = index;
-  }
-
-  /**
-   * Convert SBI access action to NBI access action.
-   *
-   * @param southValue SBI access action.
-   * @return NBI access action.
-   */
-  public static String convertSbiToNbi(SServiceEndPoint.AccessActionEnum southValue) {
-    for (AccessActionEnum e : AccessActionEnum.values()) {
-      if (e.getSouth().equals(southValue)) {
-        return e.north;
-      }
+    AccessActionEnum(String name, SServiceEndPoint.AccessActionEnum index) {
+        this.north = name;
+        this.south = index;
     }
-    return null;
-  }
 
-  /**
-   * Convert NBI access action to NBI access action.
-   *
-   * @param northValue NBI access action.
-   * @return SBI access action.
-   */
-  public static SServiceEndPoint.AccessActionEnum convertNbiToSbi(String northValue)
-          throws ParamErrorException {
-    for (AccessActionEnum e : AccessActionEnum.values()) {
-      if (e.getNorth().equals(northValue)) {
-        return e.south;
-      }
+    /**
+     * Convert SBI access action to NBI access action.
+     *
+     * @param southValue SBI access action.
+     * @return NBI access action.
+     */
+    public static String convertSbiToNbi(SServiceEndPoint.AccessActionEnum southValue) {
+        for (AccessActionEnum e : AccessActionEnum.values()) {
+            if (e.getSouth().equals(southValue)) {
+                return e.north;
+            }
+        }
+        return null;
     }
-    List<String> validValues = new ArrayList<>();
-    for (AccessActionEnum accessActionEnum : AccessActionEnum.values()) {
-      validValues.add(accessActionEnum.getNorth().toString());
+
+    /**
+     * Convert NBI access action to NBI access action.
+     *
+     * @param northValue NBI access action.
+     * @return SBI access action.
+     */
+    public static SServiceEndPoint.AccessActionEnum convertNbiToSbi(String northValue)
+        throws ParamErrorException {
+        for (AccessActionEnum e : AccessActionEnum.values()) {
+            if (e.getNorth().equals(northValue)) {
+                return e.south;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (AccessActionEnum accessActionEnum : AccessActionEnum.values()) {
+            validValues.add(accessActionEnum.getNorth());
+        }
+        throw new ParamErrorException(validValues.toArray(), northValue);
     }
-    throw new ParamErrorException(validValues.toArray(), northValue);
-  }
 
-  /**
-   * Get NBI access action.
-   */
-  public String getNorth() {
-    return north;
-  }
+    /**
+     * Get NBI access action.
+     */
+    public String getNorth() {
+        return north;
+    }
 
-  /**
-   * Get SBI access action.
-   */
-  public SServiceEndPoint.AccessActionEnum getSouth() {
-    return south;
-  }
+    /**
+     * Get SBI access action.
+     */
+    public SServiceEndPoint.AccessActionEnum getSouth() {
+        return south;
+    }
 }

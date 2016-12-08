@@ -25,62 +25,62 @@ import java.util.List;
  * Enumerator of PW control word.
  */
 public enum CtrlWordEnum {
-  DISABLE("disable", 0),
-  ENABLE("enable", 1);
-  private String name;
-  private Integer index;
+    DISABLE("disable", 0),
+    ENABLE("enable", 1);
+    private String name;
+    private Integer index;
 
-  CtrlWordEnum(String name, Integer index) {
-    this.name = name;
-    this.index = index;
-  }
-
-  /**
-   * Convert SBI integer control word to NBI string control word.
-   *
-   * @param index Integer value of NBI control word.
-   * @return String value of SBI control word.
-   */
-  public static String getName(Integer index) {
-    for (CtrlWordEnum e : CtrlWordEnum.values()) {
-      if (e.getIndex().equals(index)) {
-        return e.name;
-      }
+    CtrlWordEnum(String name, Integer index) {
+        this.name = name;
+        this.index = index;
     }
-    return null;
-  }
 
-  /**
-   * Convert NBI string control word to NBI integer control word.
-   *
-   * @param name String value of SBI control word.
-   * @return Integer value of NBI control word.
-   */
-  public static Integer getIndex(String name)
-          throws ParamErrorException {
-    for (CtrlWordEnum e : CtrlWordEnum.values()) {
-      if (e.getName().equals(name)) {
-        return e.index;
-      }
+    /**
+     * Convert SBI integer control word to NBI string control word.
+     *
+     * @param index Integer value of NBI control word.
+     * @return String value of SBI control word.
+     */
+    public static String getName(Integer index) {
+        for (CtrlWordEnum e : CtrlWordEnum.values()) {
+            if (e.getIndex().equals(index)) {
+                return e.name;
+            }
+        }
+        return null;
     }
-    List<String> validValues = new ArrayList<>();
-    for (CtrlWordEnum ctrlWordEnum : CtrlWordEnum.values()) {
-      validValues.add(ctrlWordEnum.getName().toString());
+
+    /**
+     * Convert NBI string control word to NBI integer control word.
+     *
+     * @param name String value of SBI control word.
+     * @return Integer value of NBI control word.
+     */
+    public static Integer getIndex(String name)
+        throws ParamErrorException {
+        for (CtrlWordEnum e : CtrlWordEnum.values()) {
+            if (e.getName().equals(name)) {
+                return e.index;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (CtrlWordEnum ctrlWordEnum : CtrlWordEnum.values()) {
+            validValues.add(ctrlWordEnum.getName());
+        }
+        throw new ParamErrorException(validValues.toArray(), name);
     }
-    throw new ParamErrorException(validValues.toArray(), name);
-  }
 
-  /**
-   * Get NBI control word.
-   */
-  public String getName() {
-    return name;
-  }
+    /**
+     * Get NBI control word.
+     */
+    public String getName() {
+        return name;
+    }
 
-  /**
-   * Get SBI control word.
-   */
-  public Integer getIndex() {
-    return index;
-  }
+    /**
+     * Get SBI control word.
+     */
+    public Integer getIndex() {
+        return index;
+    }
 }

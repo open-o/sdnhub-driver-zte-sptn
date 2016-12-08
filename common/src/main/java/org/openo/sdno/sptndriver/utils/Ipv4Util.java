@@ -23,56 +23,56 @@ import org.apache.commons.net.util.SubnetUtils;
  */
 public class Ipv4Util {
 
-  /**
-   * Get the IP part from the full IP "a.b.c.d/mask".
-   *
-   * @param ip Full IP address like "a.b.c.d/mask"
-   * @return IP address like "a.b.c.d"
-   */
-  public static String getDotIp(String ip) {
-    if (ip != null) {
-      String[] parts = ip.split("/");
-      if (parts.length > 0) {
-        return parts[0];
-      }
-    }
-    return ip;
-  }
-
-  /**
-   * Get IP mask from full IP "a.b.c.d/mask", and return in forms of "255.255.255.0".
-   *
-   * @param ip "a.b.c.d/mask"
-   * @return IP mask like "255.255.255.0", return "255.255.255.255" if input IP like "a.b.c.d"
-   */
-  public static String getDotMask(String ip) {
-    if (ip == null) {
-      return null;
-    }
-    String mask;
-
-    String[] parts = ip.split("/");
-    if (parts.length >= 2) {
-      mask = parts[1];
-    } else {
-      return "255.255.255.255";
+    /**
+     * Get the IP part from the full IP "a.b.c.d/mask".
+     *
+     * @param ip Full IP address like "a.b.c.d/mask"
+     * @return IP address like "a.b.c.d"
+     */
+    public static String getDotIp(String ip) {
+        if (ip != null) {
+            String[] parts = ip.split("/");
+            if (parts.length > 0) {
+                return parts[0];
+            }
+        }
+        return ip;
     }
 
-    if (mask.contains(".")) {
-      return mask;
-    }
-    return ipInt2DotStr(Integer.parseInt(mask));
-  }
+    /**
+     * Get IP mask from full IP "a.b.c.d/mask", and return in forms of "255.255.255.0".
+     *
+     * @param ip "a.b.c.d/mask"
+     * @return IP mask like "255.255.255.0", return "255.255.255.255" if input IP like "a.b.c.d"
+     */
+    public static String getDotMask(String ip) {
+        if (ip == null) {
+            return null;
+        }
+        String mask;
 
-  /**
-   * Transform integer mask to string dot mask.
-   *
-   * @param intMask Integer value of mask, like 24
-   * @return Mask in form of "255.255.255.0"
-   */
-  private static String ipInt2DotStr(int intMask) {
-    String cidr = "255.255.255.255/" + intMask;
-    SubnetUtils subnet = new SubnetUtils(cidr);
-    return subnet.getInfo().getNetmask();
-  }
+        String[] parts = ip.split("/");
+        if (parts.length >= 2) {
+            mask = parts[1];
+        } else {
+            return "255.255.255.255";
+        }
+
+        if (mask.contains(".")) {
+            return mask;
+        }
+        return ipInt2DotStr(Integer.parseInt(mask));
+    }
+
+    /**
+     * Transform integer mask to string dot mask.
+     *
+     * @param intMask Integer value of mask, like 24
+     * @return Mask in form of "255.255.255.0"
+     */
+    private static String ipInt2DotStr(int intMask) {
+        String cidr = "255.255.255.255/" + intMask;
+        SubnetUtils subnet = new SubnetUtils(cidr);
+        return subnet.getInfo().getNetmask();
+    }
 }

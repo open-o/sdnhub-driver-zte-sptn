@@ -25,26 +25,27 @@ import org.slf4j.LoggerFactory;
  * The class to unregister sptn driver from driver manager.
  */
 public class DriverManagerUnregister implements Runnable {
-  private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerUnregister.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerUnregister.class);
 
-  public DriverManagerUnregister() {}
-
-  @Override
-  public void run() {
-    LOGGER.info("Unregister sdn-o zte sptn driver from driver manager begin");
-    if (App.driverInstanceId == null) {
-      LOGGER.error("Unregister sdn-o zte sptn driver from driver manager: "
-          + "driverInstanceId is null.");
-      return;
+    public DriverManagerUnregister() {
     }
 
-    DriverManagerService driverManagerService  = new DriverManagerService();
+    @Override
+    public void run() {
+        LOGGER.info("Unregister sdn-o zte sptn driver from driver manager begin");
+        if (App.driverInstanceId == null) {
+            LOGGER.error("Unregister sdn-o zte sptn driver from driver manager: "
+                + "driverInstanceId is null.");
+            return;
+        }
 
-    if (!driverManagerService.unregisterDriver(App.driverInstanceId)) {
-      LOGGER.error("Unregister sdn-o zte sptn driver from driver manager failed, id: "
-          + App.driverInstanceId);
-    } else {
-      LOGGER.info("Unregister sdn-o zte sptn driver from driver manager success!");
+        DriverManagerService driverManagerService = new DriverManagerService();
+
+        if (!driverManagerService.unregisterDriver(App.driverInstanceId)) {
+            LOGGER.error("Unregister sdn-o zte sptn driver from driver manager failed, id: "
+                + App.driverInstanceId);
+        } else {
+            LOGGER.info("Unregister sdn-o zte sptn driver from driver manager success!");
+        }
     }
-  }
 }

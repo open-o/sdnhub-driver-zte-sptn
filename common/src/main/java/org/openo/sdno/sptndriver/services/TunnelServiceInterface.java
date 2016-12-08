@@ -30,14 +30,14 @@ import retrofit2.http.POST;
  */
 public interface TunnelServiceInterface {
 
-  /**
-   * Calculate tunnel routes.
-   *
-   * @param routeCalcReqsInput Request to calculate tunnel routes.
-   * @return Tunnel routes result.
-   */
-  @Headers(AppConfig.CONTROLLER_ICT_AUTH)
-  @POST("restconf/operations/sptn-service-route:request-routes")
-  Call<SRouteCalResultsOutput> calcRoutes(
-      @Body SRouteCalReqsInput routeCalcReqsInput);
+    /**
+     * Calculate tunnel routes.
+     *
+     * @param routeCalcReqsInput Request to calculate tunnel routes.
+     * @return Tunnel routes result.
+     */
+    @Headers(AppConfig.CONTROLLER_ICT_AUTH)
+    @POST("restconf/operations/sptn-service-route:request-routes")
+    Call<SRouteCalResultsOutput> calcRoutes(
+        @Body SRouteCalReqsInput routeCalcReqsInput);
 }

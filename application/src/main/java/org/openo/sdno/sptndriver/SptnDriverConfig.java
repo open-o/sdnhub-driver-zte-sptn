@@ -30,30 +30,30 @@ import io.dropwizard.db.DataSourceFactory;
  */
 public class SptnDriverConfig extends Configuration implements Config {
 
-  /**
-   * Default time out of rest command, in seconds.
-   */
-  @JsonProperty
-  private int timeout = 600;
-  @JsonProperty
-  @NotEmpty
-  private String msbUrl;
-  @JsonProperty
-  private DataSourceFactory database = new DataSourceFactory();
+    /**
+     * Default time out of rest command, in seconds.
+     */
+    @JsonProperty
+    private int timeout = 600;
+    @JsonProperty
+    @NotEmpty
+    private String msbUrl;
+    @JsonProperty
+    private DataSourceFactory database = new DataSourceFactory();
 
-  @Override
-  public int getTimeout() {
-    return timeout;
-  }
+    @Override
+    public int getTimeout() {
+        return timeout;
+    }
 
-  @Override
-  public String getMsbUrl() {
-    return msbUrl;
-  }
+    @Override
+    public String getMsbUrl() {
+        return msbUrl;
+    }
 
-  @Override
-  public DataSourceFactory getDataSourceFactory() {
-    return database;
-  }
+    @Override
+    public DataSourceFactory getDataSourceFactory() {
+        return database;
+    }
 
 }

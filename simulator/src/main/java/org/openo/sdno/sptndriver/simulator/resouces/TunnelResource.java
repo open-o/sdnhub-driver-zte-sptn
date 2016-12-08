@@ -31,24 +31,25 @@ import javax.ws.rs.core.Response;
 @Path("/restconf/operations/")
 @Produces(MediaType.APPLICATION_JSON)
 public class TunnelResource {
-  /**
-   *  Calculate tunnel route
-   * @param input Tunnel route calculation requirement.
-   * @return 200
-   */
-  @Path("/sptn-service-route:request-routes")
-  @POST
-  public Response calculateRoute(Object input) {
-    Object output;
-    try {
-      output = JsonUtil.readJsonFromFile("./conf/json/calculate_route.json");
-    } catch (Exception ex) {
-      return Response
-          .status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity(ExceptionUtils.getStackTrace(ex))
-          .type(MediaType.TEXT_PLAIN_TYPE)
-          .build();
+    /**
+     * Calculate tunnel route
+     *
+     * @param input Tunnel route calculation requirement.
+     * @return 200
+     */
+    @Path("/sptn-service-route:request-routes")
+    @POST
+    public Response calculateRoute(Object input) {
+        Object output;
+        try {
+            output = JsonUtil.readJsonFromFile("./conf/json/calculate_route.json");
+        } catch (Exception ex) {
+            return Response
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(ExceptionUtils.getStackTrace(ex))
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .build();
+        }
+        return Response.ok(output).build();
     }
-    return Response.ok(output).build();
-  }
 }

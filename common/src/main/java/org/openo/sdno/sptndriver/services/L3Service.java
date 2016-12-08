@@ -38,59 +38,59 @@ import retrofit2.Retrofit;
  */
 public class L3Service {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(L3Service.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(L3Service.class);
 
-  private String baseUrl;
+    private String baseUrl;
 
-  public L3Service(String baseUrl) {
-    this.baseUrl = baseUrl;
-  }
-
-  /**
-   * Send REST to controller to create L3vpn.
-   *
-   * @param l3vpn L3vpn information
-   */
-  public String createL3vpn(SL3vpnCreateInput l3vpn)
-      throws ServerException {
-    String printText = "Create l3vpn " + l3vpn.getSncL3vpn().getId();
-    LOGGER.debug(printText + " begin. ");
-    Gson gson = new Gson();
-    LOGGER.debug("Send to controller: " + gson.toJson(l3vpn));
-    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
-    L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
-    Call<SCmdResultAndNcdResRelations> cmdCall = service.createL3vpn(l3vpn);
-    Response<SCmdResultAndNcdResRelations> response;
-    try {
-      response = cmdCall.execute();
-    } catch (IOException ex) {
-      throw new ServerIoException(ex);
+    public L3Service(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
-    ServiceUtil.parseCmdResultAndNcdResRelations(response, LOGGER, printText);
-    LOGGER.debug(printText + " end. ");
-    return response.body().getCommandResult().getSuccessResources()
+
+    /**
+     * Send REST to controller to create L3vpn.
+     *
+     * @param l3vpn L3vpn information
+     */
+    public String createL3vpn(SL3vpnCreateInput l3vpn)
+        throws ServerException {
+        String printText = "Create l3vpn " + l3vpn.getSncL3vpn().getId();
+        LOGGER.debug(printText + " begin. ");
+        Gson gson = new Gson();
+        LOGGER.debug("Send to controller: " + gson.toJson(l3vpn));
+        Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
+        L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
+        Call<SCmdResultAndNcdResRelations> cmdCall = service.createL3vpn(l3vpn);
+        Response<SCmdResultAndNcdResRelations> response;
+        try {
+            response = cmdCall.execute();
+        } catch (IOException ex) {
+            throw new ServerIoException(ex);
+        }
+        ServiceUtil.parseCmdResultAndNcdResRelations(response, LOGGER, printText);
+        LOGGER.debug(printText + " end. ");
+        return response.body().getCommandResult().getSuccessResources()
             .getSuccessResourceList().get(0).getResourceId();
-  }
-
-  /**
-   * Send REST to controller to delete L3vpn..
-   *
-   * @param l3vpnId L3vpn UUID
-   */
-  public void deleteL3vpn(String l3vpnId)
-      throws ServerException {
-    String printText = "Delete L3vpn " + l3vpnId;
-    LOGGER.debug(printText + " begin. ");
-    Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
-    L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
-    Call<SCommandResultOutput> cmdCall = service.deleteL3vpn(l3vpnId);
-    Response<SCommandResultOutput> response;
-    try {
-      response = cmdCall.execute();
-    } catch (IOException ex) {
-      throw new ServerIoException(ex);
     }
-    ServiceUtil.parseRpcResult(response, LOGGER, printText);
-    LOGGER.debug(printText + " end. ");
-  }
+
+    /**
+     * Send REST to controller to delete L3vpn..
+     *
+     * @param l3vpnId L3vpn UUID
+     */
+    public void deleteL3vpn(String l3vpnId)
+        throws ServerException {
+        String printText = "Delete L3vpn " + l3vpnId;
+        LOGGER.debug(printText + " begin. ");
+        Retrofit retrofit = ServiceUtil.initRetrofit(baseUrl);
+        L3ServiceInterface service = retrofit.create(L3ServiceInterface.class);
+        Call<SCommandResultOutput> cmdCall = service.deleteL3vpn(l3vpnId);
+        Response<SCommandResultOutput> response;
+        try {
+            response = cmdCall.execute();
+        } catch (IOException ex) {
+            throw new ServerIoException(ex);
+        }
+        ServiceUtil.parseRpcResult(response, LOGGER, printText);
+        LOGGER.debug(printText + " end. ");
+    }
 }

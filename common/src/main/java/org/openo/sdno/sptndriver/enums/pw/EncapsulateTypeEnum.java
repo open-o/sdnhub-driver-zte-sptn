@@ -26,62 +26,62 @@ import java.util.List;
  * Enumerator of encapsulate type.
  */
 public enum EncapsulateTypeEnum {
-  VLAN("vlan", SEncapsulateType.ETHERNET_VLAN),
-  ETHERNET("eth", SEncapsulateType.ETHERNET);
-  private String north;
-  private SEncapsulateType south;
+    VLAN("vlan", SEncapsulateType.ETHERNET_VLAN),
+    ETHERNET("eth", SEncapsulateType.ETHERNET);
+    private String north;
+    private SEncapsulateType south;
 
-  EncapsulateTypeEnum(String north, SEncapsulateType south) {
-    this.north = north;
-    this.south = south;
-  }
-
-  /**
-   * Convert SBI encapsulate type to NBI encapsulate type.
-   *
-   * @param south SBI encapsulate type.
-   * @return NBI encapsulate type.
-   */
-  public static String convertSbiToNbi(SEncapsulateType south) {
-    for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
-      if (e.getSouth().equals(south)) {
-        return e.north;
-      }
+    EncapsulateTypeEnum(String north, SEncapsulateType south) {
+        this.north = north;
+        this.south = south;
     }
-    return null;
-  }
 
-  /**
-   * Convert NBI encapsulate type to SBI encapsulate type.
-   *
-   * @param name NBI encapsulate type.
-   * @return SBI encapsulate type.
-   */
-  public static SEncapsulateType convertNbiToSbi(String name)
-          throws ParamErrorException {
-    for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
-      if (e.getNorth().equals(name)) {
-        return e.south;
-      }
+    /**
+     * Convert SBI encapsulate type to NBI encapsulate type.
+     *
+     * @param south SBI encapsulate type.
+     * @return NBI encapsulate type.
+     */
+    public static String convertSbiToNbi(SEncapsulateType south) {
+        for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
+            if (e.getSouth().equals(south)) {
+                return e.north;
+            }
+        }
+        return null;
     }
-    List<String> validValues = new ArrayList<>();
-    for (EncapsulateTypeEnum encapsulateTypeEnum : EncapsulateTypeEnum.values()) {
-      validValues.add(encapsulateTypeEnum.getNorth().toString());
+
+    /**
+     * Convert NBI encapsulate type to SBI encapsulate type.
+     *
+     * @param name NBI encapsulate type.
+     * @return SBI encapsulate type.
+     */
+    public static SEncapsulateType convertNbiToSbi(String name)
+        throws ParamErrorException {
+        for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
+            if (e.getNorth().equals(name)) {
+                return e.south;
+            }
+        }
+        List<String> validValues = new ArrayList<>();
+        for (EncapsulateTypeEnum encapsulateTypeEnum : EncapsulateTypeEnum.values()) {
+            validValues.add(encapsulateTypeEnum.getNorth());
+        }
+        throw new ParamErrorException(validValues.toArray(), name);
     }
-    throw new ParamErrorException(validValues.toArray(), name);
-  }
 
-  /**
-   * Get NBI encapsulate type.
-   */
-  public String getNorth() {
-    return north;
-  }
+    /**
+     * Get NBI encapsulate type.
+     */
+    public String getNorth() {
+        return north;
+    }
 
-  /**
-   * Get SBI encapsulate type.
-   */
-  public SEncapsulateType getSouth() {
-    return south;
-  }
+    /**
+     * Get SBI encapsulate type.
+     */
+    public SEncapsulateType getSouth() {
+        return south;
+    }
 }

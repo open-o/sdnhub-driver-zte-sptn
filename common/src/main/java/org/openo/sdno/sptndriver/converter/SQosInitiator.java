@@ -31,120 +31,120 @@ import org.openo.sdno.sptndriver.utils.MathUtil;
  */
 public class SQosInitiator {
 
-  /**
-   * NBI CBS in bytes and SBI CBS in KBytes.
-   */
-  private static final int CBS_MULTIPLIER = 1000;
-  /**
-   * NBI PBS in bytes and SBI PBS in KBytes.
-   */
-  private static final int PBS_MULTIPLIER = 1000;
-  /**
-   *  Default CBS in KBytes.
-   */
-  private static String DEFAULT_CBS = "100";
-  /**
-   *  Default PBS in KBytes.
-   */
-  private static String DEFAULT_PBS = "100";
+    /**
+     * NBI CBS in bytes and SBI CBS in KBytes.
+     */
+    private static final int CBS_MULTIPLIER = 1000;
+    /**
+     * NBI PBS in bytes and SBI PBS in KBytes.
+     */
+    private static final int PBS_MULTIPLIER = 1000;
+    /**
+     * Default CBS in KBytes.
+     */
+    private static String DEFAULT_CBS = "100";
+    /**
+     * Default PBS in KBytes.
+     */
+    private static String DEFAULT_PBS = "100";
 
-  /**
-   * Initialize LSP QoS parameters according to MplsTePolicy.
-   *
-   * @param policy MplsTePolicy in NBI.
-   * @return LSP QoS in SBI.
-   */
-  public static SQos initQos(NMplsTePolicy policy) {
-    SQos qos = new SQos();
-    qos.setBelongedId(null);
-    qos.setTunnelMode(SQos.TunnelModeEnum.PIPELINE);
-    qos.setConvgMode(SConvergeMode.NOT_CONVERGE.toString());
-    qos.setTrafficAdjMode(STrafficAdjustMode.AUTO_ADJUST.toString());
+    /**
+     * Initialize LSP QoS parameters according to MplsTePolicy.
+     *
+     * @param policy MplsTePolicy in NBI.
+     * @return LSP QoS in SBI.
+     */
+    public static SQos initQos(NMplsTePolicy policy) {
+        SQos qos = new SQos();
+        qos.setBelongedId(null);
+        qos.setTunnelMode(SQos.TunnelModeEnum.PIPELINE);
+        qos.setConvgMode(SConvergeMode.NOT_CONVERGE.toString());
+        qos.setTrafficAdjMode(STrafficAdjustMode.AUTO_ADJUST.toString());
 
-    if (policy != null && policy.getBandwidth() != null) {
-      qos.setCacMode(SCacMode.OPEN.toString());
-      qos.setA2zPolicing(SQosPolicing.OPEN.toString());
-      qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
-      qos.setA2zCir(policy.getBandwidth().toString());
-      qos.setZ2aCir(policy.getBandwidth().toString());
-      qos.setA2zPir(policy.getBandwidth().toString());
-      qos.setZ2aPir(policy.getBandwidth().toString());
-      qos.setA2zCbs(DEFAULT_CBS);
-      qos.setZ2aCbs(DEFAULT_CBS);
-      qos.setA2zPbs(DEFAULT_PBS);
-      qos.setZ2aPbs(DEFAULT_PBS);
-    } else {
-      qos.setCacMode(SCacMode.CLOSE.toString());
-      qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
-      qos.setZ2aPolicing(SQosPolicing.CLOSE.toString());
-    }
-    qos.setA2zColorMode(SColorMode.UNWARE.toString());
-    qos.setZ2aColorMode(SColorMode.UNWARE.toString());
-    qos.setTrafficClass(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
-    return qos;
-  }
-
-  /**
-   * Initialize QoS in which CAC mode and policing is closed.
-   *
-   * @param belongedId The UUID of object(PW or AC) which the QoS is belonged to.
-   * @return QoS.
-   */
-  public static SQos initCacClosedQos(String belongedId) {
-    SQos qos = new SQos();
-    qos.setBelongedId(belongedId);
-    qos.setTunnelMode(SQos.TunnelModeEnum.PIPELINE);
-    qos.setConvgMode(null);
-    qos.setTrafficAdjMode(null);
-    qos.setCacMode(SCacMode.CLOSE.toString());
-    qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
-    qos.setZ2aPolicing(SQosPolicing.CLOSE.toString());
-    // todo check if cir need to be configured 0 or -1
-    qos.setTrafficClass(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
-    return qos;
-  }
-
-  /**
-   * Initialize AC QoS.
-   *
-   * @param acId          AC UUID
-   * @param upStreamQos   Upstream AC QoS.
-   * @param downStreamQos Downstream AC QoS.
-   * @return AC QoS.
-   */
-  public static SQos initAcQos(String acId, NQosIfCar upStreamQos, NQosIfCar downStreamQos) {
-    SQos qos = initCacClosedQos(acId);
-    if (upStreamQos != null
-        && upStreamQos.getEnable() != null
-        && upStreamQos.getEnable()) {
-      qos.setCacMode(SCacMode.OPEN.toString());
-      qos.setA2zPolicing(SQosPolicing.OPEN.toString());
-      qos.setA2zCir(upStreamQos.getCir().toString());
-      qos.setA2zPir(upStreamQos.getPir().toString());
-      qos.setA2zCbs(getSouthCbs(upStreamQos.getCbs()));
-      qos.setA2zPbs(getSouthPbs(upStreamQos.getPbs()));
+        if (policy != null && policy.getBandwidth() != null) {
+            qos.setCacMode(SCacMode.OPEN.toString());
+            qos.setA2zPolicing(SQosPolicing.OPEN.toString());
+            qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
+            qos.setA2zCir(policy.getBandwidth().toString());
+            qos.setZ2aCir(policy.getBandwidth().toString());
+            qos.setA2zPir(policy.getBandwidth().toString());
+            qos.setZ2aPir(policy.getBandwidth().toString());
+            qos.setA2zCbs(DEFAULT_CBS);
+            qos.setZ2aCbs(DEFAULT_CBS);
+            qos.setA2zPbs(DEFAULT_PBS);
+            qos.setZ2aPbs(DEFAULT_PBS);
+        } else {
+            qos.setCacMode(SCacMode.CLOSE.toString());
+            qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
+            qos.setZ2aPolicing(SQosPolicing.CLOSE.toString());
+        }
+        qos.setA2zColorMode(SColorMode.UNWARE.toString());
+        qos.setZ2aColorMode(SColorMode.UNWARE.toString());
+        qos.setTrafficClass(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
+        return qos;
     }
 
-    if (downStreamQos != null
-        && downStreamQos.getEnable() != null
-        && downStreamQos.getEnable()) {
-      qos.setCacMode(SCacMode.OPEN.toString());
-      qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
-      qos.setZ2aCir(downStreamQos.getCir().toString());
-      qos.setZ2aPir(downStreamQos.getPir().toString());
-      qos.setZ2aCbs(getSouthCbs(downStreamQos.getCbs()));
-      qos.setZ2aPbs(getSouthPbs(downStreamQos.getPbs()));
+    /**
+     * Initialize QoS in which CAC mode and policing is closed.
+     *
+     * @param belongedId The UUID of object(PW or AC) which the QoS is belonged to.
+     * @return QoS.
+     */
+    public static SQos initCacClosedQos(String belongedId) {
+        SQos qos = new SQos();
+        qos.setBelongedId(belongedId);
+        qos.setTunnelMode(SQos.TunnelModeEnum.PIPELINE);
+        qos.setConvgMode(null);
+        qos.setTrafficAdjMode(null);
+        qos.setCacMode(SCacMode.CLOSE.toString());
+        qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
+        qos.setZ2aPolicing(SQosPolicing.CLOSE.toString());
+        // todo check if cir need to be configured 0 or -1
+        qos.setTrafficClass(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
+        return qos;
     }
 
-    return qos;
-  }
+    /**
+     * Initialize AC QoS.
+     *
+     * @param acId          AC UUID
+     * @param upStreamQos   Upstream AC QoS.
+     * @param downStreamQos Downstream AC QoS.
+     * @return AC QoS.
+     */
+    public static SQos initAcQos(String acId, NQosIfCar upStreamQos, NQosIfCar downStreamQos) {
+        SQos qos = initCacClosedQos(acId);
+        if (upStreamQos != null
+            && upStreamQos.getEnable() != null
+            && upStreamQos.getEnable()) {
+            qos.setCacMode(SCacMode.OPEN.toString());
+            qos.setA2zPolicing(SQosPolicing.OPEN.toString());
+            qos.setA2zCir(upStreamQos.getCir().toString());
+            qos.setA2zPir(upStreamQos.getPir().toString());
+            qos.setA2zCbs(getSouthCbs(upStreamQos.getCbs()));
+            qos.setA2zPbs(getSouthPbs(upStreamQos.getPbs()));
+        }
 
-  private static String getSouthCbs(Long northCbs) {
-    return Long.toString(MathUtil.ceil((float)northCbs, (float) CBS_MULTIPLIER));
-  }
+        if (downStreamQos != null
+            && downStreamQos.getEnable() != null
+            && downStreamQos.getEnable()) {
+            qos.setCacMode(SCacMode.OPEN.toString());
+            qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
+            qos.setZ2aCir(downStreamQos.getCir().toString());
+            qos.setZ2aPir(downStreamQos.getPir().toString());
+            qos.setZ2aCbs(getSouthCbs(downStreamQos.getCbs()));
+            qos.setZ2aPbs(getSouthPbs(downStreamQos.getPbs()));
+        }
 
-  private static String getSouthPbs(Long northPbs) {
-    return Long.toString(MathUtil.ceil((float)northPbs, (float) PBS_MULTIPLIER));
-  }
+        return qos;
+    }
+
+    private static String getSouthCbs(Long northCbs) {
+        return Long.toString(MathUtil.ceil((float) northCbs, (float) CBS_MULTIPLIER));
+    }
+
+    private static String getSouthPbs(Long northPbs) {
+        return Long.toString(MathUtil.ceil((float) northPbs, (float) PBS_MULTIPLIER));
+    }
 
 }
