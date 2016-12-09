@@ -52,7 +52,13 @@ public class DriverManagerRegister implements Runnable {
         int retry = 1;
         while (!driverManagerService.registerDriver(driverInfo)) {
             LOGGER.warn(logText + " failed, sleep 30S and try again.");
-            threadSleep(30000);
+            try {
+                threadSleep(30000);
+            } catch (InterruptedException ex) {
+                LOGGER.error(logText + "is interrupted.");
+                ExceptionUtils.getStackTrace(ex);
+                Thread.currentThread().interrupt();
+            }
             LOGGER.info(logText + ": " + retry++);
         }
         App.driverInstanceId = parseDriverInstanceId(driverInfo);
@@ -60,14 +66,10 @@ public class DriverManagerRegister implements Runnable {
         LOGGER.info(logText + " end.");
     }
 
-    private void threadSleep(int second) {
+    private void threadSleep(int second) throws InterruptedException {
         String logText = "Register sdn-o zte sptn driver to driver manager";
         LOGGER.info(logText + " start sleep ....");
-        try {
-            Thread.sleep(second);
-        } catch (InterruptedException error) {
-            LOGGER.error(ExceptionUtils.getStackTrace(error));
-        }
+        Thread.sleep(second);
         LOGGER.info(logText + " sleep end.");
     }
 
@@ -81,7 +83,7 @@ public class DriverManagerRegister implements Runnable {
         }
     }
 
-    private String parseDriverInstanceId(Object driverInfo) {
+    private static String parseDriverInstanceId(Object driverInfo) {
         if (driverInfo == null) {
             return null;
         }
