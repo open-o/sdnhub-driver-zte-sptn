@@ -61,7 +61,7 @@ public class DriverManagerRegister implements Runnable {
             }
             LOGGER.info(logText + ": " + retry++);
         }
-        App.driverInstanceId = parseDriverInstanceId(driverInfo);
+        App.setDriverInstanceId(parseDriverInstanceId(driverInfo));
         LOGGER.info(logText + " success!");
         LOGGER.info(logText + " end.");
     }

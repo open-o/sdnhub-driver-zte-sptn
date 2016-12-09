@@ -27,13 +27,10 @@ import org.slf4j.LoggerFactory;
 public class DriverManagerUnregister implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerUnregister.class);
 
-    public DriverManagerUnregister() {
-    }
-
     @Override
     public void run() {
         LOGGER.info("Unregister sdn-o zte sptn driver from driver manager begin");
-        if (App.driverInstanceId == null) {
+        if (App.getDriverInstanceId() == null) {
             LOGGER.error("Unregister sdn-o zte sptn driver from driver manager: "
                 + "driverInstanceId is null.");
             return;
@@ -41,9 +38,9 @@ public class DriverManagerUnregister implements Runnable {
 
         DriverManagerService driverManagerService = new DriverManagerService();
 
-        if (!driverManagerService.unregisterDriver(App.driverInstanceId)) {
+        if (!driverManagerService.unregisterDriver(App.getDriverInstanceId())) {
             LOGGER.error("Unregister sdn-o zte sptn driver from driver manager failed, id: "
-                + App.driverInstanceId);
+                + App.getDriverInstanceId());
         } else {
             LOGGER.info("Unregister sdn-o zte sptn driver from driver manager success!");
         }

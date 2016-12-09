@@ -46,7 +46,7 @@ public class App extends Application<SptnDriverConfig> {
 
     private static final Logger LOGGER =
         LoggerFactory.getLogger(App.class);
-    public static String driverInstanceId;
+    private static String driverInstanceId;
     private Thread driverManagerRegister;
 
     /**
@@ -56,6 +56,14 @@ public class App extends Application<SptnDriverConfig> {
      */
     public static void main(String[] args) throws Exception {
         new App().run(args);
+    }
+
+    public static String getDriverInstanceId() {
+        return driverInstanceId;
+    }
+
+    public static void setDriverInstanceId(String driverInstanceId) {
+        App.driverInstanceId = driverInstanceId;
     }
 
     /**
@@ -93,7 +101,7 @@ public class App extends Application<SptnDriverConfig> {
 
         registerToDriverMgr();
 
-        addLifeCycleListener(config, environment);
+        environment.lifecycle().addLifeCycleListener(new AppLifeCycleListener());
     }
 
 
@@ -105,14 +113,14 @@ public class App extends Application<SptnDriverConfig> {
         config.setTitle("Open-o SDN-O ZTE SPTN Drvier API");
         config.setVersion("1.0.0");
         config.setResourcePackage("org.openo.sdno.sptndriver.resources");
-        // set rest api basepath in swagger
+        // set rest api base path in swagger
         DefaultServerFactory serverFactory =
             (DefaultServerFactory) configuration.getServerFactory();
         String basePath = serverFactory.getApplicationContextPath();
         String rootPath = serverFactory.getJerseyRootPath();
         rootPath = rootPath.substring(0, rootPath.indexOf("/*"));
         basePath =
-            basePath.equals("/") ? rootPath : (new StringBuilder()).append(basePath).append(rootPath)
+            ("/").equals(basePath) ? rootPath : (new StringBuilder()).append(basePath).append(rootPath)
                 .toString();
         config.setBasePath(basePath);
         config.setScan(true);
@@ -124,41 +132,41 @@ public class App extends Application<SptnDriverConfig> {
         driverManagerRegister.start();
     }
 
-    private void unregisterFromDriverMgr() {
-        Thread driverManagerUnregister = new Thread(new DriverManagerUnregister());
-        driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
-        driverManagerUnregister.start();
+
+
+
+    private class AppLifeCycleListener implements LifeCycle.Listener {
+        @Override
+        public void lifeCycleStarting(LifeCycle lifeCycle) {
+            // Do something when the service is starting.
+        }
+
+        @Override
+        public void lifeCycleStarted(LifeCycle lifeCycle) {
+            // Do something when the service is started.
+        }
+
+        @Override
+        public void lifeCycleFailure(LifeCycle lifeCycle, Throwable throwable) {
+            driverManagerRegister.interrupt();
+            unregisterFromDriverMgr();
+        }
+
+        @Override
+        public void lifeCycleStopping(LifeCycle lifeCycle) {
+            driverManagerRegister.interrupt();
+            unregisterFromDriverMgr();
+        }
+
+        @Override
+        public void lifeCycleStopped(LifeCycle lifeCycle) {
+            // Do something when the service is stopped.
+        }
+
+        private void unregisterFromDriverMgr() {
+            Thread driverManagerUnregister = new Thread(new DriverManagerUnregister());
+            driverManagerUnregister.setName("Unregister sdn-o sptn driver to Driver Manager");
+            driverManagerUnregister.start();
+        }
     }
-
-    private void addLifeCycleListener(final SptnDriverConfig config, Environment environment) {
-        environment.lifecycle().addLifeCycleListener(new LifeCycle.Listener() {
-            @Override
-            public void lifeCycleStarting(LifeCycle lifeCycle) {
-
-            }
-
-            @Override
-            public void lifeCycleStarted(LifeCycle lifeCycle) {
-
-            }
-
-            @Override
-            public void lifeCycleFailure(LifeCycle lifeCycle, Throwable throwable) {
-                driverManagerRegister.interrupt();
-                unregisterFromDriverMgr();
-            }
-
-            @Override
-            public void lifeCycleStopping(LifeCycle lifeCycle) {
-                driverManagerRegister.interrupt();
-                unregisterFromDriverMgr();
-            }
-
-            @Override
-            public void lifeCycleStopped(LifeCycle lifeCycle) {
-
-            }
-        });
-    }
-
 }
