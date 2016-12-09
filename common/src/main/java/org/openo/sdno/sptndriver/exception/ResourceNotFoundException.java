@@ -20,15 +20,15 @@ package org.openo.sdno.sptndriver.exception;
  * Throw this exception if the entity(like L2 or L3) can not be found.
  */
 public class ResourceNotFoundException extends Exception {
-    private Object resource;
+    private final String resourceInfo;
 
-    public ResourceNotFoundException(Object resource) {
-        this.resource = resource;
+    public ResourceNotFoundException(final Object resource) {
+        resourceInfo = resource.toString();
     }
 
     @Override
     public String toString() {
-        return "Can not find " + resource.toString();
+        return "Can not find " + resourceInfo;
     }
 
 }

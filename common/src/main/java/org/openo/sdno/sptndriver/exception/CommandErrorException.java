@@ -26,22 +26,28 @@ import javax.ws.rs.core.Response;
  */
 public class CommandErrorException extends ServerException {
 
-    private SCommandResult cmdResult;
+    private final String errorInfo;
 
-    public CommandErrorException(SCommandResult cmdResult) {
-        this.cmdResult = cmdResult;
+    public CommandErrorException(final SCommandResult cmdResult) {
+        errorInfo = getErrorInfo(cmdResult);
+    }
+
+    private static String getErrorInfo(final SCommandResult cmdResult) {
+        String errorInfo;
+        if (cmdResult != null
+            && cmdResult.getFailedResources() != null
+            && !cmdResult.getFailedResources().getFailedResourceList().isEmpty()) {
+            errorInfo = "Controller returns failure: "
+                + cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
+        } else {
+            errorInfo = "Error information from controller is null.";
+        }
+        return errorInfo;
     }
 
     @Override
     public String toString() {
-        String errorMsg;
-        if (cmdResult != null && cmdResult.getFailedResources() != null) {
-            errorMsg = "Controller returns failure: "
-                + cmdResult.getFailedResources().getFailedResourceList().get(0).getErrorMessage();
-        } else {
-            errorMsg = "Error information from controller is null.";
-        }
-        return errorMsg;
+        return errorInfo;
     }
 
     @Override
@@ -52,4 +58,5 @@ public class CommandErrorException extends ServerException {
             .entity(toString())
             .build();
     }
+
 }

@@ -16,28 +16,18 @@
 
 package org.openo.sdno.sptndriver.exception;
 
-import java.io.IOException;
+import org.junit.Test;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Wrap IOException to construct Response.
+ * The unit test class of ResourceNotFoundException.
  */
-public class ServerIoException extends ServerException {
-
-    private final java.io.IOException ex;
-
-    public ServerIoException(final IOException ex) {
-        this.ex = ex;
+public class ResourceNotFoundExceptionTest {
+    @Test
+    public void testToString() throws Exception {
+        ResourceNotFoundException ex = new ResourceNotFoundException("failed resource");
+        assertEquals("Can not find failed resource", ex.toString());
     }
 
-    @Override
-    public Response getResponse() {
-        return Response
-            .status(Response.Status.INTERNAL_SERVER_ERROR)
-            .entity(ex.toString())
-            .type(MediaType.TEXT_PLAIN_TYPE)
-            .build();
-    }
 }

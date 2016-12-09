@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
  * The exception class for wrong parameter.
  */
 public class ParamErrorException extends ServerException {
-    private String errorInfo;
+    private final String errorInfo;
 
     public ParamErrorException(String errorInfo) {
         this.errorInfo = errorInfo;
@@ -35,17 +35,23 @@ public class ParamErrorException extends ServerException {
      * @param validValues Expected valid input array
      * @param inputValue  Actual input
      */
-    public ParamErrorException(Object[] validValues, String inputValue)
+    public ParamErrorException(final Object[] validValues, final String inputValue)
         throws ParamErrorException {
-        errorInfo = "Valid values are: {";
+        errorInfo = getErrorInfo(validValues,inputValue);
+    }
+
+    private static String getErrorInfo(final Object[] validValues, final String inputValue) {
+        StringBuilder tempErrorInfo = new StringBuilder("Valid values are: {");
         for (Object para : validValues) {
-            errorInfo += para.toString() + ",";
+            tempErrorInfo.append(para.toString()).append(",");
         }
-        errorInfo += "}, input value is: ";
+        tempErrorInfo.append("}, input value is: ");
         if (inputValue == null) {
-            errorInfo += "null. ";
+            tempErrorInfo.append("null. ");
+        } else {
+            tempErrorInfo.append(inputValue).append(". ");
         }
-        errorInfo += inputValue + ". ";
+        return tempErrorInfo.toString();
     }
 
     @Override

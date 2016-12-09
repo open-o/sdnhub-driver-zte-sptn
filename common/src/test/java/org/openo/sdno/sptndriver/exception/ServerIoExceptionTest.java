@@ -16,31 +16,27 @@
 
 package org.openo.sdno.sptndriver.exception;
 
+import org.junit.Test;
+
+import java.io.IOException;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static org.junit.Assert.*;
+
 /**
- * When can not find controller, throw this exception.
+ * The unit test class of ServerIoException.
  */
-public class ControllerNotFoundException extends ServerException {
-    private final String errorInfo;
+public class ServerIoExceptionTest {
+    @Test
+    public void testGetResponse() throws Exception {
+        ServerIoException ex = new ServerIoException(new IOException("IO Exception"));
 
-    public ControllerNotFoundException(final Exception ex, final String controllerId) {
-        errorInfo = "Can not find controller: " + controllerId
-            + " due to: " + ex.toString();
+        Response actualValue = ex.getResponse();
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualValue.getStatus());
+        assertEquals(MediaType.TEXT_PLAIN_TYPE, actualValue.getMediaType());
+        assertEquals("java.io.IOException: IO Exception", actualValue.getEntity());
     }
 
-    @Override
-    public String toString() {
-        return errorInfo;
-    }
-
-    @Override
-    public Response getResponse() {
-        return Response
-            .status(Response.Status.BAD_REQUEST)
-            .type(MediaType.TEXT_PLAIN_TYPE)
-            .entity(toString())
-            .build();
-    }
 }

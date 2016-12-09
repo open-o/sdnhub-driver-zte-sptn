@@ -29,30 +29,35 @@ import retrofit2.Response;
  */
 public class HttpErrorException extends ServerException {
 
-    private Response response;
+    private final String errorInfo;
+    private final int errorCode;
 
-    public HttpErrorException(Response response) {
-        this.response = response;
+    public HttpErrorException(final Response response) {
+        errorInfo = getErrorInfo(response);
+        errorCode = response.code();
+    }
+
+    private static String getErrorInfo(final Response response) {
+        String errorInfo = "Controller returns unsuccessful status: ";
+        try {
+            errorInfo += response.errorBody().string();
+        } catch (IOException ex) {
+            errorInfo += ExceptionUtils.getStackTrace(ex);
+        }
+        return errorInfo;
     }
 
     @Override
     public String toString() {
-        String errorStr = "Controller returns unsuccessful status: ";
-        try {
-            errorStr += response.errorBody().string();
-        } catch (IOException ex) {
-            errorStr += ExceptionUtils.getStackTrace(ex);
-        }
-        return errorStr;
+        return errorInfo;
     }
 
     @Override
     public javax.ws.rs.core.Response getResponse() {
         return javax.ws.rs.core.Response
-            .status(response.code())
+            .status(errorCode)
             .entity(toString())
             .type(MediaType.TEXT_PLAIN_TYPE)
             .build();
-
     }
 }
