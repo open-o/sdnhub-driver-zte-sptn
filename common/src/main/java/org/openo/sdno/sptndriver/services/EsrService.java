@@ -17,8 +17,8 @@
 package org.openo.sdno.sptndriver.services;
 
 import org.openo.sdno.sptndriver.config.AppConfig;
-import org.openo.sdno.sptndriver.exception.CommandErrorException;
-import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ServerException;
+import org.openo.sdno.sptndriver.exception.ServerIoException;
 import org.openo.sdno.sptndriver.models.esr.SdnController;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
@@ -37,9 +37,6 @@ public class EsrService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EsrService.class);
 
-    public EsrService() {
-    }
-
     /**
      * Get SDN-O controller.
      *
@@ -47,14 +44,18 @@ public class EsrService {
      * @return SDN-O controller.
      */
     public SdnController getSdnoController(String controllerId)
-        throws CommandErrorException, HttpErrorException, IOException {
+        throws ServerException {
         String printText = "Get controller " + controllerId;
         LOGGER.debug(printText + " begin. ");
         Retrofit retrofit = ServiceUtil.initRetrofit(AppConfig.getConfig().getMsbUrl());
         EsrServiceInterface service = retrofit.create(EsrServiceInterface.class);
         Call<SdnController> cmdCall = service.getSdnoController(controllerId);
         Response<SdnController> response;
-        response = cmdCall.execute();
+        try {
+            response = cmdCall.execute();
+        } catch (IOException ex) {
+            throw new ServerIoException(ex);
+        }
 
         SdnController sdnController = ServiceUtil.parseResponse(response, LOGGER, printText);
 

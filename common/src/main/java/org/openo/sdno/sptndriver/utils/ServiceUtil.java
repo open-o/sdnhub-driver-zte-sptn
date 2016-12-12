@@ -23,6 +23,7 @@ import org.openo.sdno.sptndriver.enums.south.SCmdResultStatus;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
 import org.openo.sdno.sptndriver.exception.ParamErrorException;
+import org.openo.sdno.sptndriver.exception.ServerException;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelations;
 import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCommandResult;
@@ -45,6 +46,12 @@ public class ServiceUtil {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(ServiceUtil.class);
 
+    private static final String MSG_SUCCESS_BUT_NULL = " successfully, but response is null.";
+    private static final String MSG_FAILED_RESPONSE_UNSUCCESSFULL
+        = " failed, response unsuccessful.";
+
+    private ServiceUtil(){}
+
     /**
      * Parse the result of REST commands that the return type is SCommandResultOutput.
      *
@@ -55,16 +62,16 @@ public class ServiceUtil {
     public static void parseCommandResultOutput(Response<SCommandResultOutput> response,
                                                 Logger logger,
                                                 String printText)
-        throws CommandErrorException, HttpErrorException {
+        throws ServerException {
         if (response.isSuccessful()) {
             if (response.body() == null || response.body().getOutput() == null) {
-                logger.info(printText + " successfully, but response is null.");
+                logger.info(printText + MSG_SUCCESS_BUT_NULL);
                 return;
             }
             SCommandResult commandResult = response.body().getOutput();
             checkSuccess(commandResult, logger, printText);
         } else {
-            logger.error(printText + " failed, response unsuccessful.");
+            logger.error(printText + MSG_FAILED_RESPONSE_UNSUCCESSFULL);
             throw new HttpErrorException(response);
         }
     }
@@ -79,16 +86,16 @@ public class ServiceUtil {
     public static void parseCmdResultAndNcdResRelations(Response<SCmdResultAndNcdResRelations> response,
                                                         Logger logger,
                                                         String printText)
-        throws CommandErrorException, HttpErrorException {
+        throws ServerException {
         if (response.isSuccessful()) {
-            if (response.body() == null || response.body() == null) {
-                logger.info(printText + " successfully, but response is null.");
+            if (response.body() == null) {
+                logger.info(printText + MSG_SUCCESS_BUT_NULL);
                 return;
             }
             SCommandResult commandResult = response.body().getCommandResult();
             checkSuccess(commandResult, logger, printText);
         } else {
-            logger.error(printText + " failed, response unsuccessful.");
+            logger.error(printText + MSG_FAILED_RESPONSE_UNSUCCESSFULL);
             throw new HttpErrorException(response);
         }
     }
@@ -104,10 +111,10 @@ public class ServiceUtil {
         Response<SCmdResultAndNcdResRelationsOutput> response,
         Logger logger,
         String printText)
-        throws CommandErrorException, HttpErrorException {
+        throws ServerException {
         if (response.isSuccessful()) {
             if (response.body() == null || response.body().getOutput() == null) {
-                logger.info(printText + " successfully, but response is null.");
+                logger.info(printText + MSG_SUCCESS_BUT_NULL);
                 return;
             }
             SCmdResultAndNcdResRelationsOutput commandResultOutput = response.body();
@@ -121,7 +128,7 @@ public class ServiceUtil {
             LOGGER.debug("Response from controller is: " + gson.toJson(response.body()));
             checkSuccess(commandResult, logger, printText);
         } else {
-            logger.error(printText + " failed, response unsuccessful.");
+            logger.error(printText + MSG_FAILED_RESPONSE_UNSUCCESSFULL);
             throw new HttpErrorException(response);
         }
     }
@@ -139,7 +146,7 @@ public class ServiceUtil {
         if (response.isSuccessful()) {
             logger.debug(printText + " successfully. ");
         } else {
-            logger.error(printText + " failed, response unsuccessful.");
+            logger.error(printText + MSG_FAILED_RESPONSE_UNSUCCESSFULL);
             throw new HttpErrorException(response);
         }
     }
@@ -155,19 +162,19 @@ public class ServiceUtil {
     public static <T> T parseResponse(Response<T> response,
                                       Logger logger,
                                       String printText)
-        throws CommandErrorException, HttpErrorException {
+        throws ServerException {
         if (response.isSuccessful()) {
             Gson gson = new Gson();
             LOGGER.debug("Response from controller is: " + gson.toJson(response.body()));
             return response.body();
         } else {
-            logger.error(printText + " failed, response unsuccessful.");
+            logger.error(printText + MSG_FAILED_RESPONSE_UNSUCCESSFULL);
             throw new HttpErrorException(response);
         }
 
     }
 
-    private static <T> void checkSuccess(SCommandResult commandResult,
+    private static void checkSuccess(SCommandResult commandResult,
                                          Logger logger,
                                          String printText)
         throws CommandErrorException, HttpErrorException {

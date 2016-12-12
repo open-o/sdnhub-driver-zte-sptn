@@ -20,6 +20,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.openo.sdno.sptndriver.config.AppConfig;
 import org.openo.sdno.sptndriver.exception.CommandErrorException;
 import org.openo.sdno.sptndriver.exception.HttpErrorException;
+import org.openo.sdno.sptndriver.exception.ServerException;
 import org.openo.sdno.sptndriver.utils.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +39,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DriverManagerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverManagerService.class);
-
-    public DriverManagerService() {
-
-    }
 
     /**
      * Register driver to driver manager.
@@ -70,14 +67,10 @@ public class DriverManagerService {
             LOGGER.error("Register sptn driver failed, due to: " + ExceptionUtils.getStackTrace(ex));
             return false;
         } catch (HttpErrorException ex) {
-            if (ex.getResponse().getStatus() == RegisterStatus.INVALID_PARAMETER.status) {
-                LOGGER.warn("Invalid parameter or register twice.");
-                return true;
-            } else {
-                LOGGER.error("Register sptn driver failed: Internal server error, error code is: "
-                    + ex.getResponse().getStatus());
-                return false;
-            }
+            return parseRegisterHttpErrorException(ex);
+        } catch (ServerException ex) {
+            LOGGER.error("Register sptn driver failed, due to unexpected exception: " + ExceptionUtils.getStackTrace(ex));
+            return false;
         }
 
         LOGGER.debug("Register sptn driver end. ");
@@ -123,5 +116,16 @@ public class DriverManagerService {
 
         LOGGER.debug("Unregister sptn driver end. ");
         return true;
+    }
+
+    private boolean parseRegisterHttpErrorException(HttpErrorException ex) {
+        if (ex.getResponse().getStatus() == RegisterStatus.INVALID_PARAMETER.status) {
+            LOGGER.warn("Invalid parameter or register twice.");
+            return true;
+        } else {
+            LOGGER.error("Register sptn driver failed: Internal server error, error code is: "
+                + ex.getResponse().getStatus());
+            return false;
+        }
     }
 }
