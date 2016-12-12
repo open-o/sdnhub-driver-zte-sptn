@@ -36,6 +36,8 @@ public class SSncSwitchInitiator {
      */
     private static final int WTR_MULTIPLIER = 1000000;
 
+    private SSncSwitchInitiator() {}
+
     /**
      * Initialize PW SNC switch.
      *
@@ -84,7 +86,9 @@ public class SSncSwitchInitiator {
             coRoute = policy.getCoRoute();
         }
 
-        if (hasProtect(policy)) {
+        if (policy != null
+            && policy.getPathProtectPolicy() != null
+            && hasProtect(policy)) {
             NPathProtectPolicy pathProtectPolicy = policy.getPathProtectPolicy();
             hasProt = true;
             if (pathProtectPolicy.getRevertive() != null
