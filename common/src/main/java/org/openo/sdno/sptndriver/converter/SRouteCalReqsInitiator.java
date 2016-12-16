@@ -30,17 +30,16 @@ import org.openo.sdno.sptndriver.models.south.SRouteCalReqElementLeftneids;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqElementRightneids;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqs;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The class to initialize route calculate request.
  */
 public class SRouteCalReqsInitiator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SRouteCalReqsInitiator.class);
+    // Sequence number of work lsp is 1, protection lsp is 2
     private static final String WORK_SEQUENCE_NO = "1";
-    private static final String PROTECTION_SEQUENCE_NO = "2";
+
+    private SRouteCalReqsInitiator(){}
 
     /**
      * Initialize LSP route calculate request of L2.
@@ -59,10 +58,7 @@ public class SRouteCalReqsInitiator {
         String egressNe = null;
         // Try to get mplsTePolicy from particular constraints.
         NTunnelService tunnelService = l2vpn.getTunnelService();
-        if (tunnelService != null
-            && tunnelService.getParticularConstraints() != null
-            && tunnelService.getParticularConstraints().getParticularConstraint() != null
-            && !tunnelService.getParticularConstraints().getParticularConstraint().isEmpty()) {
+        if (!isParticularConstraintEmpty(tunnelService)) {
             NParticularConstraint
                 particularConstraint =
                 tunnelService.getParticularConstraints().getParticularConstraint().get(0);
@@ -71,28 +67,18 @@ public class SRouteCalReqsInitiator {
             egressNe = particularConstraint.getEgressNe();
         }
         // If get mplsTePolicy from particular constraints failed, try to get it from tunnel service.
-        if (mplsTePolicy == null
-            && tunnelService != null
-            && tunnelService.getMplsTe() != null) {
+        if (mplsTePolicy == null && !isMplsTeNull(tunnelService)) {
             mplsTePolicy = tunnelService.getMplsTe();
         }
         // if initialization of ingress NE or egress NE failed, try to get the information from ACs.
-        if (ingressNe == null || egressNe == null) {
-            if (l2vpn.getAcs() != null
-                && l2vpn.getAcs().getAc() != null
-                && l2vpn.getAcs().getAc().size() == 2) {
+        if (isAnyNeNull(ingressNe, egressNe) && hasTwoAcs(l2vpn)) {
                 ingressNe = l2vpn.getAcs().getAc().get(0).getNeId();
                 egressNe = l2vpn.getAcs().getAc().get(1).getNeId();
-            }
         }
         // if initialization of ingress NE or egress NE failed, try to get the information from PWs.
-        if (ingressNe == null || egressNe == null) {
-            if (l2vpn.getPws() != null
-                && l2vpn.getPws().getPws() != null
-                && l2vpn.getPws().getPws().size() == 2) {
+        if (isAnyNeNull(ingressNe, egressNe) && hasTwoPws(l2vpn)) {
                 ingressNe = l2vpn.getPws().getPws().get(0).getNeId();
                 egressNe = l2vpn.getPws().getPws().get(1).getNeId();
-            }
         }
 
         return initElineLspCalRoute(mplsTePolicy, ingressNe, egressNe);
@@ -174,5 +160,31 @@ public class SRouteCalReqsInitiator {
         return mplsTePolicy != null && mplsTePolicy.getBesteffort() != null;
     }
 
+    private static boolean hasTwoAcs(NL2Vpn l2vpn) {
+        return l2vpn.getAcs() != null
+            && l2vpn.getAcs().getAc() != null
+            && l2vpn.getAcs().getAc().size() == 2;
+    }
 
+    private static boolean hasTwoPws(NL2Vpn l2vpn) {
+        return l2vpn.getPws() != null
+            && l2vpn.getPws().getPws() != null
+            && l2vpn.getPws().getPws().size() == 2;
+    }
+
+    private static boolean isParticularConstraintEmpty(NTunnelService tunnelService) {
+        return tunnelService == null
+            || tunnelService.getParticularConstraints() == null
+            || tunnelService.getParticularConstraints().getParticularConstraint() == null
+            || tunnelService.getParticularConstraints().getParticularConstraint().isEmpty();
+    }
+
+    private static boolean isMplsTeNull(NTunnelService tunnelService) {
+        return tunnelService == null
+            || tunnelService.getMplsTe() == null;
+    }
+
+    private static boolean isAnyNeNull(String ingressNe, String egressNe) {
+        return ingressNe == null || egressNe == null;
+    }
 }
