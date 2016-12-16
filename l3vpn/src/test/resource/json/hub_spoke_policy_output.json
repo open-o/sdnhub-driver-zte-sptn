@@ -1,0 +1,101 @@
+{
+  "id": "l3vpn-uuid",
+  "user-label": "l3vpn-name",
+  "admin-status": "admin-down",
+  "operate-status": "operate-down",
+  "acs": {
+    "l3-acs": [
+      {
+        "id": "ac1",
+        "ne-id": "ne1",
+        "ltp-id": "ltp1id",
+        "ip-addr": "1.0.0.1",
+        "qos": {
+          "belonged-id": "ac1",
+          "tunnel-mode": "pipeline",
+          "cac-mode": "0",
+          "a2z-policing": "0",
+          "z2a-policing": "0",
+          "traffic-class": "CS7"
+        },
+        "protocol-list": {
+          "protocols": []
+        }
+      },
+      {
+        "id": "ac2",
+        "ne-id": "ne2",
+        "ltp-id": "ac2ltp",
+        "ip-addr": "1.0.0.2",
+        "qos": {
+          "belonged-id": "ac2",
+          "tunnel-mode": "pipeline",
+          "cac-mode": "0",
+          "a2z-policing": "0",
+          "z2a-policing": "0",
+          "traffic-class": "CS7"
+        },
+        "protocol-list": {
+          "protocols": []
+        }
+      }
+    ]
+  },
+  "topo-mode": "hub-spoke",
+  "hub-spoke-policy": {
+    "node-list": {
+      "hub-spoke-nodes": [
+        {
+          "ne-id": "ne2",
+          "node-role": "spoke",
+          "belonged-hubs": {
+            "belonged-hub-list": [
+              {
+                "node-id": "ne1"
+              }
+            ]
+          }
+        },
+        {
+          "ne-id": "ne1",
+          "node-role": "hub"
+        }
+      ]
+    },
+    "hub-fullmeshed": false,
+    "primary-backup-connected": true
+  },
+  "tunnel-create-policy": {
+    "direction": "bidirection",
+    "type": "1",
+    "qos": {
+      "tunnel-mode": "pipeline",
+      "cac-mode": "0",
+      "convg-mode": "0",
+      "traffic-adj-mode": "1",
+      "a2z-policing": "0",
+      "z2a-policing": "0",
+      "a2z-color-mode": "0",
+      "z2a-color-mode": "0",
+      "traffic-class": "CS7"
+    },
+    "snc-switch": {
+      "layer-rate": "LSP",
+      "linear-protection-type": "path-protection-1-to-1",
+      "linear-protection-protocol": "APS",
+      "switch-mode": "double-end-switch",
+      "revertive-mode": "revertive",
+      "wtr": "300",
+      "hold-off-time": "0"
+    },
+    "admin-status": "admin-up",
+    "lsp-oam": {
+      "meg-id": "-1",
+      "cc-allow": true,
+      "cc-exp": "CS7",
+      "cc-interval": "3.3",
+      "lm-mode": "disable",
+      "dm-mode": "disable"
+    }
+  }
+}

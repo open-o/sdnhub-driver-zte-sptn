@@ -42,8 +42,20 @@ import java.util.List;
  */
 public class L3ConverterTest {
     @Test
-    public void convertNbiToSbi() throws Exception {
-        File inputJson = new File("src/test/resource/json/create_l3vpn_input.json");
+    public void testFullMesh() throws Exception {
+       compareInputAndOutput("src/test/resource/json/create_l3vpn_input.json",
+           "src/test/resource/json/create_l3vpn_output.json");
+    }
+
+    @Test
+    public void testHubSpoke() throws Exception {
+        compareInputAndOutput("src/test/resource/json/hub_spoke_policy_input.json",
+            "src/test/resource/json/hub_spoke_policy_output.json");
+    }
+
+    private void compareInputAndOutput (String inputJsonFile, String outputJsonFile)
+        throws Exception{
+        File inputJson = new File(inputJsonFile);
         JsonParser crtParser = new JsonParser();
         JsonElement crtBody = crtParser.parse(new FileReader(inputJson));
 
@@ -54,7 +66,7 @@ public class L3ConverterTest {
 
         SL3vpn calculatedOutput = L3Converter.convertNbiToSbi(l3vpn);
 
-        File outputJson = new File("src/test/resource/json/create_l3vpn_output.json");
+        File outputJson = new File(outputJsonFile);
         JsonParser routeParser = new JsonParser();
         JsonElement outputBody = routeParser.parse(new FileReader(outputJson));
 
@@ -70,7 +82,7 @@ public class L3ConverterTest {
         if (calculatedOutput.getBindRelationList() == null) {
             calculatedOutput.setBindRelationList(new ArrayList<SL3BindRelation>());
         }
-        Assert.assertEquals(calculatedOutput, expectedOutput);
+        Assert.assertEquals(expectedOutput, calculatedOutput);
     }
 
     private void clearStaticRouteId(SL3vpn sl3vpn) {

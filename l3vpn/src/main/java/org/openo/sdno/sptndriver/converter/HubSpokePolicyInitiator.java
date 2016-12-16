@@ -29,8 +29,6 @@ import org.openo.sdno.sptndriver.models.south.SHubSpokeNodes;
 import org.openo.sdno.sptndriver.models.south.SHubSpokePolicy;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.models.south.SNodeId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +39,8 @@ import java.util.Map;
  * The class to initiate hub spoke policy.
  */
 public class HubSpokePolicyInitiator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HubSpokePolicyInitiator.class);
+
+    private HubSpokePolicyInitiator(){}
 
     /**
      * The method to initiate hub spoke policy.

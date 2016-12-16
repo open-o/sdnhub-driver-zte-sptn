@@ -1,0 +1,104 @@
+{
+  "id": "l3vpn-uuid",
+  "name": "l3vpn-name",
+  "topology": "hub-spoke",
+  "adminStatus": "adminDown",
+  "operStatus": "operateDown",
+  "tunnelService": {
+    "type": "auto-select",
+    "autoSelect": {
+      "autoSelectTunnels": {
+        "autoSelectTunnel": []
+      }
+    },
+    "mplsTe": {
+      "signalType": "rsvp-te",
+      "manageProtocol": "netconf",
+      "pathConstraint": {},
+      "pathProtectPolicy": {}
+    },
+    "particularConstraints": {
+      "particularConstraint": []
+    }
+  },
+  "mtu": 1500,
+  "acs": {
+    "ac": [
+      {
+        "id": "ac1",
+        "neId": "ne1",
+        "ltpId": "ltp1id",
+        "name": "ltp1name",
+        "localName": "ltp1localname",
+        "adminStatus": "adminDown",
+        "operStatus": "operateDown",
+        "upstreamBandwidth": {},
+        "downstreamBandwidth": {},
+        "l2Access": {
+          "accessType": "port",
+          "accessAction": "keep"
+        },
+        "l3Access": {
+          "ipv4Address": "1.0.0.1",
+          "routes": {
+            "route": []
+          }
+        },
+        "overrideFlows": {
+          "overrideFlow": []
+        },
+        "topologyRole": "hub",
+        "acDirection": "out"
+      },
+      {
+        "id": "ac2",
+        "neId": "ne2",
+        "ltpId": "ac2ltp",
+        "name": "ac2name",
+        "localName": "ac2localname",
+        "upstreamBandwidth": {},
+        "downstreamBandwidth": {},
+        "l2Access": {
+          "accessType": "port",
+          "accessAction": "keep"
+        },
+        "l3Access": {
+          "ipv4Address": "1.0.0.2",
+          "routes": {
+            "route": []
+          }
+        },
+        "overrideFlows": {
+          "overrideFlow": []
+        },
+        "topologyRole": "spoke",
+        "acDirection": "in"
+      }
+    ]
+  },
+  "loopbackifs": {
+    "loopback": []
+  },
+  "topologyService": {
+    "hubGroups": [
+      {
+        "acId": "ac1",
+        "hubDirection": "out"
+      }
+    ],
+    "spokeGroup": {
+      "spokeAc": [
+        {
+          "acId": "ac2"
+        }
+      ]
+    }
+  },
+  "protectGroup": {
+    "vrrp": {
+      "bfdParamter": {}
+    }
+  },
+  "diffServ": {}
+}
+
