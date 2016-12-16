@@ -63,7 +63,9 @@ public enum AdminStatusEnum {
      * @return SBI administrative status
      */
     public static SAdminStatus convertNbiToSbi(String north) throws ParamErrorException {
-
+        if (north == null) {
+            return null;
+        }
         for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
             if (adminStatusEnum.getNorthValue().equals(north)) {
                 return adminStatusEnum.south;
