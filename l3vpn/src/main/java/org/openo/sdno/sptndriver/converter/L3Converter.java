@@ -47,6 +47,8 @@ import java.util.List;
 public class L3Converter {
     private static final Logger LOGGER = LoggerFactory.getLogger(L3Converter.class);
 
+    private L3Converter(){}
+
     /**
      * Convert NBI L3vpn to SBI L3vpn.
      *
@@ -76,7 +78,8 @@ public class L3Converter {
         // Maybe use protection group in NBI and topology type in the future to determine the frr list.
         sl3vpn.setL3FrrList(null);
         sl3vpn.setStaticRoutes(null);
-        if (nl3Vpn.getDiffServ() != null) {
+        if (nl3Vpn.getDiffServ() != null
+            && nl3Vpn.getDiffServ().getServiceClass() != null) {
             sl3vpn.setTrafficClass(
                 TrafficClassConverter.getEnum(nl3Vpn.getDiffServ().getServiceClass().toString()));
         }
