@@ -22,6 +22,9 @@ import java.util.UUID;
  * The class of UUID utility.
  */
 public class UuidUtil {
+
+    private UuidUtil(){}
+
     /**
      * Generate a UUID.
      *

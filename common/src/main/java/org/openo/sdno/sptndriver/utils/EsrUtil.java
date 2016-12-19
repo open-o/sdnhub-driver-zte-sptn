@@ -25,6 +25,8 @@ import org.openo.sdno.sptndriver.services.EsrService;
  */
 public class EsrUtil {
 
+    private EsrUtil(){}
+
     /**
      * Get SDN-O controller URL by controller id.
      *

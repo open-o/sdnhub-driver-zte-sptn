@@ -24,6 +24,8 @@ public class AppConfig {
         = "ICTAuthentication:21232F297A57A5A743894A0E4A801FC3";
     private static Config config;
 
+    private AppConfig(){}
+
     public static Config getConfig() {
         return config;
     }

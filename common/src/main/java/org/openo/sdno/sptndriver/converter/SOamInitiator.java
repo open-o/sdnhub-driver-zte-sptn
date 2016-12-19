@@ -26,6 +26,8 @@ import org.openo.sdno.sptndriver.models.south.SOamMode;
  */
 public class SOamInitiator {
 
+    private SOamInitiator(){}
+
     /**
      * Initialization of OAM.
      *

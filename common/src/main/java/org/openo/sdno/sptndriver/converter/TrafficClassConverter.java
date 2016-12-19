@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class TrafficClassConverter {
 
+    private TrafficClassConverter(){}
+
     /**
      * Convert string to SBI traffic class enumerator.
      *

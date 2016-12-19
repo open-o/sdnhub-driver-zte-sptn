@@ -23,6 +23,8 @@ import org.apache.commons.net.util.SubnetUtils;
  */
 public class Ipv4Util {
 
+    private Ipv4Util(){}
+
     /**
      * Get the IP part from the full IP "a.b.c.d/mask".
      *

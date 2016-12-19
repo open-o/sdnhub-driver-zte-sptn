@@ -20,6 +20,9 @@ package org.openo.sdno.sptndriver.utils;
  * The Math utility class.
  */
 public class MathUtil {
+
+    private MathUtil(){}
+
     /**
      * Calculate the smallest value that is equal to or bigger than the result of divide.
      *

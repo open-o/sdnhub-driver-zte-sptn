@@ -27,6 +27,8 @@ import java.io.IOException;
  */
 public class JsonUtil {
 
+    private JsonUtil(){}
+
     public static Object readJsonFromFile(String fileName)
         throws IOException, ParseException {
         JSONParser parser = new JSONParser();

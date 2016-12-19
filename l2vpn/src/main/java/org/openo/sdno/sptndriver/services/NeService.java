@@ -23,13 +23,16 @@ import org.openo.sdno.sptndriver.models.north.brs.NME;
  */
 public class NeService {
 
-  /**
-   * Get NE information from BRS.
-   *
-   * @param globalID Global ID of NE.
-   * @return NE information.
-   */
-  public static NME getNNEByGlobalID(String globalID) {
-    return null;
-  }
+    private NeService() {
+    }
+
+    /**
+     * Get NE information from BRS.
+     *
+     * @param globalID Global ID of NE.
+     * @return NE information.
+     */
+    public static NME getNNEByGlobalID(String globalID) {
+        return null;
+    }
 }

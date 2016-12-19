@@ -48,6 +48,8 @@ public class SQosInitiator {
      */
     private static String DEFAULT_PBS = "100";
 
+    private SQosInitiator(){}
+
     /**
      * Initialize LSP QoS parameters according to MplsTePolicy.
      *
