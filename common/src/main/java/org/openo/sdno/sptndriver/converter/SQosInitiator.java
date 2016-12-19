@@ -42,11 +42,11 @@ public class SQosInitiator {
     /**
      * Default CBS in KBytes.
      */
-    private static String DEFAULT_CBS = "100";
+    private static final String DEFAULT_CBS = "100";
     /**
      * Default PBS in KBytes.
      */
-    private static String DEFAULT_PBS = "100";
+    private static final String DEFAULT_PBS = "100";
 
     private SQosInitiator(){}
 
@@ -101,7 +101,6 @@ public class SQosInitiator {
         qos.setCacMode(SCacMode.CLOSE.toString());
         qos.setA2zPolicing(SQosPolicing.CLOSE.toString());
         qos.setZ2aPolicing(SQosPolicing.CLOSE.toString());
-        // todo check if cir need to be configured 0 or -1
         qos.setTrafficClass(org.openo.sdno.sptndriver.models.south.STrafficClass.CS7);
         return qos;
     }
@@ -121,8 +120,8 @@ public class SQosInitiator {
             && upStreamQos.getEnable()) {
             qos.setCacMode(SCacMode.OPEN.toString());
             qos.setA2zPolicing(SQosPolicing.OPEN.toString());
-            qos.setA2zCir(upStreamQos.getCir().toString());
-            qos.setA2zPir(upStreamQos.getPir().toString());
+            qos.setA2zCir(getString(upStreamQos.getCir()));
+            qos.setA2zPir(getString(upStreamQos.getPir()));
             qos.setA2zCbs(getSouthCbs(upStreamQos.getCbs()));
             qos.setA2zPbs(getSouthPbs(upStreamQos.getPbs()));
         }
@@ -132,8 +131,8 @@ public class SQosInitiator {
             && downStreamQos.getEnable()) {
             qos.setCacMode(SCacMode.OPEN.toString());
             qos.setZ2aPolicing(SQosPolicing.OPEN.toString());
-            qos.setZ2aCir(downStreamQos.getCir().toString());
-            qos.setZ2aPir(downStreamQos.getPir().toString());
+            qos.setZ2aCir(getString(downStreamQos.getCir()));
+            qos.setZ2aPir(getString(downStreamQos.getPir()));
             qos.setZ2aCbs(getSouthCbs(downStreamQos.getCbs()));
             qos.setZ2aPbs(getSouthPbs(downStreamQos.getPbs()));
         }
@@ -142,11 +141,24 @@ public class SQosInitiator {
     }
 
     private static String getSouthCbs(Long northCbs) {
+        if (northCbs == null) {
+            return null;
+        }
         return Long.toString(MathUtil.ceil((float) northCbs, (float) CBS_MULTIPLIER));
     }
 
     private static String getSouthPbs(Long northPbs) {
+        if (northPbs == null) {
+            return null;
+        }
         return Long.toString(MathUtil.ceil((float) northPbs, (float) PBS_MULTIPLIER));
+    }
+
+    private static String getString(Long longValue) {
+        if (longValue == null) {
+            return null;
+        }
+        return longValue.toString();
     }
 
 }

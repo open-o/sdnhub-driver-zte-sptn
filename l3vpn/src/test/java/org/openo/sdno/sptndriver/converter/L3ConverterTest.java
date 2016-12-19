@@ -53,6 +53,12 @@ public class L3ConverterTest {
             "src/test/resource/json/hub_spoke_policy_output.json");
     }
 
+    @Test
+    public void testAcQos() throws Exception {
+        compareInputAndOutput("src/test/resource/json/ac_qos_input.json",
+            "src/test/resource/json/ac_qos_output.json");
+    }
+
     private void compareInputAndOutput (String inputJsonFile, String outputJsonFile)
         throws Exception{
         File inputJson = new File(inputJsonFile);

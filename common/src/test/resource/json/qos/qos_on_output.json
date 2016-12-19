@@ -1,0 +1,19 @@
+{
+  "tunnel-mode": "pipeline",
+  "cac-mode": "1",
+  "convg-mode": "0",
+  "traffic-adj-mode": "1",
+  "a2z-policing": "1",
+  "z2a-policing": "1",
+  "a2z-cir": "1000",
+  "z2a-cir": "1000",
+  "a2z-pir": "1000",
+  "z2a-pir": "1000",
+  "a2z-cbs": "100",
+  "z2a-cbs": "100",
+  "a2z-pbs": "100",
+  "z2a-pbs": "100",
+  "a2z-color-mode": "0",
+  "z2a-color-mode": "0",
+  "traffic-class": "CS7"
+}
