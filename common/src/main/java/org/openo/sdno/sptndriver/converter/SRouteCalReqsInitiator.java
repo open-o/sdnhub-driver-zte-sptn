@@ -71,12 +71,12 @@ public class SRouteCalReqsInitiator {
             mplsTePolicy = tunnelService.getMplsTe();
         }
         // if initialization of ingress NE or egress NE failed, try to get the information from ACs.
-        if (isAnyNeNull(ingressNe, egressNe) && hasTwoAcs(l2vpn)) {
+        if (isAnyNeNullorEmpty(ingressNe, egressNe) && hasTwoAcs(l2vpn)) {
                 ingressNe = l2vpn.getAcs().getAc().get(0).getNeId();
                 egressNe = l2vpn.getAcs().getAc().get(1).getNeId();
         }
         // if initialization of ingress NE or egress NE failed, try to get the information from PWs.
-        if (isAnyNeNull(ingressNe, egressNe) && hasTwoPws(l2vpn)) {
+        if (isAnyNeNullorEmpty(ingressNe, egressNe) && hasTwoPws(l2vpn)) {
                 ingressNe = l2vpn.getPws().getPws().get(0).getNeId();
                 egressNe = l2vpn.getPws().getPws().get(1).getNeId();
         }
@@ -88,8 +88,8 @@ public class SRouteCalReqsInitiator {
                                                            String ingressNe,
                                                            String egressNe)
         throws ParamErrorException {
-        if (ingressNe == null || egressNe == null) {
-            throw new ParamErrorException("Ingress ne or egress ne is null.");
+        if (isAnyNeNullorEmpty(ingressNe,egressNe)) {
+            throw new ParamErrorException("Ingress ne or egress ne is null or empty.");
         }
 
         SRouteCalReqs routeCalReqs = new SRouteCalReqs();
@@ -157,7 +157,12 @@ public class SRouteCalReqsInitiator {
     }
 
     private static boolean isBestEffort(NMplsTePolicy mplsTePolicy) {
-        return mplsTePolicy != null && mplsTePolicy.getBesteffort() != null;
+        // If user doesn't specify besteffort field, the default value is true
+        if (mplsTePolicy== null || mplsTePolicy.getBesteffort() == null) {
+            return true;
+        } else {
+            return mplsTePolicy.getBesteffort();
+        }
     }
 
     private static boolean hasTwoAcs(NL2Vpn l2vpn) {
@@ -184,7 +189,10 @@ public class SRouteCalReqsInitiator {
             || tunnelService.getMplsTe() == null;
     }
 
-    private static boolean isAnyNeNull(String ingressNe, String egressNe) {
-        return ingressNe == null || egressNe == null;
+    private static boolean isAnyNeNullorEmpty(String ingressNe, String egressNe) {
+        return ingressNe == null
+            || ingressNe.isEmpty()
+            || egressNe == null
+            || egressNe.isEmpty();
     }
 }

@@ -13,23 +13,23 @@
             "left-ne-ids": {
               "left-ne-id": [
                 {
-                  "ne-id": "53319217-4670-49c3-8d82-68ba1350c542"
+                  "ne-id": "ne1"
                 }
               ]
             },
             "right-ne-ids": {
               "right-ne-id": [
                 {
-                  "ne-id": "f8d01f79-b2f7-4e4a-bbfc-23f670041e04"
+                  "ne-id": "ne2"
                 }
               ]
             },
             "work-calculate-constraint": {
-              "bandwidth": "1024",
+              "bandwidth": "0",
               "cal-policy": "bandwidth-balancing"
             },
             "protect-calculate-constraint": {
-              "bandwidth": "1024",
+              "bandwidth": "0",
               "cal-policy": "bandwidth-balancing"
             }
           }

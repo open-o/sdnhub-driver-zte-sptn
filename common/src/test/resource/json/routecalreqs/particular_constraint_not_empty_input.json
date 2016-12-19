@@ -1,0 +1,100 @@
+{
+  "id": "l2vpn1",
+  "name": "l2vpnname",
+  "topology": "full-mesh",
+  "adminStatus": "adminUp",
+  "operStatus": "operateUp",
+  "tunnelService": {
+    "type": "mpls-te",
+    "autoSelect": {
+      "autoSelectTunnels": {
+        "autoSelectTunnel": []
+      }
+    },
+    "mplsTe": {
+      "signalType": "static-lsp",
+      "manageProtocol": "netconf",
+      "pathConstraint": {},
+      "pathProtectPolicy": {}
+    },
+    "particularConstraints": {
+      "particularConstraint": [
+        {
+          "ingressNe": "ne1",
+          "egressNe": "ne2",
+          "type": "particular-mpls-te-tunnel",
+          "bindingTunnel": [],
+          "mplsTe": {
+            "signalType": "static-lsp",
+            "manageProtocol": "netconf",
+            "pathConstraint": {},
+            "pathProtectPolicy": {}
+          }
+        }
+      ]
+    }
+  },
+  "mtu": 1200,
+  "acs": {
+    "ac": [
+      {
+        "id": "ac1",
+        "localName": "aclocalname1",
+        "neId": "ne1",
+        "ltpId": "ltp1",
+        "adminStatus": "adminUp",
+        "operStatus": "operateUp",
+        "l2Access": {
+          "accessType": "port",
+          "accessAction": "keep"
+        },
+        "inboundQosIfPhb": {},
+        "outboundQosIfPhb": {},
+        "upstreamBandwidth": {},
+        "downstreamBandwidth": {},
+        "overrideFlow": {
+          "overrideFlow": []
+        }
+      },
+      {
+        "id": "ac2",
+        "localName": "aclocalname2",
+        "neId": "ne2",
+        "ltpId": "ltpid2",
+        "adminStatus": "adminUp",
+        "operStatus": "operateUp",
+        "l2Access": {
+          "accessType": "port",
+          "accessAction": "keep"
+        },
+        "inboundQosIfPhb": {},
+        "outboundQosIfPhb": {},
+        "upstreamBandwidth": {},
+        "downstreamBandwidth": {},
+        "overrideFlow": {
+          "overrideFlow": []
+        }
+      }
+    ]
+  },
+  "ctrlWordType": "enable",
+  "pws": {
+    "uuid": "pwuuid",
+    "pws": [
+      {
+        "id": "pw1",
+        "neId": "ne1",
+        "topoRole": "hub",
+        "protectionRole": "primary"
+      },
+      {
+        "id": "pw2",
+        "neId": "ne2",
+        "topoRole": "hub",
+        "protectionRole": "primary"
+      }
+    ]
+  },
+  "signalingType": "static",
+  "encapsulation": "eth"
+}

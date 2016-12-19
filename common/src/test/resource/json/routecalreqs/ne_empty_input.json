@@ -1,0 +1,41 @@
+{
+  "id": "l2vpn1",
+  "name": "l2vpnname",
+  "topology": "full-mesh",
+  "adminStatus": "adminUp",
+  "operStatus": "operateUp",
+  "tunnelService": {
+    "type": "mpls-te",
+    "autoSelect": {
+      "autoSelectTunnels": {
+        "autoSelectTunnel": []
+      }
+    },
+    "mplsTe": {
+      "signalType": "static-lsp",
+      "manageProtocol": "netconf",
+      "pathConstraint": {},
+      "pathProtectPolicy": {}
+    },
+    "particularConstraints": {
+      "particularConstraint": [
+        {
+          "ingressNe": "",
+          "egressNe": "",
+          "type": "particular-mpls-te-tunnel",
+          "bindingTunnel": [],
+          "mplsTe": {
+            "signalType": "static-lsp",
+            "manageProtocol": "netconf",
+            "pathConstraint": {},
+            "pathProtectPolicy": {}
+          }
+        }
+      ]
+    }
+  },
+  "mtu": 1200,
+  "ctrlWordType": "enable",
+  "signalingType": "static",
+  "encapsulation": "eth"
+}
