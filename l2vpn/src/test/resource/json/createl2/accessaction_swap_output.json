@@ -1,0 +1,114 @@
+{
+  "input": {
+    "snc-eline": {
+      "user-label": "l2vpnname",
+      "admin-status": "admin-up",
+      "operate-status": "operate-up",
+      "snc-type": "simple",
+      "interconnection-mode": "uni-uni",
+      "ingress-end-points": {
+        "ingress-end-point": {
+          "id": "l2ac1",
+          "ne-id": "53319217-4670-49c3-8d82-68ba1350c542",
+          "ltp-id": "0f2d13f6-b659-49d6-a9f4-b28211eb98e7",
+          "access-type": "Port",
+          "dot1q-vlan-bitmap": "1",
+          "qinq-svlan-bitmap": "1",
+          "qinq-cvlan-bitmap": "1",
+          "access-action": "Swap",
+          "action-vlan-id": "1",
+          "role": "master",
+          "qos": {
+            "belonged-id": "l2ac1",
+            "tunnel-mode": "pipeline",
+            "cac-mode": "0",
+            "a2z-policing": "0",
+            "z2a-policing": "0",
+            "traffic-class": "CS7"
+          }
+        }
+      },
+      "egress-end-points": {
+        "egress-end-point": {
+          "id": "ac2uuid",
+          "ne-id": "f8d01f79-b2f7-4e4a-bbfc-23f670041e04",
+          "ltp-id": "13e26387-1942-42c6-9be1-d359d44c8428",
+          "access-type": "Port",
+          "dot1q-vlan-bitmap": "1",
+          "qinq-svlan-bitmap": "1",
+          "qinq-cvlan-bitmap": "1",
+          "access-action": "Swap",
+          "action-vlan-id": "1",
+          "role": "master",
+          "qos": {
+            "belonged-id": "ac2uuid",
+            "tunnel-mode": "pipeline",
+            "cac-mode": "0",
+            "a2z-policing": "0",
+            "z2a-policing": "0",
+            "traffic-class": "CS7"
+          }
+        }
+      },
+      "snc-pws": {
+        "snc-pw": {
+          "id": "b852bc70-b025-41f5-b4cb-cd667512ecc0",
+          "user-label": "pw1name",
+          "role": "master",
+          "encaplate-type": "ethernet",
+          "ingress-ne-id": "53319217-4670-49c3-8d82-68ba1350c542",
+          "egress-ne-id": "f8d01f79-b2f7-4e4a-bbfc-23f670041e04",
+          "source-ip": "0.0.0.0",
+          "destination-ip": "0.0.0.0",
+          "admin-status": "admin-up",
+          "operate-status": "operate-up",
+          "ctrl-word-support": "1",
+          "sn-support": "0",
+          "vccv-type": "0",
+          "conn-ack-type": "0",
+          "qos": {
+            "belonged-id": "b852bc70-b025-41f5-b4cb-cd667512ecc0",
+            "tunnel-mode": "pipeline",
+            "cac-mode": "0",
+            "a2z-policing": "0",
+            "z2a-policing": "0",
+            "traffic-class": "CS7"
+          }
+        }
+      }
+    },
+    "snc-tunnel-create-policy": {
+      "direction": "bidirection",
+      "type": "1",
+      "qos": {
+        "tunnel-mode": "pipeline",
+        "cac-mode": "0",
+        "convg-mode": "0",
+        "traffic-adj-mode": "1",
+        "a2z-policing": "0",
+        "z2a-policing": "0",
+        "a2z-color-mode": "0",
+        "z2a-color-mode": "0",
+        "traffic-class": "CS7"
+      },
+      "snc-switch": {
+        "layer-rate": "LSP",
+        "linear-protection-type": "path-protection-1-to-1",
+        "linear-protection-protocol": "APS",
+        "switch-mode": "double-end-switch",
+        "revertive-mode": "revertive",
+        "wtr": "1",
+        "hold-off-time": "0"
+      },
+      "admin-status": "admin-up",
+      "lsp-oam": {
+        "meg-id": "-1",
+        "cc-allow": true,
+        "cc-exp": "CS7",
+        "cc-interval": "3.3",
+        "lm-mode": "disable",
+        "dm-mode": "disable"
+      }
+    }
+  }
+}

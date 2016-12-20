@@ -143,10 +143,6 @@ public class L2Converter {
      */
     private static SServiceEndPoint northToSouth(NL2Ac ac)
         throws ParamErrorException {
-        if (ac == null) {
-            LOGGER.error("input ac is null.");
-            return null;
-        }
         SServiceEndPoint ep = new SServiceEndPoint();
         ep.setId(ac.getId());
         ep.setNeId(ac.getNeId());
@@ -171,9 +167,6 @@ public class L2Converter {
                     ep.setActionVlanId(nl2Access.getPushVlanId().toString());
                 } else if (accessAction.equals(AccessActionEnum.SWAP.getNorth())) {
                     ep.setActionVlanId(nl2Access.getSwapVlanId().toString());
-                } else {
-                    LOGGER.debug(
-                        "No need to config access vlan id since access action is " + accessAction + ".");
                 }
             }
 
@@ -214,43 +207,39 @@ public class L2Converter {
      * @return SBI PW list.
      */
     private static SSncPws initPws(NL2Vpn l2Vpn) throws ParamErrorException {
-        if (l2Vpn == null || l2Vpn.getPws() == null) {
-            LOGGER.error("l2vpn or pwList is null.");
-            return null;
+        if (l2Vpn == null
+            || l2Vpn.getPws() == null
+            || l2Vpn.getPws().getPws().size() != 2) {
+            throw new ParamErrorException("L2vpn should includes 2 pws.");
         }
 
-        if (l2Vpn.getPws().getPws().size() != 2) {
-            LOGGER.error("l2vpn or pwList size is not 2 or 3.");
-            return null;
-        }
         SSncPws pwList = new SSncPws();
-        if (l2Vpn.getPws().getPws().size() == 2) {
-            NPw pwA = l2Vpn.getPws().getPws().get(0);
-            NPw pwZ = l2Vpn.getPws().getPws().get(1);
 
-            SSncPw sncPw = new SSncPw();
-            sncPw.setId(UuidUtil.getUuid());
-            sncPw.setName(null);
-            sncPw.setUserLabel(pwA.getName());
-            sncPw.setRole(SSncPw.RoleEnum.MASTER);
-            sncPw.setEncaplateType(
-                EncapsulateTypeEnum.convertNbiToSbi(l2Vpn.getEncapsulation().toString()));
-            sncPw.setIngressNeId(pwA.getNeId());
-            sncPw.setEgressNeId(pwZ.getNeId());
-            sncPw.setDestinationIp(pwA.getPeerAddress());
-            sncPw.setSourceIp(pwZ.getPeerAddress());
-            sncPw.setAdminStatus(AdminStatusEnum.convertNbiToSbi(l2Vpn.getAdminStatus()));
-            sncPw.setOperateStatus(OperateStatusEnum.convertNbiToSbi(l2Vpn.getOperStatus()));
-            sncPw.setCtrlWordSupport(
-                CtrlWordEnum.getIndex(l2Vpn.getCtrlWordType().toString()).toString());
-            sncPw.setSnSupport(SSnSupport.NOT_SUPPORT.toString());
-            sncPw.setVccvType("0");
-            sncPw.setConnAckType("0");
-            sncPw.setQos(SQosInitiator.initCacClosedQos(sncPw.getId()));
-            // Doesn't support protect now, no need to set oam.
-            sncPw.setOam(null);
-            pwList.setSncPw(sncPw);
-        }
+        NPw pwA = l2Vpn.getPws().getPws().get(0);
+        NPw pwZ = l2Vpn.getPws().getPws().get(1);
+
+        SSncPw sncPw = new SSncPw();
+        sncPw.setId(UuidUtil.getUuid());
+        sncPw.setName(null);
+        sncPw.setUserLabel(pwA.getName());
+        sncPw.setRole(SSncPw.RoleEnum.MASTER);
+        sncPw.setEncaplateType(
+            EncapsulateTypeEnum.convertNbiToSbi(l2Vpn.getEncapsulation().toString()));
+        sncPw.setIngressNeId(pwA.getNeId());
+        sncPw.setEgressNeId(pwZ.getNeId());
+        sncPw.setDestinationIp(pwA.getPeerAddress());
+        sncPw.setSourceIp(pwZ.getPeerAddress());
+        sncPw.setAdminStatus(AdminStatusEnum.convertNbiToSbi(l2Vpn.getAdminStatus()));
+        sncPw.setOperateStatus(OperateStatusEnum.convertNbiToSbi(l2Vpn.getOperStatus()));
+        sncPw.setCtrlWordSupport(
+            CtrlWordEnum.getIndex(l2Vpn.getCtrlWordType().toString()).toString());
+        sncPw.setSnSupport(SSnSupport.NOT_SUPPORT.toString());
+        sncPw.setVccvType("0");
+        sncPw.setConnAckType("0");
+        sncPw.setQos(SQosInitiator.initCacClosedQos(sncPw.getId()));
+        // Doesn't support protect now, no need to set oam.
+        sncPw.setOam(null);
+        pwList.setSncPw(sncPw);
 
         return pwList;
     }

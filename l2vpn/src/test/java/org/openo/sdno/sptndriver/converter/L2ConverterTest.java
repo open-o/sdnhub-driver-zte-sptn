@@ -16,67 +16,140 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-
 import org.junit.Assert;
 import org.junit.Test;
+import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
+import org.openo.sdno.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdno.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdno.sptndriver.models.south.SSncPw;
+import org.openo.sdno.sptndriver.utils.JsonUtil;
 
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 /**
  * The class to test L2Convert
  */
 public class L2ConverterTest {
-  @Test
-  public void convertL2ToElineTunnerCreator() throws Exception {
-    File inputJson = new File("src/test/resource/json/create_l2vpn_input.json");
-    JsonParser crtParser = new JsonParser();
-    JsonElement crtBody = crtParser.parse(new FileReader(inputJson));
+    @Test
+    public void convertL2ToElineTunnerCreator() throws Exception {
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/create_l2vpn_input.json", NL2Vpn.class);
+        SCreateElineAndTunnelsInput calculatedOutput = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+        SCreateElineAndTunnelsInput expectedOutput = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/create_l2vpn_output.json", SCreateElineAndTunnelsInput.class);
 
-    Gson inputGson = new Gson();
-    Type l2vpnType = new TypeToken<NL2Vpn>(){}.getType();
-    NL2Vpn l2vpn = inputGson.fromJson(crtBody, l2vpnType);
-
-    SCreateElineAndTunnelsInput calculatedOutput = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
-
-    File outputJson = new File("src/test/resource/json/create_l2vpn_output.json");
-    JsonParser routeParser = new JsonParser();
-    JsonElement outputBody = routeParser.parse(new FileReader(outputJson));
-
-    Gson outputGson = new Gson();
-    Type SCreateElineAndTunnelsInput = new TypeToken<SCreateElineAndTunnelsInput>(){}.getType();
-    SCreateElineAndTunnelsInput expectedOutput = outputGson.fromJson(outputBody, SCreateElineAndTunnelsInput);
-
-    // uuid of pw is different every time, so must clear the uuid.
-    clearPwId(calculatedOutput);
-    clearPwId(expectedOutput);
-    Assert.assertEquals(calculatedOutput, expectedOutput);
-  }
-
-  @Test
-  public void getReturnId() throws Exception {
-
-  }
-
-  private void clearPwId(SCreateElineAndTunnelsInput realValue) {
-    if (realValue != null
-        && realValue.getInput() != null
-        && realValue.getInput().getSncEline() != null
-        && realValue.getInput().getSncEline().getSncPws() != null) {
-      SSncPw sSncPw = realValue.getInput().getSncEline().getSncPws().getSncPw();
-      sSncPw.setId(null);
-      sSncPw.getQos().setBelongedId(null);
-      if (sSncPw.getOam() != null) {
-        sSncPw.getOam().setBelongedId(null);
-      }
+        // uuid of pw is different every time, so must clear the uuid.
+        clearPwId(calculatedOutput);
+        clearPwId(expectedOutput);
+        Assert.assertEquals(expectedOutput,calculatedOutput);
     }
-  }
+
+    @Test
+    public void testNullInput() throws Exception {
+        try {
+            L2Converter.convertL2ToElineTunnerCreator(null);
+        } catch (ParamErrorException ex) {
+            assertThat(ex.toString(), containsString("Input l2vpn is null."));
+            return;
+        }
+        fail("Expect ParamErrorException for null input.");
+    }
+
+    @Test
+    public void testAcSize() throws Exception {
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/only_1_ac_input.json", NL2Vpn.class);
+        try {
+            L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+        } catch (ParamErrorException ex) {
+            assertThat(ex.toString(), containsString("Input acList size must be 2."));
+            return;
+        }
+        fail("Expect ParamErrorException for only 1 ac.");
+    }
+
+    @Test
+    public void testNullPw() throws Exception {
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/no_pw_input.json", NL2Vpn.class);
+        try {
+            L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+        } catch (ParamErrorException ex) {
+            assertThat(ex.toString(), containsString("L2vpn should includes 2 pws."));
+            return;
+        }
+        fail("Expect ParamErrorException for empty pw list.");
+    }
+
+    @Test
+    public void testPwSize() throws Exception {
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/only_1_pw_input.json", NL2Vpn.class);
+        try {
+            L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+        } catch (ParamErrorException ex) {
+            assertThat(ex.toString(), containsString("L2vpn should includes 2 pws."));
+            return;
+        }
+        fail("Expect ParamErrorException for only 1 pw.");
+    }
+
+    @Test
+    public void testSwapAccessAction() throws Exception {
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/accessaction_swap_input.json", NL2Vpn.class);
+        SCreateElineAndTunnelsInput calculatedOutput = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+        SCreateElineAndTunnelsInput expectedOutput = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/accessaction_swap_output.json", SCreateElineAndTunnelsInput.class);
+
+        // uuid of pw is different every time, so must clear the uuid.
+        clearPwId(calculatedOutput);
+        clearPwId(expectedOutput);
+        Assert.assertEquals(expectedOutput, calculatedOutput);
+    }
+
+    @Test
+    public void testBackupPw() throws Exception {
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/backup_pw_input.json", NL2Vpn.class);
+        SCreateElineAndTunnelsInput calculatedOutput = L2Converter.convertL2ToElineTunnerCreator(l2vpn);
+        SCreateElineAndTunnelsInput expectedOutput = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/backup_pw_output.json", SCreateElineAndTunnelsInput.class);
+
+        // uuid of pw is different every time, so must clear the uuid.
+        clearPwId(calculatedOutput);
+        clearPwId(expectedOutput);
+        Assert.assertEquals(expectedOutput, calculatedOutput);
+    }
+
+    @Test
+    public void testGetReturnId() throws Exception {
+        SCmdResultAndNcdResRelationsOutput cmdResultAndNcdResRelationsOutput  = JsonUtil.parseJsonFromFile(
+            "src/test/resource/json/createl2/returnid_input.json", SCmdResultAndNcdResRelationsOutput.class);
+        String calculated = L2Converter.getReturnId(cmdResultAndNcdResRelationsOutput);
+        String expected = "53319217-4670-49c3-8d82-68ba1350c542";
+        Assert.assertEquals(expected, calculated);
+    }
+
+    @Test
+    public void testGetReturnIdNull() throws Exception {
+        Assert.assertEquals(null, L2Converter.getReturnId(null));
+    }
+
+    private void clearPwId(SCreateElineAndTunnelsInput realValue) {
+        if (realValue != null
+            && realValue.getInput() != null
+            && realValue.getInput().getSncEline() != null
+            && realValue.getInput().getSncEline().getSncPws() != null) {
+            SSncPw sSncPw = realValue.getInput().getSncEline().getSncPws().getSncPw();
+            sSncPw.setId(null);
+            sSncPw.getQos().setBelongedId(null);
+            if (sSncPw.getOam() != null) {
+                sSncPw.getOam().setBelongedId(null);
+            }
+        }
+    }
 }
