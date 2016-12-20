@@ -20,16 +20,11 @@ import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NTunnelService;
 import org.openo.sdno.sptndriver.models.south.SAdminStatus;
 import org.openo.sdno.sptndriver.models.south.SSncTunnelCreatePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The class to initiate tunnel create policy..
  */
 public class SSncTunnelCreatePolicyInitiator {
-
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(SSncTunnelCreatePolicyInitiator.class);
 
     /**
      * Initialize tunnel create policy.
@@ -44,14 +39,13 @@ public class SSncTunnelCreatePolicyInitiator {
         }
         SSncTunnelCreatePolicy tunnelCreatePolicy = new SSncTunnelCreatePolicy();
         tunnelCreatePolicy.setName(null);
-        // todo where to find the user label?
+        // Can find tunnel's user label in NBI, so let controller config user label
         tunnelCreatePolicy.setUserLabel(null);
         // todo tunnelCreatePolicy.setTenantId(nl2Vpn.getTenantId());
         tunnelCreatePolicy.setCreater(null);
         tunnelCreatePolicy.setParentNcdId(null);
         tunnelCreatePolicy.setDirection(SSncTunnelCreatePolicy.DirectionEnum.BIDIRECTION);
-        tunnelCreatePolicy.setType(SncType.line_mpls.toString());
-        // todo tunnelCreatePolicy.setIsShared(false);
+        tunnelCreatePolicy.setType(SncType.LINE_MPLS.toString());
         tunnelCreatePolicy.setQos(SQosInitiator.initQos(tunnelService.getMplsTe()));
         tunnelCreatePolicy.setAdminStatus(SAdminStatus.UP);
 
@@ -69,8 +63,8 @@ public class SSncTunnelCreatePolicyInitiator {
      * Tunnel type in tunnel create policy.
      */
     private enum SncType {
-        line_mpls(1),
-        ring_mpls(2);
+        LINE_MPLS(1),
+        RING_MPLS(2);
         private Integer value;
 
         SncType(Integer value) {
