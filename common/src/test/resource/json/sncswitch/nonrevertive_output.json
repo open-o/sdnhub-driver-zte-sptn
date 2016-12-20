@@ -1,0 +1,9 @@
+{
+  "layer-rate": "LSP",
+  "linear-protection-type": "path-protection-1-to-1",
+  "linear-protection-protocol": "APS",
+  "switch-mode": "double-end-switch",
+  "revertive-mode": "no-revertive",
+  "wtr": "60",
+  "hold-off-time": "0"
+}

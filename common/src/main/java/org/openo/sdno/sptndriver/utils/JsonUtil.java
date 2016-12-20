@@ -16,11 +16,18 @@
 
 package org.openo.sdno.sptndriver.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 /**
  * The Json util class
@@ -29,9 +36,34 @@ public class JsonUtil {
 
     private JsonUtil(){}
 
+    /**
+     * Read Json from file
+     * @param fileName Json file name
+     * @return Json element
+     * @throws IOException
+     * @throws ParseException When parse Json fails.
+     */
     public static Object readJsonFromFile(String fileName)
         throws IOException, ParseException {
         JSONParser parser = new JSONParser();
         return parser.parse(new FileReader(fileName));
+    }
+
+    /**
+     * Parse Json from file and turn it to specific Java object.
+     * @param fileName Json file name
+     * @param <T> Excepted Object type
+     * @return Java object of type T
+     * @throws FileNotFoundException When Json file not exists
+     */
+    public static <T> T parseJsonFromFile(String fileName,
+                                          Type type)
+        throws FileNotFoundException {
+        File routeCase = new File(fileName);
+        JsonParser routeParser = new JsonParser();
+        JsonElement routeBody = routeParser.parse(new FileReader(routeCase));
+
+        Gson gson = new Gson();
+        return gson.fromJson(routeBody, type);
     }
 }

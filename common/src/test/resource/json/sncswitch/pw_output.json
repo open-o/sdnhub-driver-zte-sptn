@@ -1,0 +1,10 @@
+{
+  "snc-id": "pw1",
+  "layer-rate": "PW",
+  "linear-protection-type": "path-protection-1-to-1",
+  "linear-protection-protocol": "APS",
+  "switch-mode": "double-end-switch",
+  "revertive-mode": "revertive",
+  "wtr": "300",
+  "hold-off-time": "0"
+}

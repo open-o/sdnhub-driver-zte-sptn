@@ -1,0 +1,13 @@
+{
+  "signalType": "static-lsp",
+  "manageProtocol": "netconf",
+  "besteffort": true,
+  "bandwidth": 1000,
+  "pathConstraint": {},
+  "pathProtectPolicy": {
+    "type": "333",
+    "bandwidthMode": "dynamic-bandwidth",
+    "wtr": 60000000,
+    "revertive": "false"
+  }
+}
