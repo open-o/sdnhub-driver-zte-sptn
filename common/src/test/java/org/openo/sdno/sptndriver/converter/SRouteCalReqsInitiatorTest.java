@@ -17,21 +17,12 @@
 package org.openo.sdno.sptndriver.converter;
 
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.openo.sdno.sptndriver.exception.ParamErrorException;
 import org.openo.sdno.sptndriver.models.north.NL2Vpn;
 import org.openo.sdno.sptndriver.models.south.SRouteCalReqsInput;
-
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
+import org.openo.sdno.sptndriver.utils.JsonUtil;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -41,13 +32,6 @@ import static org.junit.matchers.JUnitMatchers.containsString;
  * The class to test SRouteCalReqsInitiator.
  */
 public class SRouteCalReqsInitiatorTest {
-
-    private Gson gson;
-
-    @Before
-    public void setUp() {
-        gson = new Gson();
-    }
 
     @Test
     public void initElineLspCalRoute() throws Exception {
@@ -107,29 +91,14 @@ public class SRouteCalReqsInitiatorTest {
         Assert.assertEquals(expected, calculated);
     }
 
-    private SRouteCalReqsInput getExpected(String expectedJson)
+    private SRouteCalReqsInput getExpected(String jsonFileName)
         throws Exception {
-        File routeCase = new File(expectedJson);
-        JsonParser routeParser = new JsonParser();
-        JsonElement routeBody = routeParser.parse(new FileReader(routeCase));
-
-        Type SRouteCalReqsInput = new TypeToken<SRouteCalReqsInput>() {
-        }.getType();
-        return gson.fromJson(routeBody, SRouteCalReqsInput);
+        return JsonUtil.parseJsonFromFile(jsonFileName, SRouteCalReqsInput.class);
     }
 
-    private SRouteCalReqsInput getCalculateResult(String inputJson)
+    private SRouteCalReqsInput getCalculateResult(String jsonFileName)
         throws Exception {
-        File crtCase = new File(inputJson);
-        JsonParser crtParser = new JsonParser();
-        JsonElement crtBody = crtParser.parse(new FileReader(crtCase));
-
-        Type parseType = new TypeToken<NL2Vpn>() {
-        }.getType();
-        NL2Vpn l2vpn = gson.fromJson(crtBody, parseType);
-
+        NL2Vpn l2vpn = JsonUtil.parseJsonFromFile(jsonFileName, NL2Vpn.class);
         return SRouteCalReqsInitiator.initElineLspCalRoute(l2vpn);
     }
-
-
 }

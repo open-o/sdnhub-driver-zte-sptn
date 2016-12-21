@@ -16,32 +16,16 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.openo.sdno.sptndriver.models.north.NMplsTePolicy;
 import org.openo.sdno.sptndriver.models.south.SQos;
-
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
+import org.openo.sdno.sptndriver.utils.JsonUtil;
 
 /**
  * The UT class of SQosInitiator
  */
 public class SQosInitiatorTest {
-
-    private Gson gson;
-
-    @Before
-    public void setUp() throws Exception {
-        gson = new Gson();
-    }
 
     @Test
     public void test_Qos_On() throws Exception {
@@ -51,26 +35,14 @@ public class SQosInitiatorTest {
 
     }
 
-    private SQos getExpected(String expectedJson)
+    private SQos getExpected(String jsonFileName)
         throws Exception {
-        File routeCase = new File(expectedJson);
-        JsonParser routeParser = new JsonParser();
-        JsonElement routeBody = routeParser.parse(new FileReader(routeCase));
-
-        Type SQos = new TypeToken<SQos>() {}.getType();
-        return gson.fromJson(routeBody, SQos);
+        return JsonUtil.parseJsonFromFile(jsonFileName, SQos.class);
     }
 
-    private SQos getCalculateResult(String inputJson)
+    private SQos getCalculateResult(String jsonFileName)
         throws Exception {
-        File crtCase = new File(inputJson);
-        JsonParser crtParser = new JsonParser();
-        JsonElement crtBody = crtParser.parse(new FileReader(crtCase));
-
-        Type parseType = new TypeToken<NMplsTePolicy>() {
-        }.getType();
-        NMplsTePolicy mplsTePolicy = gson.fromJson(crtBody, parseType);
-
+        NMplsTePolicy mplsTePolicy = JsonUtil.parseJsonFromFile(jsonFileName, NMplsTePolicy.class);
         return SQosInitiator.initQos(mplsTePolicy);
     }
 

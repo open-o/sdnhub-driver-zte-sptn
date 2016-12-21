@@ -16,11 +16,6 @@
 
 package org.openo.sdno.sptndriver.converter;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openo.sdno.sptndriver.models.north.NL3Vpn;
@@ -30,10 +25,8 @@ import org.openo.sdno.sptndriver.models.south.SL3ac;
 import org.openo.sdno.sptndriver.models.south.SL3acProtocol;
 import org.openo.sdno.sptndriver.models.south.SL3vpn;
 import org.openo.sdno.sptndriver.models.south.SStaticRoute;
+import org.openo.sdno.sptndriver.utils.JsonUtil;
 
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,24 +54,8 @@ public class L3ConverterTest {
 
     private void compareInputAndOutput (String inputJsonFile, String outputJsonFile)
         throws Exception{
-        File inputJson = new File(inputJsonFile);
-        JsonParser crtParser = new JsonParser();
-        JsonElement crtBody = crtParser.parse(new FileReader(inputJson));
-
-        Gson gson = new Gson();
-        Type inputType = new TypeToken<NL3Vpn>() {
-        }.getType();
-        NL3Vpn l3vpn = gson.fromJson(crtBody, inputType);
-
-        SL3vpn calculatedOutput = L3Converter.convertNbiToSbi(l3vpn);
-
-        File outputJson = new File(outputJsonFile);
-        JsonParser routeParser = new JsonParser();
-        JsonElement outputBody = routeParser.parse(new FileReader(outputJson));
-
-        Type outputType = new TypeToken<SL3vpn>() {
-        }.getType();
-        SL3vpn expectedOutput = gson.fromJson(outputBody, outputType);
+        SL3vpn calculatedOutput = getCalculateResult(inputJsonFile);
+        SL3vpn expectedOutput = getExpected(outputJsonFile);
 
         clearStaticRouteId(calculatedOutput);
         clearStaticRouteId(expectedOutput);
@@ -107,6 +84,17 @@ public class L3ConverterTest {
                 }
             }
         }
+    }
+
+    private SL3vpn getExpected(String jsonFileName)
+        throws Exception {
+        return JsonUtil.parseJsonFromFile(jsonFileName, SL3vpn.class);
+    }
+
+    private SL3vpn getCalculateResult(String jsonFileName)
+        throws Exception {
+        NL3Vpn l3vpn = JsonUtil.parseJsonFromFile(jsonFileName, NL3Vpn.class);
+        return L3Converter.convertNbiToSbi(l3vpn);
     }
 
 }
