@@ -61,6 +61,9 @@ public enum AccessActionEnum {
      */
     public static SServiceEndPoint.AccessActionEnum convertNbiToSbi(String northValue)
         throws ParamErrorException {
+        if (northValue == null) {
+            return null;
+        }
         for (AccessActionEnum e : AccessActionEnum.values()) {
             if (e.getNorth().equals(northValue)) {
                 return e.south;

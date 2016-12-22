@@ -49,11 +49,7 @@ public enum AdminStatusEnum {
                 return adminStatusEnum.north;
             }
         }
-        List<String> validValues = new ArrayList<>();
-        for (AdminStatusEnum adminStatusEnum : AdminStatusEnum.values()) {
-            validValues.add(adminStatusEnum.getSouthValue().toString());
-        }
-        throw new ParamErrorException(validValues.toArray(), southValue.toString());
+        return null;
     }
 
     /**
