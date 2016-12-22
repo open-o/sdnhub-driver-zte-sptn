@@ -46,8 +46,8 @@ public class TrafficClassConverter {
             }
         }
         List<String> validValues = new ArrayList<>();
-        for (STrafficClass accessActionEnum : STrafficClass.values()) {
-            validValues.add(accessActionEnum.toString());
+        for (STrafficClass enumTrafficClass : STrafficClass.values()) {
+            validValues.add(enumTrafficClass.toString());
         }
         throw new ParamErrorException(validValues.toArray(), trafficClass);
     }
