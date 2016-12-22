@@ -43,7 +43,7 @@ public enum AccessTypeEnum {
      * @param south SBI access type.
      * @return NBI access type.
      */
-    public static String convertSouthToNorth(SServiceEndPoint.AccessTypeEnum south) {
+    public static String convertSbiToNbi(SServiceEndPoint.AccessTypeEnum south) {
         for (AccessTypeEnum accessTypeEnum : AccessTypeEnum.values()) {
             if (accessTypeEnum.getSouth().equals(south)) {
                 return accessTypeEnum.north;
@@ -60,6 +60,9 @@ public enum AccessTypeEnum {
      */
     public static SServiceEndPoint.AccessTypeEnum convertNbiToSbi(String north)
         throws ParamErrorException {
+        if (north == null) {
+            return null;
+        }
         for (AccessTypeEnum e : AccessTypeEnum.values()) {
             if (e.getNorth().equals(north)) {
                 return e.south;
