@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openo.sdno.sptndriver.healthCheck;
+package org.openo.sdno.sptndriver.healthcheck;
 
 import com.codahale.metrics.health.HealthCheck;
 

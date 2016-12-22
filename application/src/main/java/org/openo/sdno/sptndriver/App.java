@@ -22,7 +22,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.openo.sdno.sptndriver.common.DriverManagerRegister;
 import org.openo.sdno.sptndriver.common.DriverManagerUnregister;
 import org.openo.sdno.sptndriver.config.AppConfig;
-import org.openo.sdno.sptndriver.healthCheck.CustomHealthCheck;
+import org.openo.sdno.sptndriver.healthcheck.CustomHealthCheck;
 import org.openo.sdno.sptndriver.resources.L2Resource;
 import org.openo.sdno.sptndriver.resources.L3Resource;
 import org.skife.jdbi.v2.DBI;
