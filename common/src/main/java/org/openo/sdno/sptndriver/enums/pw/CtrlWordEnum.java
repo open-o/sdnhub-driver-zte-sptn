@@ -25,8 +25,8 @@ import java.util.List;
  * Enumerator of PW control word.
  */
 public enum CtrlWordEnum {
-    DISABLE("disable", 0),
-    ENABLE("enable", 1);
+    DISABLE("disable", Integer.valueOf(0)),
+    ENABLE("enable", Integer.valueOf(1));
     private String name;
     private Integer index;
 
@@ -41,13 +41,21 @@ public enum CtrlWordEnum {
      * @param index Integer value of NBI control word.
      * @return String value of SBI control word.
      */
-    public static String getName(Integer index) {
+    public static String getName(Integer index)
+        throws ParamErrorException {
+        if (index == null) {
+            return null;
+        }
         for (CtrlWordEnum e : CtrlWordEnum.values()) {
             if (e.getIndex().equals(index)) {
                 return e.name;
             }
         }
-        return null;
+        List<String> validValues = new ArrayList<>();
+        for (CtrlWordEnum ctrlWordEnum : CtrlWordEnum.values()) {
+            validValues.add(ctrlWordEnum.getIndex().toString());
+        }
+        throw new ParamErrorException(validValues.toArray(), index.toString());
     }
 
     /**
@@ -58,6 +66,9 @@ public enum CtrlWordEnum {
      */
     public static Integer getIndex(String name)
         throws ParamErrorException {
+        if (name == null) {
+            return null;
+        }
         for (CtrlWordEnum e : CtrlWordEnum.values()) {
             if (e.getName().equals(name)) {
                 return e.index;
