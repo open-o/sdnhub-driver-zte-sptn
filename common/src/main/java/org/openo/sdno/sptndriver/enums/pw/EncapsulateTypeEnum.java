@@ -54,13 +54,16 @@ public enum EncapsulateTypeEnum {
     /**
      * Convert NBI encapsulate type to SBI encapsulate type.
      *
-     * @param name NBI encapsulate type.
+     * @param north NBI encapsulate type.
      * @return SBI encapsulate type.
      */
-    public static SEncapsulateType convertNbiToSbi(String name)
+    public static SEncapsulateType convertNbiToSbi(String north)
         throws ParamErrorException {
+        if (north == null) {
+            return null;
+        }
         for (EncapsulateTypeEnum e : EncapsulateTypeEnum.values()) {
-            if (e.getNorth().equals(name)) {
+            if (e.getNorth().equals(north)) {
                 return e.south;
             }
         }
@@ -68,7 +71,7 @@ public enum EncapsulateTypeEnum {
         for (EncapsulateTypeEnum encapsulateTypeEnum : EncapsulateTypeEnum.values()) {
             validValues.add(encapsulateTypeEnum.getNorth());
         }
-        throw new ParamErrorException(validValues.toArray(), name);
+        throw new ParamErrorException(validValues.toArray(), north);
     }
 
     /**
