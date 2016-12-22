@@ -16,20 +16,21 @@
 
 package org.openo.sdno.sptndriver.enums.south;
 
-/**
- * Enumerator of SNC switch layer rate.
- */
-public enum SSncLayerRate {
-    LSP(0),
-    PW(1);
-    private Integer value;
+import junit.framework.Assert;
 
-    SSncLayerRate(Integer value) {
-        this.value = value;
+import org.junit.Test;
+
+/**
+ * The UT class of SSncLayerRate.
+ */
+public class SSncLayerRateTest {
+    @Test
+    public void testToString_0() throws Exception {
+        Assert.assertEquals("0", SSncLayerRate.LSP.toString());
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(value);
+    @Test
+    public void testToString_1() throws Exception {
+        Assert.assertEquals("1", SSncLayerRate.PW.toString());
     }
 }
