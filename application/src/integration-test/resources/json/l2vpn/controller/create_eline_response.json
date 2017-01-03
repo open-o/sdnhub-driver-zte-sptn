@@ -1,0 +1,18 @@
+{
+  "output": {
+    "command-result": {
+      "success-resources": {}
+    },
+    "ncd-resource-relations": {
+      "ncd-resource-relation": [
+        {
+          "ncd-id": "6149dae6-9cc0-4ded-b132-cd28f7be55da",
+          "resource-id": "668d75c3-dc21-45a4-8e0b-f2d49b617888"
+        }
+      ]
+    }
+  }
+}
+
+
+

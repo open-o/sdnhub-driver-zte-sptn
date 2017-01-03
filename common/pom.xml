@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright 2016 ZTE Corporation.
+  ~ Copyright 2016-2017 ZTE Corporation.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
         <version>1.1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openo.sdno.driver-zte-sptn</groupId>
     <artifactId>common</artifactId>
     <name>sdno-driver-zte-sptn/common</name>
     <dependencies>
@@ -65,13 +64,12 @@
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1</version>
+            <version>${json-simple.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
-            <version>${dropwizard.version}</version>
-            <scope>test</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
     </dependencies>
     <build>
