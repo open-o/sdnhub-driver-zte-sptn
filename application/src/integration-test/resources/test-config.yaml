@@ -37,19 +37,6 @@ logging:
       threshold: DEBUG
       timeZone: UTC
       logFormat: "%d{yyyy-MM-dd HH:mm:ss SSS} %-5p [%c][%t] - %m%n"
-    - type: file
-      threshold: DEBUG
-      logFormat: "%d{yyyy-MM-dd HH:mm:ss SSS} %-5p [%c][%t] - %m%n"
-      # The file to which current statements will be logged.
-      currentLogFilename: ./logs/zte_sptn_drive_test.log
-      # When the log file rotates, the archived log will be renamed to this and gzipped. The
-      # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
-      # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
-      archivedLogFilenamePattern: ./logs/zte_sptn_driver_test-%d{yyyy-MM-dd}.log.gz
-      # The number of archived files to keep.
-      archivedFileCount: 7
-      # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
-      timeZone: UTC
 # Database settings.
 database:
  # the name of your JDBC driver
