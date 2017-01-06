@@ -1,7 +1,15 @@
 {
   "output": {
     "command-result": {
-      "success-resources": []
+      "result": 1,
+      "success-resources": {
+        "success-resource-list": [
+          {
+            "resouce-id": "668d75c3-dc21-45a4-8e0b-f2d49b617888"
+          }
+        ]
+      },
+      "failed-resources": {}
     },
     "ncd-resource-relations": {
       "ncd-resource-relation": [
