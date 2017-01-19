@@ -1,6 +1,6 @@
 ﻿#!/usr/bin/env bash
 #
-# Copyright 2016 ZTE Corporation.
+# Copyright 2016-2017 ZTE Corporation.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ JAVA_OPTS="-Xms50m -Xmx128m"
 #JAVA_OPTS="$JAVA_OPTS -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=$port,server=y,suspend=n"
 echo @JAVA_OPTS@ $JAVA_OPTS
 
-class_path="$RUNHOME/:$RUNHOME/sdno-driver-zte-sptn.jar"
+class_path="$RUNHOME/:$RUNHOME/sdnhub-driver-zte-sptn.jar"
 echo @class_path@ $class_path
 
-"$JAVA" $JAVA_OPTS -classpath "$class_path" org.openo.sdno.sptndriver.App server "$RUNHOME/conf/config.yaml"
+"$JAVA" $JAVA_OPTS -classpath "$class_path" org.openo.sdnhub.sptndriver.App server "$RUNHOME/conf/config.yaml"
 

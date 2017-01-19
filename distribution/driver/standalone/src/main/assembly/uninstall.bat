@@ -1,5 +1,5 @@
 @REM
-@REM Copyright 2016 ZTE Corporation.
+@REM Copyright 2016-2017 ZTE Corporation.
 @REM
 @REM Licensed under the Apache License, Version 2.0 (the "License");
 @REM you may not use this file except in compliance with the License.
@@ -21,14 +21,14 @@ set user=%1
 set password=%2
 set port=3306
 set host=127.0.0.1
-echo start uninstall sdno_driver_zte_sptn
+echo start uninstall sdnhub_driver_zte_sptn
 echo HOME=$HOME
 cd /d %HOME%
-mysql -u%user% -p%password% -P%port% -h%host% < dbscripts\mysql\openo-sdno-zte-sptn-driver-clear.sql
+mysql -u%user% -p%password% -P%port% -h%host% < dbscripts\mysql\openo-sdnhub-zte-sptn-driver-clear.sql
 set "err=%errorlevel%"
 if "%err%"=="0" (
-   echo uninstall sdno_driver_zte_sptn success
+   echo uninstall sdnhub_driver_zte_sptn success
   ) else (
-    echo failed uninstall sdno_driver_zte_sptn
+    echo failed uninstall sdnhub_driver_zte_sptn
   )
 pause

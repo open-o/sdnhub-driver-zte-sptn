@@ -1,5 +1,5 @@
 #
-# Copyright 2016 ZTE Corporation.
+# Copyright 2016-2017 ZTE Corporation.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ logging:
   # Logger-specific levels.
   loggers:
     # Sets the level for 'com.example.app' to DEBUG.
-    org.openo.sdno.sptndriver.App: INFO
+    org.openo.sdnhub.sptndriver.App: INFO
   appenders:
     - type: console
       threshold: INFO
@@ -54,7 +54,7 @@ database:
   driverClass: com.mysql.jdbc.Driver
   user: sptn_driver
   password: Test_12345
-  url: jdbc:mysql://localhost/sdno_driver_zte_sptn
+  url: jdbc:mysql://localhost/sdnhub_driver_zte_sptn
 # Timeout in seconds.
 timeout: 600
   

@@ -1,5 +1,5 @@
 @REM
-@REM Copyright 2016 ZTE Corporation.
+@REM Copyright 2016-2017 ZTE Corporation.
 @REM
 @REM Licensed under the Apache License, Version 2.0 (the "License");
 @REM you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ set class_path=%RUNHOME%;%RUNHOME%zte-sptn-controller-simulator.jar
 echo ### jvm_opts: %jvm_opts%
 echo ### class_path: %class_path%
 
-%JAVA% -classpath %class_path% %jvm_opts% org.openo.sdno.sptndriver.simulator.App server %RUNHOME%conf/config.yaml
+%JAVA% -classpath %class_path% %jvm_opts% org.openo.sdnhub.sptndriver.simulator.App server %RUNHOME%conf/config.yaml
 
 IF ERRORLEVEL 1 goto showerror
 exit

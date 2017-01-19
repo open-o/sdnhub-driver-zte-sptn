@@ -26,7 +26,7 @@
 
     <groupId>org.openo.sdnhub.driver-zte-sptn</groupId>
     <artifactId>sptndriver</artifactId>
-    <name>sdno-driver-zte-sptn</name>
+    <name>sdnhub-driver-zte-sptn</name>
     <packaging>pom</packaging>
 
     <modules>

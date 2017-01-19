@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright 2016 ZTE Corporation.
+  ~ Copyright 2016-2017 ZTE Corporation.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 
     <artifactId>models</artifactId>
     <version>1.1.0-SNAPSHOT</version>
-    <name>sdno-driver-zte-sptn/models</name>
+    <name>sdnhub-driver-zte-sptn/models</name>
     <dependencies>
         <dependency>
             <groupId>io.swagger</groupId>
@@ -56,7 +56,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
                             <output>${project.build.directory}/generated-sources/south</output>
-                            <modelPackage>org.openo.sdno.sptndriver.models.south</modelPackage>
+                            <modelPackage>org.openo.sdnhub.sptndriver.models.south</modelPackage>
                             <modelNamePrefix>S</modelNamePrefix>
                             <environmentVariables>
                                 <!-- generate all models -->
@@ -78,7 +78,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
                             <output>${project.build.directory}/generated-sources/south</output>
-                            <modelPackage>org.openo.sdno.sptndriver.models.south.brs</modelPackage>
+                            <modelPackage>org.openo.sdnhub.sptndriver.models.south.brs</modelPackage>
                             <modelNamePrefix>S</modelNamePrefix>
                             <environmentVariables>
                                 <!-- generate all models -->
@@ -100,7 +100,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
                             <output>${project.build.directory}/generated-sources/north</output>
-                            <modelPackage>org.openo.sdno.sptndriver.models.north</modelPackage>
+                            <modelPackage>org.openo.sdnhub.sptndriver.models.north</modelPackage>
                             <modelNamePrefix>N</modelNamePrefix>
                             <environmentVariables>
                                 <!-- generate all models -->
@@ -122,7 +122,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
                             <output>${project.build.directory}/generated-sources/north</output>
-                            <modelPackage>org.openo.sdno.sptndriver.models.north</modelPackage>
+                            <modelPackage>org.openo.sdnhub.sptndriver.models.north</modelPackage>
                             <modelNamePrefix>N</modelNamePrefix>
                             <environmentVariables>
                                 <!-- generate all models -->
@@ -144,7 +144,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
                             <output>${project.build.directory}/generated-sources/north</output>
-                            <modelPackage>org.openo.sdno.sptndriver.models.north.brs</modelPackage>
+                            <modelPackage>org.openo.sdnhub.sptndriver.models.north.brs</modelPackage>
                             <modelNamePrefix>N</modelNamePrefix>
                             <environmentVariables>
                                 <!-- generate all models -->
@@ -166,7 +166,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
                             <output>${project.build.directory}/generated-sources/esr</output>
-                            <modelPackage>org.openo.sdno.sptndriver.models.esr</modelPackage>
+                            <modelPackage>org.openo.sdnhub.sptndriver.models.esr</modelPackage>
                             <environmentVariables>
                                 <!-- generate all models -->
                                 <models/>

@@ -23,7 +23,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>distribution</artifactId>
-    <name>sdno-driver-zte-sptn/distribution</name>
+    <name>sdnhub-driver-zte-sptn/distribution</name>
     <packaging>pom</packaging>
 
     <modules>

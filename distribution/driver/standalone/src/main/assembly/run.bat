@@ -1,5 +1,5 @@
 @REM
-@REM Copyright 2016 ZTE Corporation.
+@REM Copyright 2016-2017 ZTE Corporation.
 @REM
 @REM Licensed under the Apache License, Version 2.0 (the "License");
 @REM you may not use this file except in compliance with the License.
@@ -15,20 +15,20 @@
 @REM
 
 @echo off
-title sdno-driver-zte-sptn
+title sdnhub-driver-zte-sptn
 
 set RUNHOME=%~dp0
 echo ### RUNHOME: %RUNHOME%
-echo ### Starting sdno-driver-zte-sptn
+echo ### Starting sdnhub-driver-zte-sptn
 
 set JAVA="%JAVA_HOME%\bin\java.exe"
 set jvm_opts=-Xms50m -Xmx128m
 rem set jvm_opts=%jvm_opts% -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=%port%,server=y,suspend=n
-set class_path=%RUNHOME%;%RUNHOME%sdno-driver-zte-sptn.jar
+set class_path=%RUNHOME%;%RUNHOME%sdnhub-driver-zte-sptn.jar
 echo ### jvm_opts: %jvm_opts%
 echo ### class_path: %class_path%
 
-%JAVA% -classpath %class_path% %jvm_opts% org.openo.sdno.sptndriver.App server %RUNHOME%conf/config.yaml
+%JAVA% -classpath %class_path% %jvm_opts% org.openo.sdnhub.sptndriver.App server %RUNHOME%conf/config.yaml
 
 IF ERRORLEVEL 1 goto showerror
 exit

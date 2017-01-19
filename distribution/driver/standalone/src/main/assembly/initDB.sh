@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016 ZTE Corporation.
+# Copyright 2016-2017 ZTE Corporation.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ user=$1
 password=$2
 port=3306
 host=127.0.0.1
-echo "start init sdno_driver_zte_sptn db"
-mysql -u$user -p$password -P$port -h$host <$HOME/dbscripts/mysql/openo-sdno-zte-sptn-driver-createobj.sql
+echo "start init sdnhub_driver_zte_sptn db"
+mysql -u$user -p$password -P$port -h$host <$HOME/dbscripts/mysql/openo-sdnhub-zte-sptn-driver-createobj.sql
 sql_result=$?
 if [ $sql_result != 0 ] ; then
-   echo "failed to init sdno_driver_zte_sptn database!"
+   echo "failed to init sdnhub_driver_zte_sptn database!"
    exit 1
 fi
-echo "init sdno_driver_zte_sptn database success!"
+echo "init sdnhub_driver_zte_sptn database success!"
 exit 0
 

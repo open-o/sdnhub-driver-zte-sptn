@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2016 ZTE Corporation.
+  ~ Copyright 2016-2017 ZTE Corporation.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>standalone</artifactId>
-    <name>sdno-driver-zte-sptn/distribution/driver/standalone</name>
+    <name>sdnhub-driver-zte-sptn/distribution/driver/standalone</name>
     <packaging>pom</packaging>
 
     <properties>
-        <packagename>sdno-driver-zte-sptn</packagename>
+        <packagename>sdnhub-driver-zte-sptn</packagename>
         <linux64id>linux64</linux64id>
         <win64id>win64</win64id>
         <linux64assembly>target/assembly/${linux64id}</linux64assembly>
@@ -107,7 +107,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${linux64assembly}</outputDirectory>
-                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
+                                    <destFileName>sdnhub-driver-zte-sptn.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -126,7 +126,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${win64assembly}</outputDirectory>
-                                    <destFileName>sdno-driver-zte-sptn.jar</destFileName>
+                                    <destFileName>sdnhub-driver-zte-sptn.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

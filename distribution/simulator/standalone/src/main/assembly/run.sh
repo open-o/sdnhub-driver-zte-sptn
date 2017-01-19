@@ -1,6 +1,6 @@
 ﻿#!/usr/bin/env bash
 #
-# Copyright 2016 ZTE Corporation.
+# Copyright 2016-2017 ZTE Corporation.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,5 +30,5 @@ echo @JAVA_OPTS@ $JAVA_OPTS
 class_path="$RUNHOME/:$RUNHOME/zte-sptn-controller-simulator.jar"
 echo @class_path@ $class_path
 
-"$JAVA" $JAVA_OPTS -classpath "$class_path" org.openo.sdno.sptndriver.simulator.App server "$RUNHOME/conf/config.yaml"
+"$JAVA" $JAVA_OPTS -classpath "$class_path" org.openo.sdnhub.sptndriver.simulator.App server "$RUNHOME/conf/config.yaml"
 

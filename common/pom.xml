@@ -23,7 +23,7 @@
     </parent>
 
     <artifactId>common</artifactId>
-    <name>sdno-driver-zte-sptn/common</name>
+    <name>sdnhub-driver-zte-sptn/common</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

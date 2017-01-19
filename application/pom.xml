@@ -23,7 +23,7 @@
     </parent>
 
     <artifactId>application</artifactId>
-    <name>sdno-driver-zte-sptn/application</name>
+    <name>sdnhub-driver-zte-sptn/application</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -150,7 +150,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.openo.sdno.sptndriver.App</mainClass>
+                                    <mainClass>org.openo.sdnhub.sptndriver.App</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

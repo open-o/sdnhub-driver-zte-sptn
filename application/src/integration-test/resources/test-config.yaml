@@ -31,7 +31,7 @@ logging:
   # Logger-specific levels.
   loggers:
     # Sets the level for 'com.example.app' to DEBUG.
-    org.openo.sdno.sptndriver.App: DEBUG
+    org.openo.sdnhub.sptndriver.App: DEBUG
   appenders:
     - type: console
       threshold: DEBUG
