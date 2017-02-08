@@ -10,8 +10,8 @@
         "service_url": "/openoapi/sbi-l2vpn-vpws/v1",
         "support_sys": [
           {
-            "type": "ODL",
-            "version": "B03"
+            "type": "zte-sptn-controller",
+            "version": "STN-1.10.00.B11"
           }
         ]
       },
@@ -19,8 +19,8 @@
         "service_url": "/openoapi/sbi-l3vpn/v1",
         "support_sys": [
           {
-            "type": "ODL",
-            "version": "B03"
+            "type": "zte-sptn-controller",
+            "version": "STN-1.10.00.B11"
           }
         ]
       }
