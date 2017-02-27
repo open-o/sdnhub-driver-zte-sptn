@@ -23,8 +23,6 @@ import com.google.gson.JsonParser;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -40,13 +38,16 @@ public class JsonUtil {
      * Read Json from file
      * @param fileName Json file name
      * @return Json element
-     * @throws IOException
-     * @throws ParseException When parse Json fails.
+     * @throws IOException If an I/O error occurs
+     * @throws ParseException When parse Json fails
      */
     public static Object readJsonFromFile(String fileName)
         throws IOException, ParseException {
         JSONParser parser = new JSONParser();
-        return parser.parse(new FileReader(fileName));
+        FileReader fileReader = new FileReader(fileName);
+        Object returnObj = parser.parse(fileReader);
+        fileReader.close();
+        return returnObj;
     }
 
     /**
@@ -54,16 +55,17 @@ public class JsonUtil {
      * @param fileName Json file name
      * @param <T> Excepted Object type
      * @return Java object of type T
-     * @throws FileNotFoundException When Json file not exists
+     * @throws IOException If an I/O error occurs
      */
     public static <T> T parseJsonFromFile(String fileName,
                                           Type type)
-        throws FileNotFoundException {
-        File routeCase = new File(fileName);
-        JsonParser routeParser = new JsonParser();
-        JsonElement routeBody = routeParser.parse(new FileReader(routeCase));
+        throws IOException {
+        FileReader fileReader = new FileReader(fileName);
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonElement = jsonParser.parse(fileReader);
+        fileReader.close();
 
         Gson gson = new Gson();
-        return gson.fromJson(routeBody, type);
+        return gson.fromJson(jsonElement, type);
     }
 }
