@@ -19,15 +19,15 @@ package org.openo.sdnhub.sptndriver.converter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openo.sdnhub.sptndriver.exception.ParamErrorException;
+import org.openo.sdnhub.sptndriver.models.north.NL2Vpn;
 import org.openo.sdnhub.sptndriver.models.south.SCmdResultAndNcdResRelationsOutput;
 import org.openo.sdnhub.sptndriver.models.south.SCreateElineAndTunnelsInput;
 import org.openo.sdnhub.sptndriver.models.south.SSncPw;
-import org.openo.sdnhub.sptndriver.models.north.NL2Vpn;
 import org.openo.sdnhub.sptndriver.utils.JsonUtil;
 
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.internal.matchers.StringContains.containsString;
 
 /**
  * The class to test L2Convert
