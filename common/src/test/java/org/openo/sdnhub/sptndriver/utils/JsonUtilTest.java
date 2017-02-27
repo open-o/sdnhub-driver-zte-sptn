@@ -18,8 +18,8 @@ package org.openo.sdnhub.sptndriver.utils;
 
 import com.google.gson.annotations.SerializedName;
 
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
